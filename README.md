@@ -12,7 +12,7 @@
 Objetivo: Definición periférica del proyecto y diseño inicial.
 
 ### Especificación detallada del sistema (Completo).
-*a) Detalle de la especificación de los componentes del proyecto, su descripción funcional y sistema de caja negra.*
+*Detalle de la especificación de los componentes del proyecto, su descripción funcional y sistema de caja negra.*
 
 | Componente  | Especificación | Funcionamiento|
 | ------------- | ------------- | ------------- |
@@ -28,3 +28,5 @@ Objetivo: Definición periférica del proyecto y diseño inicial.
 | Leds 7 segmentos | Ánodo común | Se muestra el porcentaje del nivel que esté seleccionado.|
 | Pantalla OLED | Pantalla OLED 128x64 SSD1306 | Se muestran el entorno de la mascota y también los porcentajes de los niveles de la mascota.|
 | FPGA | A-C4E6 Cyclone IV FPGA EP4CE6E22C8N | Controlador de las distintas operaciones que se desean hacer (contiene componentes lógicos programables).|
+
+
