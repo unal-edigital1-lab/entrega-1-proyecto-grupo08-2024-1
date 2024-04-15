@@ -14,8 +14,17 @@ Objetivo: Definición periférica del proyecto y diseño inicial.
 ### Especificación detallada del sistema (Completo).
 *a) Detalle de la especificación de los componentes del proyecto, su descripción funcional y sistema de caja negra.*
 
-| Componente  | Funcionamiento | Estado Afectado|
+| Componente  | Especificación | Funcionamiento|
 | ------------- | ------------- | ------------- |
-| Botones  | Generar un cambio de estado  | xd|
-| Content Cell  | Content Cell  |
-
+| Botón para Curar  | Pulsador con tapa (MCI00315)  | Cada vez que se oprima, elimina las diferentes condiciones adversas (solo funciona cuando la mascota tiene una enfermedad). |
+| Botón para Alimentar | Pulsador con tapa (MCI00315)  | Cada vez que se oprima, da de comer a la mascota, aumentando los niveles de alimentación y energía. |
+| Botón para Saltar la Cuerda | Pulsador con tapa (MCI00315)  | Cada vez que se oprima, cambia de escenario y se inicia un mini juego (aumenta el nivel de diversión pero baja el de energía). |
+| Botón para Reset | Pulsador con tapa (MCI00315)  | Cuando esté presionado por 5 segundos, restablece el estado inicial del tamagotchi (todos los niveles al 100%).|
+| Botón para Navegar Estados| Pulsador con tapa (MCI00315)  | Cada vez que se oprima, permite ver los porcentajes de las barras de los niveles.|
+| Botón para Test| Pulsador con tapa (MCI00315)  | Cuando esté presionado por 5 segundos, permite modificar los porcentajes de los niveles (se utiliza el botón de Navegar Estados para cambiar el estado y el mismo botón de Test para modificar el porcentaje).|
+| Sensor de Ultrasonido | Sensor HC-SR04 | Dependiendo de la proximidad, genera que se despierte la mascota o que simule una caricia (10 cm y 1 - 2 cm respectivamente).|
+| Sensor de Audio | Sensor KY-038 | Dependiendo de la intensidad del sonido detectado, genera que se aumenten o disminuyan los niveles de diversión (decibeles altos lo disminuyen y bajos lo aumentan).|
+| Sensor de Movimiento | Sensor MPU 6050 | Detecta la velocidad con la que se mueve y dependiendo de esta, determina si la mascota está paseando. El giroscopio detecta si la mascota está boca abajo y la pone en modo de descanso.|
+| Leds 7 segmentos | Ánodo común | Se muestra el porcentaje del nivel que esté seleccionado.|
+| Pantalla OLED | Pantalla OLED 128x64 SSD1306 | Se muestran el entorno de la mascota y también los porcentajes de los niveles de la mascota.|
+| FPGA | A-C4E6 Cyclone IV FPGA EP4CE6E22C8N | Controlador de las distintas operaciones que se desean hacer (contiene componentes lógicos programables).|
