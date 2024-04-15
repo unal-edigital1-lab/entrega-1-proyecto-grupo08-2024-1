@@ -14,8 +14,8 @@ Objetivo: Definición periférica del proyecto y diseño inicial.
 ### Especificación detallada del sistema (Completo).
 *a) Detalle de la especificación de los componentes del proyecto, su descripción funcional y sistema de caja negra.*
 
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
+| Componente  | Funcionamiento | Estado Afectado|
+| ------------- | ------------- | ------------- |
+| Botones  | Generar un cambio de estado  | xd|
 | Content Cell  | Content Cell  |
 
