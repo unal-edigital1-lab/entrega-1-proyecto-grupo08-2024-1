@@ -7,6 +7,13 @@
 
 ## Especificación de Diseño del Proyecto Tamagotchi en FPGA
 
+**Primera Entrega (10% del total de la nota del proyecto)**
+
+Objetivo: Definición periférica del proyecto y diseño inicial.
+
+### Especificación detallada del sistema (Completo).
+*a) Detalle de la especificación de los componentes del proyecto, su descripción funcional y sistema de caja negra.*
+
 | First Header  | Second Header |
 | ------------- | ------------- |
 | Content Cell  | Content Cell  |
