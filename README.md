@@ -24,7 +24,8 @@ Objetivo: Definición periférica del proyecto y diseño inicial.
 | Botón para Test| Pulsador con tapa (MCI00315)  | Cuando esté presionado por 5 segundos, permite modificar los porcentajes de los niveles (se utiliza el botón de Navegar Estados para cambiar el estado y el mismo botón de Test para modificar el porcentaje).|
 | Sensor de Ultrasonido | Sensor HC-SR04 | Cuando detecte una proximidad de 1-5 cm la mascota aumentará su estado de diversión.|
 | Sensor de Movimiento | Sensor MPU 6050 | Detecta la velocidad con la que se mueve y dependiendo de esta, determina si la mascota está paseando. El giroscopio detecta si la mascota está boca abajo y la pone en modo de descanso, si detecta que se vuelve a ubicar boca arriba, se desactiva el modo descanso.|
-| Pantalla OLED | Pantalla OLED 128x64 SSD1306 | Se muestran el entorno de la mascota y también los porcentajes de los niveles de la mascota.|
+| Pantalla LCD | Pantalla LED 240x320  | Se muestran el entorno de la mascota y también los porcentajes de los niveles de la mascota.|
+| Módulo LCD ili9341 | Módulo ili 9341 | Controla los comportamientos de la pantalla por las entradas de las señales de control.|
 | FPGA | A-C4E6 Cyclone IV FPGA EP4CE6E22C8N | Controlador de las distintas operaciones que se desean hacer (contiene componentes lógicos programables).|
 
 
