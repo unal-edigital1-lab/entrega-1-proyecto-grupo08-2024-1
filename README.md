@@ -7,6 +7,8 @@
 
 ## Especificación de Diseño del Proyecto Tamagotchi en FPGA
 
+Drive de Trabajo = https://docs.google.com/document/d/1uVYzq7XdJc5DKCoQSqGOa9-jXex2LjcXxlpm7lsy9yc/edit?usp=sharing 
+
 **Primera Entrega (10% del total de la nota del proyecto)**
 
 Objetivo: Definición periférica del proyecto y diseño inicial.
