@@ -31,5 +31,7 @@ Objetivo: Definición periférica del proyecto y diseño inicial.
 | FPGA | A-C4E6 Cyclone IV FPGA EP4CE6E22C8N | Controlador de las distintas operaciones que se desean hacer (contiene componentes lógicos programables).|
 
 
-*Sistema de Caja Negra*
+*Sistema de Caja Negra General*
+
+![Sistema de Caja Negra General](/Images/Diagrama%20de%20Caja%20Negra%20General.png)
 
