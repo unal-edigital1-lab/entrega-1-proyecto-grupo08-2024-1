@@ -34,4 +34,3 @@ Objetivo: Definición periférica del proyecto y diseño inicial.
 *Sistema de Caja Negra General*
 
 ![Sistema de Caja Negra General](/Images/Diagrama%20de%20Caja%20Negra%20General.png)
-
