@@ -44,3 +44,18 @@ Objetivo: Definición periférica del proyecto y diseño inicial.
 *Sistema de Caja Negra General*
 
 ![Sistema de Caja Negra General](/Images/Diagrama%20de%20Caja%20Negra%20General.png)
+
+
+*Caras*
+| Caras | Relación | 
+| ------------- | ------------- |
+| Divertido, triste | Felicidad |
+| Saciado, hambriento | Alimentación |
+|Activo, somnoliento | Energía |
+| Corazón, pastilla cápsula | Salud |
+| Árbol | Movimiento |
+| Caricia | Ultrasonido |
+| Despertar, Dormido | Movimiento |
+| Manzana | Botón de alimentación |
+|Jeringa | Botón de curar | 
+| Cartel Test | Botón test |  
