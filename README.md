@@ -46,7 +46,7 @@ Objetivo: Definición periférica del proyecto y diseño inicial.
 ![Sistema de Caja Negra General](/Images/Diagrama%20de%20Caja%20Negra%20General.png)
 
 
-*Caras*
+*Visualización Matriz 8x8*
 | Caras | Relación | 
 | ------------- | ------------- |
 | Divertido, triste | Felicidad |
