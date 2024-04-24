@@ -15,7 +15,7 @@ Drive de Trabajo = https://docs.google.com/document/d/1uVYzq7XdJc5DKCoQSqGOa9-jX
 Objetivo: Definición periférica del proyecto y diseño inicial.
 
 
-### Especificación detallada del sistema (Completo).
+### Especificación detallada del sistema 
 *Detalle de la especificación de los componentes del proyecto y su descripción funcional.*
 
 | Componente  | Especificación | Funcionamiento|
