@@ -3,6 +3,15 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+
+ultrasonido/db
+ultrasonido/incremental_db
+ultrasonido/output_files
+ultrasonido/simulation
+*.qsf
+*.qws
+
+
 # User-specific files
 *.rsuser
 *.suo
