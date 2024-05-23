@@ -10,7 +10,9 @@ ultrasonido/output_files
 ultrasonido/simulation
 *.qsf
 *.qws
+*.bak
 
+mpu6050/mpu6050
 
 # User-specific files
 *.rsuser
