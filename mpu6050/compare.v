@@ -13,6 +13,7 @@ module COMPARE (
     output reg SIGN
 );
 
+// Analizar función
     function [7:0] magnitude;
         input [7:0] a;
         reg [7:0] ret;

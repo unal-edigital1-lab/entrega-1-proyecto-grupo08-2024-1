@@ -18,7 +18,7 @@ module I2CMASTER (
     output reg SDA_OUT
 );
 
-    parameter DEVICE = 8'h38;
+    parameter DEVICE = 8'h68; //8´h38
 
     // Definición de los estados
     parameter S_IDLE = 5'b00000,

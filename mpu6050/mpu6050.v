@@ -87,7 +87,7 @@ module MPU6050 (
                 S_READ0: begin    
                     if (TIC) begin
                         if (STOP) begin
-                            DOUT <= 8'h3B; // read 14 registers
+                            DOUT <= 8'h3B; // read 14 registers (incluyen los del acelerómetro)
                             WE <= 1'b1;
                             RD <= 1'b0;
                         end else if (QUEUED) begin
@@ -115,7 +115,7 @@ module MPU6050 (
                                 RD <= 1'b0;
                             end else begin
                                 WE <= 1'b0;
-                                RD <= 1'b1;
+                                RD <= 1'b1; //Le envía bit de lectura porque ya se terminó el comando
                             end
                         end else if (STOP) begin
                             state <= S_STABLE;
