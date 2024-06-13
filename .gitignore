@@ -12,6 +12,14 @@ ultrasonido/simulation
 *.qws
 *.bak
 
+lcd_controller/db
+lcd_controller/incremental_db
+lcd_controller/output_files
+lcd_controller/simulation
+*.qsf
+*.qws
+*.bak
+
 mpu6050/mpu6050
 
 # User-specific files
