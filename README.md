@@ -25,9 +25,8 @@ Objetivo: Definición periférica del proyecto y diseño inicial.
 | Botón para Curar  | Pulsador con tapa (MCI00315)  | Cada vez que se oprima, elimina las diferentes condiciones adversas (solo funciona cuando la mascota tiene una enfermedad). |
 | Botón para Alimentar | Pulsador con tapa (MCI00315)  | Cada vez que se oprima, da de comer a la mascota, aumentando los niveles de alimentación y energía. |
 | Botón para Reset | Pulsador con tapa (MCI00315)  | Cuando esté presionado por 5 segundos, restablece el estado inicial del tamagotchi (todos los niveles al 100%).|
-| Botón para Navegar Estados| Pulsador con tapa (MCI00315)  | Cada vez que se oprima, permite ver los porcentajes de las barras de los niveles en el 7 segmentos y el ícono en la pantalla.|
-| Botón para Test| Pulsador con tapa (MCI00315)  | Cuando esté presionado por 5 segundos, permite modificar los porcentajes de los niveles (se utiliza el botón de Navegar Estados para cambiar el estado y el mismo botón de Test para modificar el porcentaje).|
-| Sensor de Ultrasonido | Sensor HC-SR04 | Cuando detecte una proximidad de 1-5 cm la mascota aumentará su estado de diversión.|
+| Botón para Test| Pulsador con tapa (MCI00315)  | Cuando esté presionado por 5 segundos, permite hacer un sondeo rápido entren estados, dejando interactuar de manera directa para modificar el nivel en el que se encuentra el estado.|
+| Sensor de Ultrasonido | Sensor HC-SR04 | Cuando detecte una proximidad de 1-5 cm, la mascota aumentará su estado de diversión.|
 | Sensor de Movimiento | Sensor MPU 6050 | Detecta la velocidad con la que se mueve y dependiendo de esta, determina si la mascota está paseando. El giroscopio detecta si la mascota está boca abajo y la pone en modo de descanso, si detecta que se vuelve a ubicar boca arriba, se desactiva el modo descanso.|
 | Display 8x8 MAX7219 | Módulo MAX7219 | Se representa la mascota de manera visual, siendo controlada por un módulo en específico. Serían catorce íconos incluyendo los representados de los estados.|
 | Leds 7 segmentos | Ánodo común | Se muestra el porcentaje del nivel que esté seleccionado.|
