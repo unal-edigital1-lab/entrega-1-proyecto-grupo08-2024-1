@@ -39,7 +39,7 @@ Objetivo: Definición periférica del proyecto y diseño inicial.
 | Diversión | Cada vez que pase determinado tiempo, se baja el porcentaje de este estado si no se hace uso del sensor ultrasonido (caricia). |
 | Salud | Cada vez que pase determinado tiempo, se baja el porcentaje de este estado. Solo se aumenta cuando se hace uso del botón de curar. |
 | Alimentación | Cada vez que pase determinado tiempo, se baja el porcentaje de este estado. Para aumentarlo se debe presionar el botón de alimentación. |
-| Energía | Cada vez que pase determinado tiempo, se baja el porcentaje de este estado. Cuando se utilize el giroscopio aumenta esete estado.|
+| Energía | Cada vez que pase determinado tiempo, se baja el porcentaje de este estado. Cuando se utilize el giroscopio aumenta este estado.|
 
 
 *Sistema de Caja Negra General*
