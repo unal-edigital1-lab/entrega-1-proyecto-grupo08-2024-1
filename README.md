@@ -58,7 +58,7 @@ Para la visualización se utiliza la siguiente convención:
 
 ![Tabla de SM visual](/Images/SM_table.png)
 
-Consiste en 5 bits de los cuales los primeras 3 cifras se toman en cuenta para determinar el estado que se muestra, ya sea la energia(000), la diversión(001), la alimentación(010) y la salud(011) además de un estado neutro(100) para no mostrar nada en la visualización. La dos cifras restantes determinan si el estado con el q se combina es alto obajo demostrando una cara triste(00) o felíz(01) además de su respectiva cara neutra(10) con la misma finalidad del estado neutro.
+Consiste en 5 bits de los cuales los primeras 3 cifras se toman en cuenta para determinar el estado que se muestra, ya sea la energia (000), la diversión (001), la alimentación (010) y la salud (011) además de un estado neutro (100) para no mostrar nada en la visualización. La dos cifras restantes determinan si el estado con el q se combina es alto o bajo demostrando una cara feliz (00) o triste (01) además de su respectiva cara neutra(10) con la misma finalidad del estado neutro.
 
 
 *Sistema de Caja Negra Específico*
