@@ -22,7 +22,7 @@ Objetivo: Definición periférica del proyecto y diseño inicial.
 
 | Componente  | Especificación | Funcionamiento|
 | ------------- | ------------- | ------------- |
-| Botón para Curar  | Pulsador con tapa (MCI00315)  | Cada vez que se oprima, elimina las diferentes condiciones adversas (solo funciona cuando la mascota tiene una enfermedad). |
+| Botón para Curar  | Pulsador con tapa (MCI00315)  | Cada vez que se oprima, aumenta el estado de Salud, cura al Tamogotchi. |
 | Botón para Alimentar | Pulsador con tapa (MCI00315)  | Cada vez que se oprima, da de comer a la mascota, aumentando el nivel de alimentación. |
 | Botón para Reset | Pulsador con tapa (MCI00315)  | Cuando esté presionado por 5 segundos, restablece el estado inicial del tamagotchi (todos los niveles al 100%).|
 | Botón para Test| Pulsador con tapa (MCI00315)  | Cuando esté presionado por 5 segundos, permite hacer un sondeo rápido entren estados, dejando interactuar de manera directa para modificar el nivel en el que se encuentra el estado.|
@@ -36,19 +36,27 @@ Objetivo: Definición periférica del proyecto y diseño inicial.
 *Estados*
 | Estado | Descripción | 
 | ------------- | ------------- |
-| Diversión | Cada vez que pase determinado tiempo, se baja el porcentaje de este estado si no se hace uso del sensor ultrasonido (caricia). |
-| Salud | Cada vez que pase determinado tiempo, se baja el porcentaje de este estado. Solo se aumenta cuando se hace uso del botón de curar. |
-| Alimentación | Cada vez que pase determinado tiempo, se baja el porcentaje de este estado. Para aumentarlo se debe presionar el botón de alimentación. |
-| Energía | Cada vez que pase determinado tiempo, se baja el porcentaje de este estado. Cuando se utilize el giroscopio aumenta este estado.|
+| Diversión | Cada vez que pasen 30 segundos, se baja el porcentaje de este estado si no se hace uso del sensor ultrasonido (caricia). |
+| Salud | Cada vez que pasen 100 segundos, se baja el porcentaje de este estado. Solo se aumenta cuando se hace uso del botón de curar. |
+| Alimentación | Cada vez que pasen 20 segundos, se baja el porcentaje de este estado. Para aumentarlo se debe presionar el botón de alimentación. |
+| Energía | Cada vez que pasen 50 segundos, se baja el porcentaje de este estado. Cuando el giroscopio este invertido, es decir cuando el tamagotchi este boca abajo, aumenta este estado.|
 
 
 *Sistema de Caja Negra General*
 
-![Sistema de Caja Negra General](/Images/Diagrama%20de%20Caja%20Negra%20General.png)
+![Sistema de Caja Negra General](/Diagrama%20de%20cajas/Diagrama%20de%20flujo-Página-6.jpg)
+
+Al plantear el diseño incial del Tamagotchi, se tomaron como elementos iniciales el set de botones, al menos un sensor y el sistema de visualización. Para esto se definieron 4 botones con sus respectivas funciones: botón de reset, botón de test, botón para curar a la mascota y otro para alimentarla. Todos estos serán entradas para el sistema, tal como se muestra en el diagrama general de caja negra. Otras entradas del sistema son los sensores, los que se eligieron son el sensor de Ultrasonido  HC-SR04 y el giroscopio MPU6050. Tanto los botones como los sensores son entradas de un solo bit. En caso de los botones, si están activados o no, para el sensor de ultrasonido se pide que detecte si existe una proximidad a este entre 1-5cm por lo cual la señal que enviará es de si se presenta o no esta proximidad y para
+el giroscopio se pide únicamente que detecte si este está orientado "cabeza arriba o abajo" por lo tanto también es una entrada de un bit. Y a las entradas se sumaría la señal clock.
+
+Las visualizaciones tanto de los 7 segmentos como de la pantalla LCD 16x2 corresponden a las salidas. Las salidas que se observan: **datap_hp, datap_ali, datap_fun** y **datap_ener** son los porcentajes de cada estado que se mostrarán en los 7 segmentos, salud, alimentación, diversión y energía respectivamente. La salida **data_cara** corresponde a la imagen que se va a mostrar en la pantalla LCD.
+
+
 
 *Sistema de Caja Negra Específico*
 
 ![Sistema de Caja Negra Específico](/Diagrama%20de%20cajas/Diagrama%20de%20caja%20negra.png)
+
 
 *Diagrama de Flujo*
 
