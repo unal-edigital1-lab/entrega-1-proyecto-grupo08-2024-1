@@ -1,26 +1,26 @@
 module I2CMASTER (
-    input wire MCLK,               // Reloj maestro.
-    input wire nRST,               // Reinicio asíncrono (activo bajo).
-    input wire SRST,               // Reinicio sincrónico.
-    input wire TIC,                // Reloj para la tasa de I2C (tres veces la tasa de bits).
-    input wire [7:0] DIN,          // Datos a enviar.
-    output reg [7:0] DOUT,         // Datos recibidos.
-    input wire RD,                 // Comando de lectura.
-    input wire WE,                 // Comando de escritura.
-    output reg NACK,               // Señal de no reconocimiento del esclavo.
-    output reg QUEUED,             // Indica que una operación (lectura o escritura) está en cola.
-    output reg DATA_VALID,         // Indica que hay datos nuevos disponibles en DOUT.
-    output reg STOP,               // Señal de parada.
-    output reg [2:0] STATUS,       // Estado de la máquina de estados.
-    input wire SCL_IN,             // Señal de reloj I2C de entrada.
-    output reg SCL_OUT,            // Señal de reloj I2C de salida.
-    input wire SDA_IN,             // Señal de datos I2C de entrada.
-    output reg SDA_OUT             // Señal de datos I2C de salida.
+    input wire MCLK,
+    input wire nRST,
+    input wire SRST,                        // synchronous reset
+    input wire TIC,                         // i2c rate (bit rate x3)
+    input wire [7:0] DIN,                   // data to send
+    output reg [7:0] DOUT,                  // received data
+    input wire RD,                          // read command
+    input wire WE,                          // write command
+    output reg NACK,                        // nack from slave
+    output reg QUEUED,                      // operation (write or read cycle) is queued
+    output reg DATA_VALID,                  // new data available on DOUT
+    output reg STOP,
+    output reg [2:0] STATUS,                // state machine state
+    input wire SCL_IN,                      // i2c signals
+    output reg SCL_OUT,
+    input wire SDA_IN,
+    output reg SDA_OUT
 );
 
-parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
+    parameter DEVICE = 8'h68; //8´h38
 
-    // Definición de los estados.
+    // Definición de los estados
     parameter S_IDLE = 5'b00000,
               S_START = 5'b00001,
               S_SENDBIT = 5'b00010,
@@ -41,15 +41,15 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
               S_SENDACKDOWN = 5'b10001,
               S_RESTART = 5'b10010;
 
-    // Variables de estado.
-    reg [4:0] state, next_state;   // Estado actual y siguiente de la máquina de estados.
-    reg [3:0] counter, next_counter; // Contador para bits enviados/recibidos.
-    reg [7:0] shift;              // Registro de desplazamiento para datos.
-    reg nackdet;                  // Detección de no reconocimiento.
-    reg sda_in_q, sda_in_qq;      // Registros para la sincronización de SDA_IN.
+    // Variables de estado
+    reg [4:0] state, next_state;
+    reg [3:0] counter, next_counter;
+    reg [7:0] shift;
+    reg nackdet;
+    reg sda_in_q, sda_in_qq;
 
     always @(*) begin
-        next_counter = counter + 1; // Incrementa el contador.
+        next_counter = counter + 1;
     end
 
     always @(posedge MCLK or negedge nRST) begin
@@ -57,28 +57,28 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
             sda_in_q <= 1'b1;
             sda_in_qq <= 1'b1;
         end else if (MCLK) begin
-            sda_in_q <= SDA_IN;    // Almacena el valor actual de SDA_IN.
-            sda_in_qq <= sda_in_q; // Desfase de un ciclo de reloj.
+            sda_in_q <= SDA_IN;
+            sda_in_qq <= sda_in_q;
         end
     end
 
     always @(posedge MCLK or negedge nRST) begin
         if (!nRST) begin
             STATUS <= 3'b000;
-            state <= S_IDLE;      // Estado inicial en IDLE.
-            SCL_OUT <= 1'b1;      // Configura SCL en alto.
-            SDA_OUT <= 1'b1;      // Configura SDA en alto.
-            NACK <= 1'b0;         // Reinicia la señal de no reconocimiento.
-            QUEUED <= 1'b0;       // Reinicia la señal de operación en cola.
-            DATA_VALID <= 1'b0;   // Reinicia la señal de datos válidos.
-            DOUT <= 8'b0;         // Reinicia la salida de datos.
-            counter <= 4'b0;      // Reinicia el contador.
-            nackdet <= 1'b0;      // Reinicia la detección de no reconocimiento.
-            shift <= 8'b0;        // Reinicia el registro de desplazamiento.
-            STOP <= 1'b0;         // Reinicia la señal de parada.
+            state <= S_IDLE;
+            SCL_OUT <= 1'b1;
+            SDA_OUT <= 1'b1;
+            NACK <= 1'b0;
+            QUEUED <= 1'b0;
+            DATA_VALID <= 1'b0;
+            DOUT <= 8'b0;
+            counter <= 4'b0;
+            nackdet <= 1'b0;
+            shift <= 8'b0;
+            STOP <= 1'b0;
         end else if (MCLK) begin
             if (SRST) begin
-                state <= S_IDLE;  // Reinicia el estado a IDLE si SRST está activo.
+                state <= S_IDLE;
             end else begin
                 case (state)
                     S_IDLE: begin
@@ -93,14 +93,14 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                         STOP <= 1'b0;
                         if (TIC) begin
                             if (WE || RD) begin
-                                state <= S_START; // Cambia al estado de inicio si hay comando de escritura o lectura.
+                                state <= S_START;
                             end
                         end
                     end
                     S_START: begin
                         STATUS <= 3'b001;
                         SCL_OUT <= 1'b1;
-                        SDA_OUT <= 1'b0; // Inicia la señal de inicio.
+                        SDA_OUT <= 1'b0; // start bit
                         NACK <= 1'b0;
                         QUEUED <= 1'b0;
                         STOP <= 1'b0;
@@ -110,13 +110,13 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             counter <= 4'b0000;
                             shift[7:1] <= DEVICE[6:0];
                             if (WE) begin
-                                shift[0] <= 1'b0; // Configura el bit de escritura.
+                                shift[0] <= 1'b0;
                                 next_state <= S_WRITE;
                             end else begin
-                                shift[0] <= 1'b1; // Configura el bit de lectura.
+                                shift[0] <= 1'b1; // RD='1'
                                 next_state <= S_READ;
                             end
-                            state <= S_SENDBIT; // Cambia al estado de envío de bits.
+                            state <= S_SENDBIT;
                         end
                     end
                     S_SENDBIT: begin
@@ -130,7 +130,7 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             QUEUED <= 1'b0;
                             STOP <= 1'b0;
                             DATA_VALID <= 1'b0;
-                            state <= S_WESCLUP; // Cambia al estado de esperar subida de SCL.
+                            state <= S_WESCLUP;
                         end
                     end
                     S_WESCLUP: begin
@@ -138,8 +138,8 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             NACK <= 1'b0;
                             QUEUED <= 1'b0;
                             DATA_VALID <= 1'b0;
-                            SCL_OUT <= 1'b1; // Sube SCL.
-                            state <= S_WESCLDOWN; // Cambia al estado de esperar bajada de SCL.
+                            SCL_OUT <= 1'b1;
+                            state <= S_WESCLDOWN;
                         end
                     end
                     S_WESCLDOWN: begin
@@ -148,11 +148,11 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             QUEUED <= 1'b0;
                             STOP <= 1'b0;
                             DATA_VALID <= 1'b0;
-                            SCL_OUT <= 1'b0; // Baja SCL.
+                            SCL_OUT <= 1'b0;
                             if (counter[3]) begin
-                                state <= S_CHECKACK; // Verifica el reconocimiento si se ha enviado el byte completo.
+                                state <= S_CHECKACK;
                             end else begin
-                                state <= S_SENDBIT; // Continua enviando bits.
+                                state <= S_SENDBIT;
                             end
                         end
                     end
@@ -165,7 +165,7 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             STOP <= 1'b0;
                             DATA_VALID <= 1'b0;
                             SCL_OUT <= 1'b0;
-                            state <= S_CHECKACKUP; // Cambia al estado de verificación de reconocimiento.
+                            state <= S_CHECKACKUP;    
                         end
                     end
                     S_CHECKACKUP: begin
@@ -173,9 +173,9 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             NACK <= 1'b0;
                             QUEUED <= 1'b0;
                             STOP <= 1'b0;
-                            SCL_OUT <= 1'b1; // Sube SCL.
-                            nackdet <= (sda_in_qq == 1'b1) ? 1'b1 : 1'b0; // Detecta no reconocimiento.
-                            state <= S_CHECKACKDOWN; // Cambia al estado de verificación de reconocimiento bajada.
+                            SCL_OUT <= 1'b1;
+                            nackdet <= (sda_in_qq == 1'b1) ? 1'b1 : 1'b0;
+                            state <= S_CHECKACKDOWN;    
                         end
                     end
                     S_CHECKACKDOWN: begin
@@ -184,8 +184,8 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             QUEUED <= 1'b0;
                             STOP <= 1'b0;
                             DATA_VALID <= 1'b0;
-                            SCL_OUT <= 1'b0; // Baja SCL.
-                            state <= next_state; // Cambia al siguiente estado (escritura o lectura).
+                            SCL_OUT <= 1'b0;
+                            state <= next_state;    // S_WRITE or S_READ
                         end
                     end
                     S_WRITE: begin
@@ -195,33 +195,33 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             if (TIC) begin
                                 nackdet <= 1'b0;
                                 SDA_OUT <= 1'b0;
-                                state <= S_PRESTOP; // Prepara la señal de parada si hay no reconocimiento.
+                                state <= S_PRESTOP;
                             end
                         end else begin
                             if (WE) begin
-                                shift <= DIN; // Carga los datos a escribir.
+                                shift <= DIN;
                                 counter <= 4'b0000;
                                 QUEUED <= 1'b1;
                                 DATA_VALID <= 1'b0;
-                                state <= S_SENDBIT; // Cambia al estado de envío de bits.
+                                state <= S_SENDBIT;
                             end else if (RD) begin    
                                 SCL_OUT <= 1'b0;
                                 SDA_OUT <= 1'b1;
                                 if (TIC) begin
-                                    state <= S_RESTART; // Reinicia si hay comando de lectura.
+                                    state <= S_RESTART; // for restart
                                 end
                             end else begin
                                 SCL_OUT <= 1'b0;
                                 if (TIC) begin
                                     SDA_OUT <= 1'b0;
-                                    state <= S_PRESTOP; // Prepara la señal de parada.
+                                    state <= S_PRESTOP;
                                 end
                             end
                         end
                     end
                     S_RESTART: begin
                         if (TIC) begin
-                            state <= S_IDLE; // Reinicia al estado IDLE.
+                            state <= S_IDLE;
                         end
                     end
                     S_READ: begin
@@ -231,25 +231,25 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             if (TIC) begin
                                 nackdet <= 1'b0;
                                 SDA_OUT <= 1'b0;
-                                state <= S_PRESTOP; // Prepara la señal de parada si hay no reconocimiento.
+                                state <= S_PRESTOP;
                             end
                         end else begin
                             if (RD) begin
-                                shift <= 8'b0; // Reinicia el registro de desplazamiento.
+                                shift <= 8'b0;
                                 counter <= 4'b0000;
                                 QUEUED <= 1'b1;
-                                state <= S_RECVBIT; // Cambia al estado de recepción de bits.
+                                state <= S_RECVBIT;
                             end else if (WE) begin    
                                 SCL_OUT <= 1'b0;
                                 SDA_OUT <= 1'b1;
                                 if (TIC) begin
-                                    state <= S_IDLE; // Reinicia al estado IDLE.
+                                    state <= S_IDLE; // for restart
                                 end
                             end else begin
                                 SCL_OUT <= 1'b0;
                                 if (TIC) begin
                                     SDA_OUT <= 1'b0;
-                                    state <= S_PRESTOP; // Prepara la señal de parada.
+                                    state <= S_PRESTOP;
                                 end
                             end
                         end
@@ -264,7 +264,7 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             QUEUED <= 1'b0;
                             STOP <= 1'b0;
                             DATA_VALID <= 1'b0;
-                            state <= S_RDSCLUP; // Cambia al estado de recepción de bits con subida de SCL.
+                            state <= S_RDSCLUP;
                         end
                     end
                     S_RDSCLUP: begin
@@ -273,10 +273,10 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             QUEUED <= 1'b0;
                             STOP <= 1'b0;
                             DATA_VALID <= 1'b0;
-                            SCL_OUT <= 1'b1; // Sube SCL.
+                            SCL_OUT <= 1'b1;
                             shift[7:1] <= shift[6:0];
-                            shift[0] <= sda_in_qq; // Desplaza los datos recibidos.
-                            state <= S_RDSCLDOWN; // Cambia al estado de recepción de bits con bajada de SCL.
+                            shift[0] <= sda_in_qq;
+                            state <= S_RDSCLDOWN;
                         end
                     end
                     S_RDSCLDOWN: begin
@@ -285,25 +285,25 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             QUEUED <= 1'b0;
                             STOP <= 1'b0;
                             DATA_VALID <= 1'b0;
-                            SCL_OUT <= 1'b0; // Baja SCL.
+                            SCL_OUT <= 1'b0;
                             if (counter[3]) begin
-                                state <= S_SENDACK; // Envía la señal de reconocimiento si se ha recibido el byte completo.
+                                state <= S_SENDACK;
                             end else begin
-                                state <= S_RECVBIT; // Continúa recibiendo bits.
+                                state <= S_RECVBIT;
                             end
                         end
                     end
                     S_SENDACK: begin
                         if (TIC) begin
                             STATUS <= 3'b110;
-                            SDA_OUT <= (RD) ? 1'b0 : 1'b1;  // Envía la señal de reconocimiento final para lectura.
-                            DOUT <= shift; // Almacena los datos recibidos en DOUT.
+                            SDA_OUT <= (RD) ? 1'b0 : 1'b1;  // last read 
+                            DOUT <= shift;
                             NACK <= 1'b0;
                             QUEUED <= 1'b0;
                             STOP <= 1'b0;
                             DATA_VALID <= 1'b1;
                             SCL_OUT <= 1'b0;
-                            state <= S_SENDACKUP; // Cambia al estado de subida de la señal de reconocimiento.
+                            state <= S_SENDACKUP;
                         end
                     end
                     S_SENDACKUP: begin
@@ -312,8 +312,8 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             QUEUED <= 1'b0;
                             STOP <= 1'b0;
                             DATA_VALID <= 1'b0;
-                            SCL_OUT <= 1'b1; // Sube SCL.
-                            state <= S_SENDACKDOWN; // Cambia al estado de bajada de la señal de reconocimiento.
+                            SCL_OUT <= 1'b1;
+                            state <= S_SENDACKDOWN;
                         end
                     end
                     S_SENDACKDOWN: begin
@@ -322,8 +322,8 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             QUEUED <= 1'b0;
                             STOP <= 1'b0;
                             DATA_VALID <= 1'b0;
-                            SCL_OUT <= 1'b0; // Baja SCL.
-                            state <= S_READ; // Cambia al estado de lectura.
+                            SCL_OUT <= 1'b0;
+                            state <= S_READ;
                         end
                     end
                     S_PRESTOP: begin
@@ -333,19 +333,20 @@ parameter DEVICE = 8'h68; // Dirección del dispositivo I2C.
                             SCL_OUT <= 1'b1;
                             SDA_OUT <= 1'b0;
                             NACK <= 1'b0;
-                            state <= S_STOP; // Cambia al estado de parada.
+                            state <= S_STOP;
                         end
                     end
                     S_STOP: begin
                         if (TIC) begin
                             SCL_OUT <= 1'b1;
                             SDA_OUT <= 1'b1;
-                            state <= S_IDLE; // Reinicia al estado IDLE.
+                            state <= S_IDLE;
                         end
                     end
-                    default: state <= S_IDLE; // Estado por defecto.
+                    default: state <= S_IDLE;
                 endcase
             end
         end
     end
+
 endmodule
