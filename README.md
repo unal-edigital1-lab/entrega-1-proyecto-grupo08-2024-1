@@ -46,12 +46,10 @@ Objetivo: Definición periférica del proyecto y diseño inicial.
 
 ![Sistema de Caja Negra General](/Images/Diagrama%20de%20Caja%20Negra%20General.png)
 
-*Sistema de Caja Negra Específico*
-
-![Sistema de Caja Negra Específico](/Diagrama%20de%20cajas/Diagrama%20de%20caja%20negra.png)
-
 *Diagrama de Flujo*
 
 *FSM General*
 
-*Data Path*
+*Data Path / Sistema de Caja Gris*
+
+![Sistema de Caja Negra Específico](/Diagrama%20de%20cajas/Datapath.png)
