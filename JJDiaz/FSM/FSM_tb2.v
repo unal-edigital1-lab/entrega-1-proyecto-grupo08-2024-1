@@ -13,6 +13,7 @@ module tamagotchi_tb;
     reg [2:0] count_reset;
     reg [2:0] count_test;
     wire [2:0] display_out;
+    wire [6:0] seg_display;
 
     // Instancia del módulo tamagotchi_fsm
     tamagotchi_fsm uut (
@@ -25,7 +26,8 @@ module tamagotchi_tb;
         .clk(clk),
         .count_reset(count_reset),
         .count_test(count_test),
-        .display_out(display_out)
+        .display_out(display_out),
+        .seg_display(seg_display)
     );
 
     // Generación del reloj
@@ -55,10 +57,16 @@ module tamagotchi_tb;
         #10 btn_salud = 0;  // Liberar el botón
         #20;
 
+        // Verificar cambio en display_out y seg_display
+        $display("Salud - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
         // Presionar botón de salud por segunda vez
         btn_salud = 1;
         #10 btn_salud = 0;  // Liberar el botón
         #20;
+
+        // Verificar cambio en display_out y aumento en seg_display
+        $display("Salud - Segunda presion: display_out = %b, seg_display = %b", display_out, seg_display);
 
         // Simulación del comportamiento: Botón Energía
         // Presionar botón de energía por primera vez
@@ -66,10 +74,16 @@ module tamagotchi_tb;
         #10 btn_energia = 0;  // Liberar el botón
         #20;
 
+        // Verificar cambio en display_out y seg_display
+        $display("Energia - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
         // Presionar botón de energía por segunda vez
         btn_energia = 1;
         #10 btn_energia = 0;  // Liberar el botón
         #20;
+
+        // Verificar cambio en display_out y aumento en seg_display
+        $display("Energia - Segunda presion: display_out = %b, seg_display = %b", display_out, seg_display);
 
         // Finalizar simulación
         $finish;
