@@ -4,7 +4,7 @@ module tamagotchi_fsm (
     input wire btn_hambre,
     input wire btn_diversion,
     input wire btn_reset,
-    input wire btn_test,        // Botón dedicado para activar el modo de prueba
+    input wire btn_test,
     input wire clk,
     input wire [2:0] count_reset,  // Contador que varía entre 0 a 5 segundos para reset
     input wire [2:0] count_test,   // Contador que varía entre 0 a 5 segundos para test mode
@@ -19,7 +19,7 @@ module tamagotchi_fsm (
 
     // Inicialización de valores
     initial begin
-        niveles = 4'b1010; // Todos los niveles en 10
+        niveles = 4'b1000; // Todos los niveles en 8
         timer_salud = 0;
         timer_energia = 0;
         timer_hambre = 0;
@@ -32,7 +32,7 @@ module tamagotchi_fsm (
     // Manejo del reset
     always @(posedge clk) begin
         if (count_reset == 3'b101) begin // 5 segundos en binario es 101
-            niveles <= 4'b1010; // Reiniciar todos los niveles a 10
+            niveles <= 4'b1000; // Reiniciar todos los niveles a 8
             display_out[2] <= 1'b1; // Cara feliz
             btn_press_count <= 2'b00; // Reiniciar contador de botones
             test_mode <= 1'b0; // Salir del modo de prueba
@@ -80,28 +80,28 @@ module tamagotchi_fsm (
                 btn_press_count <= btn_press_count + 1;
             end
         end else begin
-            // Modo normal: Incrementar el nivel como antes
+            // Modo normal: Incrementar el nivel como antes, con límite de 10
             if (btn_salud) begin
                 display_out[1:0] <= 2'b00; // Mostrar Salud
-                if (display_out[1:0] == 2'b00) begin
+                if (display_out[1:0] == 2'b00 && niveles[3:2] < 4'b1010) begin
                     niveles[3:2] <= niveles[3:2] + 1; // Aumentar nivel Salud
                 end
             end
             if (btn_energia) begin
                 display_out[1:0] <= 2'b01; // Mostrar Energía
-                if (display_out[1:0] == 2'b01) begin
+                if (display_out[1:0] == 2'b01 && niveles[3:2] < 4'b1010) begin
                     niveles[3:2] <= niveles[3:2] + 1; // Aumentar nivel Energía
                 end
             end
             if (btn_hambre) begin
                 display_out[1:0] <= 2'b10; // Mostrar Hambre
-                if (display_out[1:0] == 2'b10) begin
+                if (display_out[1:0] == 2'b10 && niveles[3:2] < 4'b1010) begin
                     niveles[3:2] <= niveles[3:2] + 1; // Aumentar nivel Hambre
                 end
             end
             if (btn_diversion) begin
                 display_out[1:0] <= 2'b11; // Mostrar Diversión
-                if (display_out[1:0] == 2'b11) begin
+                if (display_out[1:0] == 2'b11 && niveles[3:2] < 4'b1010) begin
                     niveles[3:2] <= niveles[3:2] + 1; // Aumentar nivel Diversión
                 end
             end
