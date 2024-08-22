@@ -178,11 +178,12 @@ module tamagotchi_fsm (
             4'b0110: get_seg_display = 7'b1111101; // 6
             4'b0111: get_seg_display = 7'b0000111; // 7
             4'b1000: get_seg_display = 7'b1111111; // 8
-            4'b1009: get_seg_display = 7'b1101111; // 9
+            4'b1001: get_seg_display = 7'b1101111; // 9
             4'b1010: get_seg_display = 7'b1110111; // A (utilizado para representar 10)
             default: get_seg_display = 7'b0000000; // Apagar todos los segmentos
         endcase
     endfunction
 
 endmodule
+
 
