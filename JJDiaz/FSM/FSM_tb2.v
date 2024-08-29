@@ -52,7 +52,7 @@ module tamagotchi_tb;
         #20;
 
         //Inicio de modo test
-        btn_test = 1;
+        //btn_test = 1;
         #10 btn_test = 0;
         #20
 
