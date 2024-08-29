@@ -51,6 +51,11 @@ module tamagotchi_tb;
         // Esperar para estabilizar
         #20;
 
+        //Inicio de modo test
+        btn_test = 1;
+        #10 btn_test = 0;
+        #20
+
         // Simulación del comportamiento: Primer botón Salud
         // Presionar botón de salud por primera vez
         btn_salud = 1;
@@ -70,6 +75,57 @@ module tamagotchi_tb;
 
         // Simulación del comportamiento: Botón Energía
         // Presionar botón de energía por primera vez
+        btn_salud = 1;
+        #10 btn_salud = 0;  // Liberar el botón
+        #20;
+
+        // Verificar cambio en display_out y seg_display
+        $display("Energia - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
+        // Presionar botón de energía por segunda vez
+        btn_salud = 1;
+        #10 btn_salud = 0;  // Liberar el botón
+        #20;
+
+        // Verificar cambio en display_out y aumento en seg_display
+        $display("Energia - Segunda presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
+        // Simulación del comportamiento: Primer botón Hambre
+        // Presionar botón de hambre por primera vez
+        btn_salud = 1;
+        #10 btn_salud = 0;  // Liberar el botón
+        #20;
+
+        // Verificar cambio en display_out y seg_display
+        $display("Hambre - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
+        // Presionar botón de hambre por segunda vez
+        btn_salud = 1;
+        #10 btn_salud = 0;  // Liberar el botón
+        #20;
+
+        // Verificar cambio en display_out y aumento en seg_display
+        $display("Hambre - Segunda presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
+        // Simulación del comportamiento: Botón Diversion
+        // Presionar botón de diversion por primera vez
+        btn_diversion = 1;
+        #10 btn_diversion = 0;  // Liberar el botón
+        #20;
+
+        // Verificar cambio en display_out y seg_display
+        $display("Diversion - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
+        // Presionar botón de diversion por segunda vez
+        btn_diversion = 1;
+        #10 btn_diversion = 0;  // Liberar el botón
+        #20;
+
+        // Verificar cambio en display_out y aumento en seg_display
+        $display("Diversion - Segunda presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
+        // Simulación del comportamiento: Botón Energía
+        // Presionar botón de energía por primera vez
         btn_energia = 1;
         #10 btn_energia = 0;  // Liberar el botón
         #20;
@@ -84,6 +140,10 @@ module tamagotchi_tb;
 
         // Verificar cambio en display_out y aumento en seg_display
         $display("Energia - Segunda presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
+        btn_reset = 1;
+        #10 btn_reset = 0;
+        #20
 
         // Finalizar simulación
         $finish;
