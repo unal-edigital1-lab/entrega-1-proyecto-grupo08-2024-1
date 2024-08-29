@@ -65,7 +65,7 @@ module tamagotchi_fsm (
             // Modo test: Solo permitir niveles 1 o 10
             if (btn_salud) begin
                 display_out[1:0] <= 2'b00; // Mostrar Salud
-                if (display_out == 3'b00 && nivel_salud != 'd1) begin
+                if (nivel_salud == 'd8 && display_out == 'b100) begin
                     nivel_salud = 4'b0001;
                 end
                 if (display_out == 3'b00 && nivel_salud == 'd1) begin
@@ -97,7 +97,6 @@ module tamagotchi_fsm (
             // Modo normal: Incrementar el nivel del estado correspondiente, con límite de 10
             if (btn_salud) begin
                 display_out[1:0] <= 2'b00; // Mostrar Salud
-                btn_press_count <= btn_press_count + 1;
                 if (nivel_salud < 4'b1010 && display_out == 3'b100) begin
                     nivel_salud <= nivel_salud + 1; // Aumentar nivel Salud
                     btn_press_count <= btn_press_count - 1; 
