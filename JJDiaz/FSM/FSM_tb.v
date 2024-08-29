@@ -13,6 +13,7 @@ module tamagotchi_tb;
     reg [2:0] count_reset;
     reg [2:0] count_test;
     wire [2:0] display_out;
+    wire [6:0] seg_display;
 
     // Instancia del módulo tamagotchi_fsm
     tamagotchi_fsm uut (
@@ -25,7 +26,8 @@ module tamagotchi_tb;
         .clk(clk),
         .count_reset(count_reset),
         .count_test(count_test),
-        .display_out(display_out)
+        .display_out(display_out),
+        .seg_display(seg_display)
     );
 
     // Generación del reloj
@@ -51,23 +53,23 @@ module tamagotchi_tb;
 
         // Simulación del comportamiento en modo normal
         // Presionar botón de salud
+        btn_diversion = 1;
+        #10 btn_diversion = 0;  // Liberar el botón
+        #20;
+
+        // Presionar botón de energía
         btn_salud = 1;
         #10 btn_salud = 0;  // Liberar el botón
         #20;
 
-        // Presionar botón de energía
+        // Presionar botón de hambre
         btn_energia = 1;
         #10 btn_energia = 0;  // Liberar el botón
         #20;
 
-        // Presionar botón de hambre
-        btn_hambre = 1;
-        #10 btn_hambre = 0;  // Liberar el botón
-        #20;
-
         // Presionar botón de diversión
-        btn_diversion = 1;
-        #10 btn_diversion = 0;  // Liberar el botón
+        btn_energia = 1;
+        #10 btn_energia = 0;  // Liberar el botón
         #20;
 
         // Finalizar simulación

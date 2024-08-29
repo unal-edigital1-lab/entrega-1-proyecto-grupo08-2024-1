@@ -40,7 +40,7 @@ module tamagotchi_fsm (
 
     // Manejo del reset
     always @(posedge clk) begin
-        if (count_reset == 3'b101) begin // 5 segundos en binario es 101
+        if (btn_reset) begin // 5 segundos en binario es 101
             nivel_salud <= 4'b1000;   // Reiniciar nivel de Salud a 8
             nivel_energia <= 4'b1000; // Reiniciar nivel de Energía a 8
             nivel_hambre <= 4'b1000;  // Reiniciar nivel de Hambre a 8
@@ -53,7 +53,7 @@ module tamagotchi_fsm (
 
     // Manejo de la activación del modo test mediante el botón dedicado
     always @(posedge clk) begin
-        if (btn_test && count_test == 3'b101) begin // 5 segundos en binario es 101
+        if (btn_test) begin // 5 segundos en binario es 101
             test_mode <= 1'b1; // Activar modo de prueba
             btn_press_count <= 2'b00; // Reiniciar contador de botones
         end
@@ -65,10 +65,12 @@ module tamagotchi_fsm (
             // Modo test: Solo permitir niveles 1 o 10
             if (btn_salud) begin
                 display_out[1:0] <= 2'b00; // Mostrar Salud
-                if (btn_press_count == 2'b01) begin
-                    nivel_salud <= (nivel_salud == 4'b0001) ? 4'b1010 : 4'b0001; // Alternar entre 1 y 10
+                if (display_out == 3'b00 && nivel_salud != 'd1) begin
+                    nivel_salud = 4'b0001;
                 end
-                btn_press_count <= btn_press_count + 1;
+                if (display_out == 3'b00 && nivel_salud == 'd1) begin
+                    nivel_salud = 4'b1010;
+                end
             end
             if (btn_energia) begin
                 display_out[1:0] <= 2'b01; // Mostrar Energía
@@ -95,26 +97,34 @@ module tamagotchi_fsm (
             // Modo normal: Incrementar el nivel del estado correspondiente, con límite de 10
             if (btn_salud) begin
                 display_out[1:0] <= 2'b00; // Mostrar Salud
-                if (nivel_salud < 4'b1010) begin
+                btn_press_count <= btn_press_count + 1;
+                if (nivel_salud < 4'b1010 && display_out == 3'b100) begin
                     nivel_salud <= nivel_salud + 1; // Aumentar nivel Salud
+                    btn_press_count <= btn_press_count - 1; 
                 end
             end
             if (btn_energia) begin
                 display_out[1:0] <= 2'b01; // Mostrar Energía
-                if (nivel_energia < 4'b1010) begin
+                btn_press_count <= btn_press_count + 1;
+                if (nivel_energia < 4'b1010 && display_out == 3'b101) begin
                     nivel_energia <= nivel_energia + 1; // Aumentar nivel Energía
+                    btn_press_count <= btn_press_count - 1;
                 end
             end
             if (btn_hambre) begin
                 display_out[1:0] <= 2'b10; // Mostrar Hambre
-                if (nivel_hambre < 4'b1010) begin
+                btn_press_count <= btn_press_count + 1;
+                if (nivel_hambre < 4'b1010 && display_out == 3'b110) begin
                     nivel_hambre <= nivel_hambre + 1; // Aumentar nivel Hambre
+                    btn_press_count <= btn_press_count - 1;
                 end
             end
             if (btn_diversion) begin
                 display_out[1:0] <= 2'b11; // Mostrar Diversión
-                if (nivel_diversion < 4'b1010) begin
+                btn_press_count <= btn_press_count + 1;
+                if (nivel_diversion < 4'b1010 && display_out == 3'b111) begin
                     nivel_diversion <= nivel_diversion + 1; // Aumentar nivel Diversión
+                    btn_press_count <= btn_press_count - 1;
                 end
             end
         end
