@@ -24,10 +24,10 @@ module tamagotchi_fsm (
 
     // Inicialización de valores
     initial begin
-        nivel_salud = 4'b1000;   // Nivel de Salud inicial en 8
+        nivel_salud = 4'b0000;   // Nivel de Salud inicial en 8
         nivel_energia = 4'b1000; // Nivel de Energía inicial en 8
         nivel_hambre = 4'b1000;  // Nivel de Hambre inicial en 8
-        nivel_diversion = 4'b1000; // Nivel de Diversión inicial en 8
+        nivel_diversion = 4'b0000; // Nivel de Diversión inicial en 8
         timer_salud = 0;
         timer_energia = 0;
         timer_hambre = 0;
@@ -63,43 +63,90 @@ module tamagotchi_fsm (
     always @(posedge clk) begin
         if (test_mode) begin
             // Modo test: Solo permitir niveles 1 o 10
-            if (btn_salud) begin
+            if (btn_salud && nivel_salud != 4'b0001) begin
                 display_out[1:0] <= 2'b00; // Mostrar Salud
-                if (nivel_salud == 'd8 && display_out == 'b100) begin
+                if (display_out == 3'b100) begin
                     nivel_salud = 4'b0001;
                 end
-                if (display_out == 3'b00 && nivel_salud == 'd1) begin
+            end
+            if (btn_salud && nivel_salud != 4'b0001) begin
+                display_out[1:0] <= 2'b00; // Mostrar Salud
+                if (display_out == 3'b000) begin
+                    nivel_salud = 4'b0001;
+                end
+            end
+            if (btn_salud && nivel_salud == 4'b0001) begin
+                display_out[1:0] <= 2'b00; // Mostrar Salud
+                if (display_out == 3'b000) begin
                     nivel_salud = 4'b1010;
                 end
             end
-            if (btn_energia) begin
-                display_out[1:0] <= 2'b01; // Mostrar Energía
-                if (btn_press_count == 2'b01) begin
-                    nivel_energia <= (nivel_energia == 4'b0001) ? 4'b1010 : 4'b0001; // Alternar entre 1 y 10
+            if (btn_energia && nivel_energia != 4'b0001) begin
+                display_out[1:0] <= 2'b01; // Mostrar Salud
+                if (display_out == 3'b101) begin
+                    nivel_energia = 4'b0001;
                 end
-                btn_press_count <= btn_press_count + 1;
             end
-            if (btn_hambre) begin
+            if (btn_energia && nivel_energia != 4'b0001) begin
+                display_out[1:0] <= 2'b01; // Mostrar Salud
+                if (display_out == 3'b001) begin
+                    nivel_energia = 4'b0001;
+                end
+            end
+            if (btn_energia && nivel_energia == 4'b0001) begin
+                display_out[1:0] <= 2'b01; // Mostrar Salud
+                if (display_out == 3'b001) begin
+                    nivel_energia = 4'b1010;
+                end
+            end
+            if (btn_hambre && nivel_hambre != 4'b0001) begin
                 display_out[1:0] <= 2'b10; // Mostrar Hambre
-                if (btn_press_count == 2'b01) begin
-                    nivel_hambre <= (nivel_hambre == 4'b0001) ? 4'b1010 : 4'b0001; // Alternar entre 1 y 10
+                if (display_out == 3'b010) begin
+                    nivel_hambre = 4'b0001;
                 end
-                btn_press_count <= btn_press_count + 1;
             end
-            if (btn_diversion) begin
-                display_out[1:0] <= 2'b11; // Mostrar Diversión
-                if (btn_press_count == 2'b01) begin
-                    nivel_diversion <= (nivel_diversion == 4'b0001) ? 4'b1010 : 4'b0001; // Alternar entre 1 y 10
+            if (btn_hambre && nivel_hambre != 4'b0001) begin
+                display_out[1:0] <= 2'b10; // Mostrar Hambre
+                if (display_out == 3'b110) begin
+                    nivel_hambre = 4'b0001;
                 end
-                btn_press_count <= btn_press_count + 1;
+            end
+            if (btn_hambre && nivel_hambre == 4'b0001) begin
+                display_out[1:0] <= 2'b10; // Mostrar Hambre
+                if (display_out == 3'b010) begin
+                    nivel_hambre = 4'b1010;
+                end
+            end
+            if (btn_diversion && nivel_diversion != 4'b0001) begin
+                display_out[1:0] <= 2'b11; // Mostrar Diversión
+                if (display_out == 3'b011) begin
+                    nivel_diversion = 4'b0001;
+                end
+            end
+            if (btn_diversion && nivel_diversion != 4'b0001) begin
+                display_out[1:0] <= 2'b11; // Mostrar Diversión
+                if (display_out == 3'b111) begin
+                    nivel_diversion = 4'b0001;
+                end
+            end
+            if (btn_diversion && nivel_diversion == 4'b0001) begin
+                display_out[1:0] <= 2'b11; // Mostrar Diversión
+                if (display_out == 3'b011) begin
+                    nivel_diversion = 4'b1010;
+                end
             end
         end else begin
             // Modo normal: Incrementar el nivel del estado correspondiente, con límite de 10
             if (btn_salud) begin
                 display_out[1:0] <= 2'b00; // Mostrar Salud
+                if (nivel_salud < 4'b1010 && display_out == 3'b000) begin
+                    nivel_salud <= nivel_salud + 1; // Aumentar nivel Salud
+                end
+            end
+            if (btn_salud) begin
+                display_out[1:0] <= 2'b00; // Mostrar Salud
                 if (nivel_salud < 4'b1010 && display_out == 3'b100) begin
                     nivel_salud <= nivel_salud + 1; // Aumentar nivel Salud
-                    btn_press_count <= btn_press_count - 1; 
                 end
             end
             if (btn_energia) begin
