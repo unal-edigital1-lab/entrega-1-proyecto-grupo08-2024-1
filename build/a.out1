@@ -1,0 +1,19 @@
+**** module/scope: COMPARE
+     Flip-Flops   : 5
+     Logic Gates  : 80
+     MAGNITUDE[8]: 3 units
+     MUX[2]: 6 slices
+     LPM[14]: 3 unaccounted
+     LOG[13]: 1 unaccounted
+     LOG[14]: 1 unaccounted
+**** module/scope: COMPARE.magnitude
+     Flip-Flops   : 0
+     Logic Gates  : 0
+**** TOTALS
+     Flip-Flops   : 5
+     Logic Gates  : 80
+     MAGNITUDE[8]: 3 units
+     MUX[2]: 6 slices
+     LPM[14]: 3 unaccounted
+     LOG[13]: 1 unaccounted
+     LOG[14]: 1 unaccounted

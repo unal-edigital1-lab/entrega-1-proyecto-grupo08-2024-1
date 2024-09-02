@@ -1,38 +1,39 @@
-module I2CMASTER (
-    input wire MCLK,
-    input wire nRST,
-    input wire SRST,                        // synchronous reset
-    input wire TIC,                         // i2c rate (bit rate x3)
-    input wire [7:0] DIN,                   // data to send
-    output reg [7:0] DOUT,                  // received data
-    input wire RD,                          // read command
-    input wire WE,                          // write command
-    output reg NACK,                        // nack from slave
-    output reg QUEUED,                      // operation (write or read cycle) is queued
-    output reg DATA_VALID,                  // new data available on DOUT
-    output reg STOP,
-    output reg [2:0] STATUS,                // state machine state
-    input wire SCL_IN,                      // i2c signals
-    output reg SCL_OUT,
-    input wire SDA_IN,
-    output reg SDA_OUT
+// Módulo encargado de comunicarse con el periférico
+module I2CMASTER ( 
+    input wire MCLK, //Reloj de la FPGA
+    input wire nRST, //Reset de la FPGA
+    input wire SRST, //Reset síncrono
+    input wire TIC, //Tasa de i2c (tasa de bit x3)
+    input wire [7:0] DIN, //Data a enviar
+    output reg [7:0] DOUT, //Data a recibir
+    input wire RD, //Comando de lectura
+    input wire WE, //Comando de escritura
+    output reg NACK, //Nack del esclavo
+    output reg QUEUED, //Operación (ciclo de lectura o escritura) en espera
+    output reg DATA_VALID, //Nueva data disponible en DOUT
+    output reg STOP, //Señal de parada
+    output reg [2:0] STATUS, //Estado de máquina de estados
+    input wire SCL_IN, //Señal de reloj i2c
+    output reg SCL_OUT, //Señal de reloj i2c modificada para controlar el bus
+    input wire SDA_IN, //Señal de datos i2c
+    output reg SDA_OUT //Señal de datos i2c modificada para controlar el bus
 );
 
-    parameter DEVICE = 8'h68; //8´h38
+    parameter DEVICE = 8'h68; //Parámetro necesario para iniciar comunicación con el MPU6050
 
     // Definición de los estados
-    parameter S_IDLE = 5'b00000,
-              S_START = 5'b00001,
-              S_SENDBIT = 5'b00010,
-              S_WESCLUP = 5'b00011,
-              S_WESCLDOWN = 5'b00100,
-              S_CHECKACK = 5'b00101,
-              S_CHECKACKUP = 5'b00110,
-              S_CHECKACKDOWN = 5'b00111,
-              S_WRITE = 5'b01000,
-              S_PRESTOP = 5'b01001,
-              S_STOP = 5'b01010,
-              S_READ = 5'b01011,
+    parameter S_IDLE = 5'b00000, //Estado de espera
+              S_START = 5'b00001, //Estado de inicio 
+              S_SENDBIT = 5'b00010, //Estado de envío de bit
+              S_WESCLUP = 5'b00011, //Estado de espera de la subida del reloj SCL
+              S_WESCLDOWN = 5'b00100, //Estado de espera de la bajada del reloj SCL
+              S_CHECKACK = 5'b00101, //Estado de verificación de ACK/NACK
+              S_CHECKACKUP = 5'b00110, //Estado de verificación con reloj alto
+              S_CHECKACKDOWN = 5'b00111, //Estado de verificación con reloj bajo
+              S_WRITE = 5'b01000, //Estado de escritura de datos
+              S_PRESTOP = 5'b01001, //Estado previo a la señal de parada 
+              S_STOP = 5'b01010, //Estado de parada
+              S_READ = 5'b01011, //Estado 
               S_RECVBIT = 5'b01100,
               S_RDSCLUP = 5'b01101,
               S_RDSCLDOWN = 5'b01110,
@@ -44,10 +45,11 @@ module I2CMASTER (
     // Variables de estado
     reg [4:0] state, next_state;
     reg [3:0] counter, next_counter;
-    reg [7:0] shift;
+    reg [7:0] shift; //Cambio de bit a bit por señal bidireccional de un bit que se envía
     reg nackdet;
     reg sda_in_q, sda_in_qq;
 
+    //Contador
     always @(*) begin
         next_counter = counter + 1;
     end
