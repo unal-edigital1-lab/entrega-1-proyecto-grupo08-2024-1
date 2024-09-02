@@ -6,7 +6,7 @@ module DEMO_MPU6050 (
     output wire LEDX,
     output wire LEDY,
     output wire LEDZ,
-    output wire LEDSIGN
+    output wire LEDSIGN,
 );
 
     // Internal signals
@@ -30,7 +30,7 @@ module DEMO_MPU6050 (
     wire SCL_OUT;
     wire SDA_IN;
     wire SDA_OUT;
-    reg [7:0] counter;
+    reg [7:0] counter = 0;
     wire nRST;
 
     // Output registers
