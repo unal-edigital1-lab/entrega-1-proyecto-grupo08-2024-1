@@ -6,7 +6,7 @@ module DEMO_MPU6050 (
     output wire LEDX,
     output wire LEDY,
     output wire LEDZ,
-    output wire LEDSIGN
+    output wire LEDSIGN,
 );
 
     // Internal signals
