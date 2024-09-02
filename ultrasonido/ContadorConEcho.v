@@ -4,6 +4,10 @@ module ContadorConEcho(
     output reg [19:0] contador2 // Salida del contador de 32 bits
 );
 
+initial begin
+	contador2 = 0; // Inicializa el contador
+end
+
 always @(posedge clk) 
     begin
 		if(echo==1)
