@@ -53,7 +53,20 @@ module top_tb;
         #50000;
 
         echo = 0;
-        #50000;
+        // Espera 10 us del trig
+        #10000;
+
+        // Espera 25 us de los pulsos enviados por el ultrasonido
+        #25000;
+
+        echo = 1;
+        #200000;
+
+        echo = 0;
+        #50000
+
+
+
 
         // Finaliza la simulación
         #100 $finish;

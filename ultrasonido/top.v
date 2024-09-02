@@ -26,6 +26,7 @@ module top (
   ControlLed ControlLed_i2 (
     .clk( clk ),             //in
     .contador2( s0 ),        //in
+    .echo( echo ),           //in
     .sens_ult( sens_ult )    //out
   );
 
