@@ -12,7 +12,7 @@ module tamagotchi_tb;
     reg clk;
     reg [2:0] count_reset;
     reg [2:0] count_test;
-    wire [2:0] display_out;
+    wire [3:0] display_out;
     wire [6:0] seg_display;
 
     // Instancia del módulo tamagotchi_fsm
@@ -76,7 +76,7 @@ module tamagotchi_tb;
         // Simulación del comportamiento: Botón Energía
         // Presionar botón de energía por primera vez
         btn_salud = 1;
-        #10 btn_salud = 0;  // Liberar el botón
+        #100 btn_salud = 0;  // Liberar el botón
         #20;
 
         // Verificar cambio en display_out y seg_display
