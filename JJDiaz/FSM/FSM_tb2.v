@@ -5,13 +5,10 @@ module tamagotchi_tb;
     // Declaración de señales
     reg btn_salud;
     reg btn_energia;
+    reg ledsign;
     reg btn_hambre;
     reg btn_diversion;
-    reg btn_reset;
-    reg btn_test;
     reg clk;
-    reg [2:0] count_reset;
-    reg [2:0] count_test;
     wire [3:0] display_out;
     wire [6:0] seg_display;
 
@@ -19,6 +16,7 @@ module tamagotchi_tb;
     tamagotchi_fsm uut (
         .btn_salud(btn_salud),
         .btn_energia(btn_energia),
+        .ledsign(ledsign)
         .btn_hambre(btn_hambre),
         .btn_diversion(btn_diversion),
         .btn_reset(btn_reset),
