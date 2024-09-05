@@ -33,39 +33,41 @@ module I2CMASTER (
               S_WRITE = 5'b01000, //Estado de escritura de datos
               S_PRESTOP = 5'b01001, //Estado previo a la señal de parada 
               S_STOP = 5'b01010, //Estado de parada
-              S_READ = 5'b01011, //Estado 
-              S_RECVBIT = 5'b01100,
-              S_RDSCLUP = 5'b01101,
-              S_RDSCLDOWN = 5'b01110,
-              S_SENDACK = 5'b01111,
-              S_SENDACKUP = 5'b10000,
-              S_SENDACKDOWN = 5'b10001,
-              S_RESTART = 5'b10010;
+              S_READ = 5'b01011, //Estado lectura de datos
+              S_RECVBIT = 5'b01100, //Estado de recepción de bits (de esclavo a maestro)
+              S_RDSCLUP = 5'b01101, //Espera para la subida del SCL de lectura
+              S_RDSCLDOWN = 5'b01110, //Espera para la bajada del SCL de lectura
+              S_SENDACK = 5'b01111, //Estado para enviar ACK al esclavo después de leer
+              S_SENDACKUP = 5'b10000, //Espera con ACK y reloj alto
+              S_SENDACKDOWN = 5'b10001, //Espera con ACK y reloj bajo
+              S_RESTART = 5'b10010; //Estado de reinicio de la comunicación
 
     // Variables de estado
     reg [4:0] state, next_state;
-    reg [3:0] counter, next_counter;
+    reg [3:0] counter, next_counter; //Contador para controlar bits enviados/recibidos
     reg [7:0] shift; //Cambio de bit a bit por señal bidireccional de un bit que se envía
     reg nackdet;
-    reg sda_in_q, sda_in_qq;
+    reg sda_in_q, sda_in_qq; //Registro de captura para sincronizar SDA_IN con el reloj MCLK
 
-    //Contador
+    // Lógica combinacional para el contador
     always @(*) begin
         next_counter = counter + 1;
     end
 
+    // Lógica secuencial para el registro de captura de SDA_IN
     always @(posedge MCLK or negedge nRST) begin
         if (!nRST) begin
             sda_in_q <= 1'b1;
             sda_in_qq <= 1'b1;
         end else if (MCLK) begin
             sda_in_q <= SDA_IN;
-            sda_in_qq <= sda_in_q;
+            sda_in_qq <= sda_in_q; //Sincroniza SDA_IN con el reloj MCLK
         end
     end
 
+    // Lógica secuencial principal para la máquina de estados
     always @(posedge MCLK or negedge nRST) begin
-        if (!nRST) begin
+        if (!nRST) begin //Reset del sistema: se inicializan todas las señales y estados
             STATUS <= 3'b000;
             state <= S_IDLE;
             SCL_OUT <= 1'b1;
@@ -79,10 +81,11 @@ module I2CMASTER (
             shift <= 8'b0;
             STOP <= 1'b0;
         end else if (MCLK) begin
-            if (SRST) begin
+            if (SRST) begin //Si hay reset síncrono, vuelve al estado de inactividad
                 state <= S_IDLE;
             end else begin
                 case (state)
+                    //Estado de inactividad, esperando comandos de escritura o lectura
                     S_IDLE: begin
                         STATUS <= 3'b000;
                         SCL_OUT <= 1'b1;
@@ -90,32 +93,33 @@ module I2CMASTER (
                         NACK <= 1'b0;
                         QUEUED <= 1'b0;
                         DATA_VALID <= 1'b0;
-                        DOUT <= 8'h01;
+                        DOUT <= 8'h01; //Inicializa el registro de datos de salida
                         counter <= 4'b0;
                         STOP <= 1'b0;
                         if (TIC) begin
-                            if (WE || RD) begin
+                            if (WE || RD) begin //Si hay una operación de escritura o lectura pendiente, pasa al estado de inicio
                                 state <= S_START;
                             end
                         end
                     end
+                    //Estado que genera la condición de inicio en el bus I2C (start bit)
                     S_START: begin
                         STATUS <= 3'b001;
                         SCL_OUT <= 1'b1;
-                        SDA_OUT <= 1'b0; // start bit
+                        SDA_OUT <= 1'b0; //Genera el start bit (SDA pasa de alto a bajo mientras SCL está alto)
                         NACK <= 1'b0;
                         QUEUED <= 1'b0;
                         STOP <= 1'b0;
                         DATA_VALID <= 1'b0;
-                        if (TIC) begin
-                            SCL_OUT <= 1'b0;
+                        if (TIC) begin //Si la tasa de reloj TIC lo permite, comienza la transmisión
+                            SCL_OUT <= 1'b0; //Baja el reloj SCL para comenzar la transmisión
                             counter <= 4'b0000;
-                            shift[7:1] <= DEVICE[6:0];
+                            shift[7:1] <= DEVICE[6:0]; //Carga la dirección del dispositivo esclavo
                             if (WE) begin
-                                shift[0] <= 1'b0;
-                                next_state <= S_WRITE;
+                                shift[0] <= 1'b0; //Para escritura, el último bit es '0' (RW bit)
+                                next_state <= S_WRITE; 
                             end else begin
-                                shift[0] <= 1'b1; // RD='1'
+                                shift[0] <= 1'b1; //Para lectura, el último bit es '1' (RW bit)
                                 next_state <= S_READ;
                             end
                             state <= S_SENDBIT;
