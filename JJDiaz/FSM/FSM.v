@@ -25,7 +25,6 @@ module tamagotchi_fsm (
     initial begin
         nivel_salud = 4'b0100;   // Nivel de Salud inicial en 8
         nivel_energia = 4'b1000; // Nivel de Energía inicial en 8
-        ledsign = 0;
         nivel_hambre = 4'b1000;  // Nivel de Hambre inicial en 8
         nivel_diversion = 4'b0100; // Nivel de Diversión inicial en 8
         timer_salud = 0;
@@ -43,7 +42,6 @@ module tamagotchi_fsm (
         if (btn_reset) begin // 5 segundos en binario es 101
             nivel_salud <= 4'b1000;   // Reiniciar nivel de Salud a 8
             nivel_energia <= 4'b1000; // Reiniciar nivel de Energía a 8
-            ledsign = 0;
             nivel_hambre <= 4'b1000;  // Reiniciar nivel de Hambre a 8
             nivel_diversion <= 4'b1000; // Reiniciar nivel de Diversión a 8
             display_out <= 4'b1000; // Cara neutra

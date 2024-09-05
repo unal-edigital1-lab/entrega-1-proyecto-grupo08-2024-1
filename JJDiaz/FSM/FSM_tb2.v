@@ -8,6 +8,8 @@ module tamagotchi_tb;
     reg ledsign;
     reg btn_hambre;
     reg btn_diversion;
+    reg btn_reset;
+    reg btn_test;
     reg clk;
     wire [3:0] display_out;
     wire [6:0] seg_display;
@@ -16,14 +18,12 @@ module tamagotchi_tb;
     tamagotchi_fsm uut (
         .btn_salud(btn_salud),
         .btn_energia(btn_energia),
-        .ledsign(ledsign)
+        .ledsign(ledsign),
         .btn_hambre(btn_hambre),
         .btn_diversion(btn_diversion),
         .btn_reset(btn_reset),
         .btn_test(btn_test),
         .clk(clk),
-        .count_reset(count_reset),
-        .count_test(count_test),
         .display_out(display_out),
         .seg_display(seg_display)
     );
@@ -39,12 +39,11 @@ module tamagotchi_tb;
         // Inicialización de señales
         btn_salud = 0;
         btn_energia = 0;
+        ledsign =0;
         btn_hambre = 0;
         btn_diversion = 0;
         btn_reset = 0;
         btn_test = 0;
-        count_reset = 3'b000;
-        count_test = 3'b000;
 
         // Esperar para estabilizar
         #20;
@@ -107,16 +106,17 @@ module tamagotchi_tb;
 
         // Simulación del comportamiento: Botón Diversion
         // Presionar botón de diversion por primera vez
-        btn_diversion = 1;
-        #10 btn_diversion = 0;  // Liberar el botón
+        btn_energia = 1;
+        ledsign = 1;
+        #10 btn_energia = 0;  // Liberar el botón
         #20;
 
         // Verificar cambio en display_out y seg_display
         $display("Diversion - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
 
         // Presionar botón de diversion por segunda vez
-        btn_diversion = 1;
-        #10 btn_diversion = 0;  // Liberar el botón
+        btn_energia = 1;
+        #10 btn_energia = 0;  // Liberar el botón
         #20;
 
         // Verificar cambio en display_out y aumento en seg_display
@@ -124,16 +124,17 @@ module tamagotchi_tb;
 
         // Simulación del comportamiento: Botón Energía
         // Presionar botón de energía por primera vez
-        btn_diversion = 1;
-        #10 btn_diversion = 0;  // Liberar el botón
+        btn_energia = 1;
+        #10 btn_energia = 0;  // Liberar el botón
         #20;
 
         // Verificar cambio en display_out y seg_display
         $display("Energia - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
 
         // Presionar botón de energía por segunda vez
-        btn_diversion = 1;
-        #10 btn_diversion = 0;  // Liberar el botón
+        btn_energia = 1;
+        #10 btn_energia = 0;  // Liberar el botón
+        ledsign = 0;
         #20;
 
         // Verificar cambio en display_out y aumento en seg_display
