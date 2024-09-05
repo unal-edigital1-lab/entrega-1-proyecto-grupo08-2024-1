@@ -1,40 +1,59 @@
 module ControlLed(
     input clk,
+	input wire echo,
     input wire [19:0] contador2,  
-    output reg led1,   
-    output reg led2, 
-    output reg led3   
+    output reg sens_ult 
+     
 );
 
-
-parameter L1=20'd70000; 
-parameter L1m=20'd50000; //Para entre 30cm 
-parameter L2=20'd50000;  //Para entre 10cm
-parameter L2m=20'd30000;
-parameter L3=20'd30000; //Para entre 2cm
-parameter L3m=20'd3000; //Para 1cm
+// distancia = 340 m/s * tiempo / 2
+// 5cm => 295 us = 295000 ns = 14750 ciclos de reloj
+// 1cm => 59 us = 59000 ns = 2950 ciclos de reloj
 
 
-always @(contador2) 
+//10us = 10000ns = 500 ciclos de reloj = 10 bits
+reg [9:0] downSens; //Para 10 bits
+
+initial begin
+	sens_ult=0; 
+	downSens=0;
+end
+
+parameter DOWNSENS=10'd500; //Para 500 ciclos de reloj
+
+parameter L=14'd14750; //Para 5cm
+parameter Lm=14'd2950; //Para 1cm
+
+
+
+
+always @(negedge echo) 
 	begin
 
-		if (contador2>L1m && contador2<L1)
+		if (contador2>Lm && contador2<L)
 			begin
-				led1 <= 0;
-				led2 <= 1;
-				led3 <= 1;  
+				sens_ult=1; 
 			end
-		else if (contador2>L2m && contador2<L2)
+	    else 
+		begin
+			sens_ult=0;
+		end
+	end
+
+always @(posedge clk)
+	begin
+		if (sens_ult==1)
 			begin
-				led1 <= 1;
-				led2 <= 0;
-				led3 <= 1;  
+				downSens=downSens+1;
+				if (downSens==DOWNSENS)
+					begin
+						sens_ult=0;
+						downSens=0;
+					end
 			end
-		else if (contador2>L3m && contador2<L3)
+		else
 			begin
-				led1 <= 1;
-				led2 <= 1;
-				led3 <= 0;  
+				downSens=0;
 			end
 	end
 
