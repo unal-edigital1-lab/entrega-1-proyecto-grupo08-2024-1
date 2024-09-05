@@ -4,9 +4,7 @@ module DEMO_MPU6050 (
     inout wire SDA,
     inout wire SCL,
     output wire LEDX,
-    output wire LEDY,
-    output wire LEDZ,
-    output wire LEDSIGN,
+    output wire LEDSIGN
 );
 
     // Internal signals
@@ -35,9 +33,6 @@ module DEMO_MPU6050 (
 
     // Output registers
     reg [7:0] XREG;
-    reg [7:0] YREG;
-    reg [7:0] ZREG;
-
     assign nRST = RESET;
 
     // Instantiate MPU6050 component
@@ -90,11 +85,7 @@ module DEMO_MPU6050 (
         .COMPLETED(COMPLETED),
         .RESCAN(RESCAN),
         .XREG(XREG),
-        .YREG(YREG),
-        .ZREG(ZREG),
         .LEDX(LEDX),
-        .LEDY(LEDY),
-        .LEDZ(LEDZ),
         .SIGN(LEDSIGN)
     );
 
@@ -116,13 +107,9 @@ module DEMO_MPU6050 (
     always @(posedge MCLK or negedge nRST) begin
         if (!nRST) begin
             XREG <= 8'b0;
-            YREG <= 8'b0;
-            ZREG <= 8'b0;
         end else if (TIC && LOAD) begin
             case (ADR)
                 4'h0: XREG <= DATA; // Revisar para el acelerómetro
-                4'h2: YREG <= DATA;
-                4'h4: ZREG <= DATA;
             endcase
         end
     end

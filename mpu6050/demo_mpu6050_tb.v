@@ -12,8 +12,6 @@ module demo_mpu6050_tb;
     wire SDA;
     wire SCL;
     wire LEDX;
-    wire LEDY;
-    wire LEDZ;
     wire LEDSIGN;
 
     DEMO_MPU6050 UUT (
@@ -22,8 +20,6 @@ module demo_mpu6050_tb;
         .SDA(SDA),
         .SCL(SCLA),
         .LEDX(LEDX),
-        .LEDY(LEDY),
-        .LEDZ(LEDZ),
         .LEDSIGN(LEDSIGN)
     );
 
