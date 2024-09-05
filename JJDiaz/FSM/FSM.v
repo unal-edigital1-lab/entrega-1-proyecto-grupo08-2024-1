@@ -153,13 +153,13 @@ module tamagotchi_fsm (
             if (btn_energia && ledsign) begin
                 display_out[1:0] <= 2'b01; // Mostrar Energía
                 if (nivel_energia < 4'b1010 && display_out == 3'b101) begin
-                    nivel_energia <= nivel_energia + 1; // Aumentar nivel Energía
+                    nivel_energia <= nivel_energia - 1; // Aumentar nivel Energía
                 end
             end
             if (btn_energia && ledsign) begin
                 display_out[1:0] <= 2'b01; // Mostrar Energía
                 if (nivel_energia < 4'b1010 && display_out == 3'b001) begin
-                    nivel_energia <= nivel_energia + 1; // Aumentar nivel Energía
+                    nivel_energia <= nivel_energia - 1; // Aumentar nivel Energía
                 end
             end
             if (btn_hambre) begin
@@ -197,10 +197,12 @@ module tamagotchi_fsm (
                 timer_salud <= 0;
             end else timer_salud <= timer_salud + 1;
 
-            if (timer_energia == 100) begin
-                nivel_energia <= nivel_energia - 1;
+            if(ledsign == 0)begin
+                if (timer_energia == 100) begin
+                nivel_energia <= nivel_energia + 1;
                 timer_energia <= 0;
-            end else timer_energia <= timer_energia + 1;
+                end else timer_energia <= timer_energia + 1;
+            end 
 
             if (timer_hambre == 70) begin
                 nivel_hambre <= nivel_hambre - 1;
