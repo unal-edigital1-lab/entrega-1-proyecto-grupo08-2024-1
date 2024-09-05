@@ -5,20 +5,18 @@ module tamagotchi_tb;
     // Declaración de señales
     reg btn_salud;
     reg btn_energia;
+    reg ledsign;
     reg btn_hambre;
     reg btn_diversion;
-    reg btn_reset;
-    reg btn_test;
     reg clk;
-    reg [2:0] count_reset;
-    reg [2:0] count_test;
-    wire [2:0] display_out;
+    wire [3:0] display_out;
     wire [6:0] seg_display;
 
     // Instancia del módulo tamagotchi_fsm
     tamagotchi_fsm uut (
         .btn_salud(btn_salud),
         .btn_energia(btn_energia),
+        .ledsign(ledsign)
         .btn_hambre(btn_hambre),
         .btn_diversion(btn_diversion),
         .btn_reset(btn_reset),
@@ -76,7 +74,7 @@ module tamagotchi_tb;
         // Simulación del comportamiento: Botón Energía
         // Presionar botón de energía por primera vez
         btn_salud = 1;
-        #10 btn_salud = 0;  // Liberar el botón
+        #100 btn_salud = 0;  // Liberar el botón
         #20;
 
         // Verificar cambio en display_out y seg_display
@@ -126,16 +124,16 @@ module tamagotchi_tb;
 
         // Simulación del comportamiento: Botón Energía
         // Presionar botón de energía por primera vez
-        btn_energia = 1;
-        #10 btn_energia = 0;  // Liberar el botón
+        btn_diversion = 1;
+        #10 btn_diversion = 0;  // Liberar el botón
         #20;
 
         // Verificar cambio en display_out y seg_display
         $display("Energia - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
 
         // Presionar botón de energía por segunda vez
-        btn_energia = 1;
-        #10 btn_energia = 0;  // Liberar el botón
+        btn_diversion = 1;
+        #10 btn_diversion = 0;  // Liberar el botón
         #20;
 
         // Verificar cambio en display_out y aumento en seg_display
@@ -144,6 +142,7 @@ module tamagotchi_tb;
         btn_reset = 1;
         #10 btn_reset = 0;
         #20
+        //#4000;
 
         // Finalizar simulación
         $finish;
