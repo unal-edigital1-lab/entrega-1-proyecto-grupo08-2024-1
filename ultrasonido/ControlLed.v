@@ -2,7 +2,8 @@ module ControlLed(
     input clk,
 	input wire echo,
     input wire [19:0] contador2,  
-    output reg sens_ult 
+    output reg sens_ult,
+	output reg led1 
      
 );
 
@@ -33,10 +34,12 @@ always @(negedge echo)
 		if (contador2>Lm && contador2<L)
 			begin
 				sens_ult=1; 
+				led1 = 1;
 			end
 	    else 
 		begin
 			sens_ult=0;
+			led1=0;
 		end
 	end
 
@@ -49,6 +52,7 @@ always @(posedge clk)
 					begin
 						sens_ult=0;
 						downSens=0;
+						led1=0;
 					end
 			end
 		else

@@ -3,6 +3,7 @@ module top (
   input echo,
   output trig,
   output sens_ult,
+  output led1,
   output wire [19:0] s0
 );
 
@@ -27,6 +28,7 @@ module top (
     .clk( clk ),             //in
     .contador2( s0 ),        //in
     .echo( echo ),           //in
+    .led1(led1),             //out
     .sens_ult( sens_ult )    //out
   );
 
