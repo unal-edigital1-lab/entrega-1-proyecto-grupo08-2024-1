@@ -7,6 +7,7 @@ module top_tb;
     reg echo;
     wire trig;
     wire sens_ult;
+    wire led1;
     wire [19:0] s0;
 
     
@@ -15,6 +16,7 @@ module top_tb;
         .echo(echo),
         .trig(trig),
         .sens_ult(sens_ult),
+        .led1(led1),
         .s0(s0)
     );
 
