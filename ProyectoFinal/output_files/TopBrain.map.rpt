@@ -1,0 +1,233 @@
+Analysis & Synthesis report for TopBrain
+Thu Sep  5 19:17:17 2024
+Quartus Prime Version 23.1std.0 Build 991 11/28/2023 SC Lite Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Analysis & Synthesis Summary
+  3. Analysis & Synthesis Settings
+  4. Parallel Compilation
+  5. Analysis & Synthesis Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2023  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details, at
+https://fpgasoftware.intel.com/eula.
+
+
+
++-------------------------------------------------------------------------------------+
+; Analysis & Synthesis Summary                                                        ;
++------------------------------------+------------------------------------------------+
+; Analysis & Synthesis Status        ; Failed - Thu Sep  5 19:17:17 2024              ;
+; Quartus Prime Version              ; 23.1std.0 Build 991 11/28/2023 SC Lite Edition ;
+; Revision Name                      ; TopBrain                                       ;
+; Top-level Entity Name              ; TopBrain                                       ;
+; Family                             ; Cyclone IV E                                   ;
+; Total logic elements               ; N/A until Partition Merge                      ;
+;     Total combinational functions  ; N/A until Partition Merge                      ;
+;     Dedicated logic registers      ; N/A until Partition Merge                      ;
+; Total registers                    ; N/A until Partition Merge                      ;
+; Total pins                         ; N/A until Partition Merge                      ;
+; Total virtual pins                 ; N/A until Partition Merge                      ;
+; Total memory bits                  ; N/A until Partition Merge                      ;
+; Embedded Multiplier 9-bit elements ; N/A until Partition Merge                      ;
+; Total PLLs                         ; N/A until Partition Merge                      ;
++------------------------------------+------------------------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Settings                                                                              ;
++------------------------------------------------------------------+--------------------+--------------------+
+; Option                                                           ; Setting            ; Default Value      ;
++------------------------------------------------------------------+--------------------+--------------------+
+; Device                                                           ; EP4CE6E22C8        ;                    ;
+; Top-level entity name                                            ; TopBrain           ; TopBrain           ;
+; Family name                                                      ; Cyclone IV E       ; Cyclone V          ;
+; Use smart compilation                                            ; Off                ; Off                ;
+; Enable parallel Assembler and Timing Analyzer during compilation ; On                 ; On                 ;
+; Enable compact report table                                      ; Off                ; Off                ;
+; Restructure Multiplexers                                         ; Auto               ; Auto               ;
+; Create Debugging Nodes for IP Cores                              ; Off                ; Off                ;
+; Preserve fewer node names                                        ; On                 ; On                 ;
+; Intel FPGA IP Evaluation Mode                                    ; Enable             ; Enable             ;
+; Verilog Version                                                  ; Verilog_2001       ; Verilog_2001       ;
+; VHDL Version                                                     ; VHDL_1993          ; VHDL_1993          ;
+; State Machine Processing                                         ; Auto               ; Auto               ;
+; Safe State Machine                                               ; Off                ; Off                ;
+; Extract Verilog State Machines                                   ; On                 ; On                 ;
+; Extract VHDL State Machines                                      ; On                 ; On                 ;
+; Ignore Verilog initial constructs                                ; Off                ; Off                ;
+; Iteration limit for constant Verilog loops                       ; 5000               ; 5000               ;
+; Iteration limit for non-constant Verilog loops                   ; 250                ; 250                ;
+; Add Pass-Through Logic to Inferred RAMs                          ; On                 ; On                 ;
+; Infer RAMs from Raw Logic                                        ; On                 ; On                 ;
+; Parallel Synthesis                                               ; On                 ; On                 ;
+; DSP Block Balancing                                              ; Auto               ; Auto               ;
+; NOT Gate Push-Back                                               ; On                 ; On                 ;
+; Power-Up Don't Care                                              ; On                 ; On                 ;
+; Remove Redundant Logic Cells                                     ; Off                ; Off                ;
+; Remove Duplicate Registers                                       ; On                 ; On                 ;
+; Ignore CARRY Buffers                                             ; Off                ; Off                ;
+; Ignore CASCADE Buffers                                           ; Off                ; Off                ;
+; Ignore GLOBAL Buffers                                            ; Off                ; Off                ;
+; Ignore ROW GLOBAL Buffers                                        ; Off                ; Off                ;
+; Ignore LCELL Buffers                                             ; Off                ; Off                ;
+; Ignore SOFT Buffers                                              ; On                 ; On                 ;
+; Limit AHDL Integers to 32 Bits                                   ; Off                ; Off                ;
+; Optimization Technique                                           ; Balanced           ; Balanced           ;
+; Carry Chain Length                                               ; 70                 ; 70                 ;
+; Auto Carry Chains                                                ; On                 ; On                 ;
+; Auto Open-Drain Pins                                             ; On                 ; On                 ;
+; Perform WYSIWYG Primitive Resynthesis                            ; Off                ; Off                ;
+; Auto ROM Replacement                                             ; On                 ; On                 ;
+; Auto RAM Replacement                                             ; On                 ; On                 ;
+; Auto DSP Block Replacement                                       ; On                 ; On                 ;
+; Auto Shift Register Replacement                                  ; Auto               ; Auto               ;
+; Allow Shift Register Merging across Hierarchies                  ; Auto               ; Auto               ;
+; Auto Clock Enable Replacement                                    ; On                 ; On                 ;
+; Strict RAM Replacement                                           ; Off                ; Off                ;
+; Allow Synchronous Control Signals                                ; On                 ; On                 ;
+; Force Use of Synchronous Clear Signals                           ; Off                ; Off                ;
+; Auto RAM Block Balancing                                         ; On                 ; On                 ;
+; Auto RAM to Logic Cell Conversion                                ; Off                ; Off                ;
+; Auto Resource Sharing                                            ; Off                ; Off                ;
+; Allow Any RAM Size For Recognition                               ; Off                ; Off                ;
+; Allow Any ROM Size For Recognition                               ; Off                ; Off                ;
+; Allow Any Shift Register Size For Recognition                    ; Off                ; Off                ;
+; Use LogicLock Constraints during Resource Balancing              ; On                 ; On                 ;
+; Ignore translate_off and synthesis_off directives                ; Off                ; Off                ;
+; Timing-Driven Synthesis                                          ; On                 ; On                 ;
+; Report Parameter Settings                                        ; On                 ; On                 ;
+; Report Source Assignments                                        ; On                 ; On                 ;
+; Report Connectivity Checks                                       ; On                 ; On                 ;
+; Ignore Maximum Fan-Out Assignments                               ; Off                ; Off                ;
+; Synchronization Register Chain Length                            ; 2                  ; 2                  ;
+; Power Optimization During Synthesis                              ; Normal compilation ; Normal compilation ;
+; HDL message level                                                ; Level2             ; Level2             ;
+; Suppress Register Optimization Related Messages                  ; Off                ; Off                ;
+; Number of Removed Registers Reported in Synthesis Report         ; 5000               ; 5000               ;
+; Number of Swept Nodes Reported in Synthesis Report               ; 5000               ; 5000               ;
+; Number of Inverted Registers Reported in Synthesis Report        ; 100                ; 100                ;
+; Clock MUX Protection                                             ; On                 ; On                 ;
+; Auto Gated Clock Conversion                                      ; Off                ; Off                ;
+; Block Design Naming                                              ; Auto               ; Auto               ;
+; SDC constraint protection                                        ; Off                ; Off                ;
+; Synthesis Effort                                                 ; Auto               ; Auto               ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal     ; On                 ; On                 ;
+; Pre-Mapping Resynthesis Optimization                             ; Off                ; Off                ;
+; Analysis & Synthesis Message Level                               ; Medium             ; Medium             ;
+; Disable Register Merging Across Hierarchies                      ; Auto               ; Auto               ;
+; Resource Aware Inference For Block RAM                           ; On                 ; On                 ;
++------------------------------------------------------------------+--------------------+--------------------+
+
+
++------------------------------------------+
+; Parallel Compilation                     ;
++----------------------------+-------------+
+; Processors                 ; Number      ;
++----------------------------+-------------+
+; Number detected on machine ; 16          ;
+; Maximum allowed            ; 8           ;
+;                            ;             ;
+; Average used               ; 1.00        ;
+; Maximum used               ; 1           ;
+;                            ;             ;
+; Usage by Processor         ; % Time Used ;
+;     Processor 1            ; 100.0%      ;
++----------------------------+-------------+
+
+
++-------------------------------+
+; Analysis & Synthesis Messages ;
++-------------------------------+
+Info: *******************************************************************
+Info: Running Quartus Prime Analysis & Synthesis
+    Info: Version 23.1std.0 Build 991 11/28/2023 SC Lite Edition
+    Info: Processing started: Thu Sep  5 19:17:12 2024
+Info: Command: quartus_map --read_settings_files=on --write_settings_files=off TopBrain -c TopBrain
+Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
+Info (20030): Parallel compilation is enabled and will use 8 of the 8 processors detected
+Info (12021): Found 1 design units, including 1 entities, in source file btnAntirebote.v
+    Info (12023): Found entity 1: btnAntirebote File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/btnAntirebote.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file btnRT.v
+    Info (12023): Found entity 1: btnRT File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/btnRT.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file compare.v
+    Info (12023): Found entity 1: COMPARE File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/compare.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file ContadorConEcho.v
+    Info (12023): Found entity 1: ContadorConEcho File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConEcho.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file ContadorConTrigger.v
+    Info (12023): Found entity 1: ContadorConTrigger File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file ControlLed.v
+    Info (12023): Found entity 1: ControlLed File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ControlLed.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file demo_mpu6050.v
+    Info (12023): Found entity 1: DEMO_MPU6050 File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/demo_mpu6050.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file FSM.v
+    Info (12023): Found entity 1: tamagotchi_fsm File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/FSM.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file i2cmaster.v
+    Info (12023): Found entity 1: I2CMASTER File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/i2cmaster.v Line: 2
+Info (12021): Found 1 design units, including 1 entities, in source file mpu6050.v
+    Info (12023): Found entity 1: MPU6050 File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/mpu6050.v Line: 2
+Info (12021): Found 1 design units, including 1 entities, in source file top.v
+    Info (12023): Found entity 1: top File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/top.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file top_brain_tb.v
+    Info (12023): Found entity 1: top_brain_tb File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/top_brain_tb.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file TopBrain.v
+    Info (12023): Found entity 1: TopBrain File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/TopBrain.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file topBtn.v
+    Info (12023): Found entity 1: topBtn File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/topBtn.v Line: 1
+Warning (10236): Verilog HDL Implicit Net warning at TopBrain.v(51): created implicit net for "btn_diversion" File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/TopBrain.v Line: 51
+Info (12127): Elaborating entity "TopBrain" for the top level hierarchy
+Info (12128): Elaborating entity "topBtn" for hierarchy "topBtn:U_topBtn" File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/TopBrain.v Line: 45
+Info (12128): Elaborating entity "btnAntirebote" for hierarchy "topBtn:U_topBtn|btnAntirebote:B_heal" File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/topBtn.v Line: 28
+Warning (10230): Verilog HDL assignment warning at btnAntirebote.v(31): truncated value with size 32 to match size of target (16) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/btnAntirebote.v Line: 31
+Info (12128): Elaborating entity "btnRT" for hierarchy "topBtn:U_topBtn|btnRT:B_rst" File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/topBtn.v Line: 30
+Warning (10230): Verilog HDL assignment warning at btnRT.v(19): truncated value with size 32 to match size of target (12) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/btnRT.v Line: 19
+Info (12128): Elaborating entity "top" for hierarchy "top:U_top" File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/TopBrain.v Line: 54
+Info (12128): Elaborating entity "ContadorConTrigger" for hierarchy "top:U_top|ContadorConTrigger:ContadorConTrigger_i0" File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/top.v Line: 19
+Warning (10230): Verilog HDL assignment warning at ContadorConTrigger.v(24): truncated value with size 32 to match size of target (20) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 24
+Error (10028): Can't resolve multiple constant drivers for net "contador1[19]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10029): Constant driver at ContadorConTrigger.v(17) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 17
+Error (10028): Can't resolve multiple constant drivers for net "contador1[18]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[17]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[16]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[15]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[14]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[13]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[12]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[11]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[10]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[9]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[8]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[7]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[6]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[5]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[4]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[3]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (10028): Can't resolve multiple constant drivers for net "contador1[2]" at ContadorConTrigger.v(22) File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ContadorConTrigger.v Line: 22
+Error (12152): Can't elaborate user hierarchy "top:U_top|ContadorConTrigger:ContadorConTrigger_i0" File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/top.v Line: 19
+Error: Quartus Prime Analysis & Synthesis was unsuccessful. 20 errors, 5 warnings
+    Error: Peak virtual memory: 331 megabytes
+    Error: Processing ended: Thu Sep  5 19:17:17 2024
+    Error: Elapsed time: 00:00:05
+    Error: Total CPU time (on all processors): 00:00:14
+
+
