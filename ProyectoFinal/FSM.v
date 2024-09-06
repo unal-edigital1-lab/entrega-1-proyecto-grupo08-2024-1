@@ -48,18 +48,14 @@ module tamagotchi_fsm (
             btn_press_count <= 2'b00; // Reiniciar contador de botones
             test_mode <= 1'b0; // Salir del modo de prueba
         end
-    end
 
-    // Manejo de la activación del modo test mediante el botón dedicado
-    always @(posedge clk) begin
+        // Manejo de la activación del modo test mediante el botón dedicado
         if (btn_test) begin // 5 segundos en binario es 101
             test_mode <= 1'b1; // Activar modo de prueba
             btn_press_count <= 2'b00; // Reiniciar contador de botones
         end
-    end
 
-    // Manejo de los botones en modo normal o test, con niveles separados
-    always @(posedge clk) begin
+        // Manejo de los botones en modo normal o test, con niveles separados
         if (test_mode) begin
             // Modo test: Solo permitir niveles 1 o 10
             if (btn_salud && nivel_salud != 4'b0001) begin
@@ -185,10 +181,8 @@ module tamagotchi_fsm (
                 end
             end
         end
-    end
 
     // Manejo del decremento de los niveles en modo normal, con niveles separados
-    always @(posedge clk) begin
         if (!test_mode) begin
             if (timer_salud == 120) begin
                 nivel_salud <= nivel_salud - 1;
@@ -212,20 +206,16 @@ module tamagotchi_fsm (
                 timer_diversion <= 0;
             end else timer_diversion <= timer_diversion + 1;
         end
-    end
 
     // Actualizar cara feliz/triste basado en el nivel del estado actual
-    always @(posedge clk) begin
         case (display_out[1:0])
             2'b00: display_out[2] <= (nivel_salud >= 4'd5) ? 1'b1 : 1'b0; // Salud
             2'b01: display_out[2] <= (nivel_energia >= 4'd5) ? 1'b1 : 1'b0; // Energía
             2'b10: display_out[2] <= (nivel_hambre >= 4'd5) ? 1'b1 : 1'b0; // Hambre
             2'b11: display_out[2] <= (nivel_diversion >= 4'd5) ? 1'b1 : 1'b0; // Diversión
         endcase
-    end
 
     // Control de la regleta de 7 segmentos para mostrar el nivel actual del estado seleccionado
-    always @(posedge clk) begin
         case (display_out[1:0])
             2'b00: seg_display <= get_seg_display(nivel_salud);   // Mostrar nivel de Salud
             2'b01: seg_display <= get_seg_display(nivel_energia); // Mostrar nivel de Energía
