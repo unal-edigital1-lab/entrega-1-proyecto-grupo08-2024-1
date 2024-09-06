@@ -82,7 +82,7 @@ module top_tb;
 
 
         // Finaliza la simulación
-        #100 $finish;
+        #10000 $finish;
     end
 
     initial begin
