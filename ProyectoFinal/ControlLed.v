@@ -27,7 +27,7 @@ parameter Lm=14'd2950; //Para 1cm
 
 
 
-
+/*
 always @(negedge echo) 
 	begin
 
@@ -42,7 +42,7 @@ always @(negedge echo)
 			led1=0;
 		end
 	end
-
+*/
 always @(posedge clk)
 	begin
 		if (sens_ult==1)

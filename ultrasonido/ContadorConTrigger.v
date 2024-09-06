@@ -14,10 +14,10 @@ initial begin
     trigger = 0;
 end
 
-always @(negedge echo ) begin
+/*always @(negedge echo ) begin
     contador1 = 0;
     
-end
+end*/
 
 always @(posedge clk) begin
     if (contador1 < limite) begin
