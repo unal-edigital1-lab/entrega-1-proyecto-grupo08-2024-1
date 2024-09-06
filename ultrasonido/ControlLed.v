@@ -28,7 +28,7 @@ parameter Lm=14'd2950; //Para 1cm
 
 
 
-always @(negedge echo) 
+/*always @(negedge echo) 
 	begin
 
 		if (contador2>Lm && contador2<L)
@@ -42,7 +42,7 @@ always @(negedge echo)
 			led1=0;
 		end
 	end
-
+*/
 always @(posedge clk)
 	begin
 		if (sens_ult==1)

@@ -41,14 +41,14 @@ module TopBrain (
         .btn_salud(btn_salud),
         .btn_hambre(btn_hambre),
         .btn_reset(btn_reset),
-        .btn_test(btn_reset)
+        .btn_test(btn_test)
     );
     
     top U_top (
         .clk(clk),
         .echo(echo),
         .trig(trig),
-        .sens_ult(btn_diversion),
+        .sens_ult(sens_ult),
         .led1(led1),
         .s0(s0)
         );
