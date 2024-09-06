@@ -1,17 +1,3 @@
-`include "mpu6050/mpu6050.v"
-`include "mpu6050/i2cmaster.v"
-`include "mpu6050/demo_mpu6050.v"
-`include "mpu6050/compare.v"
-`include "JJDiaz/FSM/FSM.v"
-`include "ultrasonido/top.v"
-`include "ultrasonido/ControlLed.v"
-`include "ultrasonido/ContadorConTrigger.v"
-`include "ultrasonido/ContadorConEcho.v"
-`include "Botones/btn/btnAntirebote.v"
-`include "Botones/btn/btnRT.v"
-`include "Botones/btn/topBtn.v"
-`include "TopBrain.v"
-
 module top_brain_tb;
 
     //Inputs son reg / Outputs son wire / Bidireccionales son wire
