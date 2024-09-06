@@ -13,14 +13,18 @@ module ControlLed(
 
 
 //10us = 10000ns = 500 ciclos de reloj = 10 bits
-reg [9:0] downSens; //Para 10 bits
+
+parameter DOWNSENS=15'd1001; //Para 50 ciclos de reloj == 1us
+reg [$clog2(DOWNSENS)-1:0] downSens; //Para 10 bits
+reg aux;
 
 initial begin
 	sens_ult=0; 
 	downSens=0;
+	led1=0;
+	aux = 0;
 end
 
-parameter DOWNSENS=10'd500; //Para 500 ciclos de reloj
 
 parameter L=14'd14750; //Para 5cm
 parameter Lm=14'd2950; //Para 1cm
@@ -28,27 +32,33 @@ parameter Lm=14'd2950; //Para 1cm
 
 
 
-/*always @(negedge echo) 
-	begin
 
-		if (contador2>Lm && contador2<L)
-			begin
-				sens_ult=1; 
-				led1 = 1;
-			end
-	    else 
-		begin
-			sens_ult=0;
-			led1=0;
-		end
-	end
-*/
+
 always @(posedge clk)
 	begin
+		if(echo==0)	begin
+			aux =1;
+		end
+		else begin	
+			aux = 0;
+		end
+
+
+		if(aux ==1) begin
+			if (contador2>Lm && contador2<L)
+			begin
+				sens_ult=1;
+			    led1=1;
+ 
+			end
+	
+		end
+
+
 		if (sens_ult==1)
 			begin
 				downSens=downSens+1;
-				if (downSens==DOWNSENS)
+				if (downSens > DOWNSENS)
 					begin
 						sens_ult=0;
 						downSens=0;
