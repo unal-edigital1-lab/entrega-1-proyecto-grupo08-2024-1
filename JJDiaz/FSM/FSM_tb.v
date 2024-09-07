@@ -5,35 +5,38 @@ module tamagotchi_tb;
     // Declaración de señales
     reg btn_salud;
     reg btn_energia;
+    reg ledsign;
     reg btn_hambre;
     reg btn_diversion;
     reg btn_reset;
     reg btn_test;
     reg clk;
-    reg [2:0] count_reset;
-    reg [2:0] count_test;
-    wire [2:0] display_out;
+    wire [3:0] display_out;
     wire [6:0] seg_display;
+
+    reg reset;
+    wire clk_out;
 
     // Instancia del módulo tamagotchi_fsm
     tamagotchi_fsm uut (
         .btn_salud(btn_salud),
         .btn_energia(btn_energia),
+        .ledsign(ledsign),
         .btn_hambre(btn_hambre),
         .btn_diversion(btn_diversion),
         .btn_reset(btn_reset),
         .btn_test(btn_test),
         .clk(clk),
-        .count_reset(count_reset),
-        .count_test(count_test),
         .display_out(display_out),
-        .seg_display(seg_display)
+        .seg_display(seg_display),
+        .clk_out(clk_out),
+        .reset(reset)
     );
 
     // Generación del reloj
     initial begin
         clk = 0;
-        forever #5 clk = ~clk; // Periodo de 10 ns
+        forever #10 clk = ~clk; // Periodo de 10 ns
     end
 
     // Secuencia de test
@@ -41,36 +44,58 @@ module tamagotchi_tb;
         // Inicialización de señales
         btn_salud = 0;
         btn_energia = 0;
+        ledsign =0;
         btn_hambre = 0;
         btn_diversion = 0;
         btn_reset = 0;
         btn_test = 0;
-        count_reset = 3'b000;
-        count_test = 3'b000;
+
+        reset = 1;
 
         // Esperar para estabilizar
-        #20;
+        #100 reset = 0;
 
-        // Simulación del comportamiento en modo normal
-        // Presionar botón de salud
-        btn_diversion = 1;
-        #10 btn_diversion = 0;  // Liberar el botón
-        #20;
 
-        // Presionar botón de energía
+        //Inicio de modo test
+        //btn_test = 1;
+        #10 btn_test = 0;
+        #20
+
+        // Simulación del comportamiento: Primer botón Salud
+        // Presionar botón de salud por primera vez
+        #100000000 btn_salud = 1;
+        #100000000 btn_salud = 0;  // Liberar el botón
+        #100000000;
+
+        // Verificar cambio en display_out y seg_display
+        $display("Salud - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
+        // Presionar botón de salud por segunda vez
         btn_salud = 1;
-        #10 btn_salud = 0;  // Liberar el botón
-        #20;
+        #100000000 btn_salud = 0;  // Liberar el botón
+        #100000000;
 
-        // Presionar botón de hambre
-        btn_energia = 1;
-        #10 btn_energia = 0;  // Liberar el botón
-        #20;
+        // Verificar cambio en display_out y aumento en seg_display
+        $display("Salud - Segunda presion: display_out = %b, seg_display = %b", display_out, seg_display);
 
-        // Presionar botón de diversión
-        btn_energia = 1;
-        #10 btn_energia = 0;  // Liberar el botón
-        #20;
+        // Simulación del comportamiento: Botón Energía
+        // Presionar botón de energía por primera vez
+        btn_salud = 1;
+        #100000000 btn_salud = 0;  // Liberar el botón
+        #100000000;
+
+        // Verificar cambio en display_out y seg_display
+        $display("Energia - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
+        // Presionar botón de energía por segunda vez
+        btn_salud = 1;
+        #100000000 btn_salud = 0;  // Liberar el botón
+        #100000000;
+
+        // Verificar cambio en display_out y aumento en seg_display
+        $display("Energia - Segunda presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
+        #100000000; 
 
         // Finalizar simulación
         $finish;
