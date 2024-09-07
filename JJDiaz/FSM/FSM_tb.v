@@ -63,7 +63,7 @@ module tamagotchi_tb;
 
         // Simulación del comportamiento: Primer botón Salud
         // Presionar botón de salud por primera vez
-        btn_salud = 1;
+        #100000000 btn_salud = 1;
         #100000000 btn_salud = 0;  // Liberar el botón
         #100000000;
 
