@@ -7,10 +7,10 @@ module bucleEspera #(parameter num_commands = 3,
     input clk,            
     input reset,          
     input ready_i,
-	 //input [4:0] select_figures, //DEBE ESTAR EN LA PRUEBA FINAL
+	 input [3:0] select_figures, //DEBE ESTAR EN LA PRUEBA FINAL
     output reg rs,        
     output reg rw,
-    //output reg enable,
+    //output reg enable, //NO ACTIVAR 
 	 output enable,
     output reg [7:0] data
 );
@@ -98,10 +98,10 @@ reg done_lcd_write;
 reg change;
 integer i;
 
-reg [4:0] select_figures; //PRUEBAS ONLY, SE DEBE QUITAR
+//reg [3:0] select_figures; //PRUEBAS ONLY, SE DEBE QUITAR
 
 reg [1:0] select_fig1;
-reg [2:0] select_fig2; 
+reg [1:0] select_fig2; 
 
 initial begin
     fsm_state <= IDLE;
@@ -117,7 +117,7 @@ initial begin
     char_counter <= 'b0;
     done_lcd_write <= 1'b0; 
 	 change <= 'b0;
-	 select_figures <= 5'b00010; //SOLO PARA PRUEBAS, SE DEBE QUITAR
+	 //select_figures <= 4'b0001; //SOLO PARA PRUEBAS, SE DEBE QUITAR
 	 wait_counter <= 'b0;
 	 wait_done <= 1'b0;
 	 //enable <= 'b0;
@@ -158,8 +158,8 @@ end
 
 
 always @(*) begin
-    select_fig1 = select_figures[4:3]; // Primeros 2 bits determinan la figura 1
-    select_fig2 = select_figures[2:0]; // Últimos 3 bits determinan la figura 2
+    select_fig1 = select_figures[3:2]; // Primeros 2 bits determinan la figura 1
+    select_fig2 = select_figures[1:0]; // Últimos 3 bits determinan la figura 2
 end
 
 always @(posedge clk_16ms)begin
@@ -268,47 +268,43 @@ always @(posedge clk_16ms) begin
                     end
                     WRITE_CHARS: begin
 								case(select_fig1) //Esta es la linea 269
-									2'b00: begin
+									2'b01: begin
 										for (i = 0; i < num_data_all; i = i + 1) begin
 											data_memory[i] <= gatoFeliz[i];
 										end
 									end
-									2'b01: begin
+									2'b00: begin
 										for (i = 0; i < num_data_all; i = i + 1) begin
 											data_memory[i] <= gatoTriste[i];
 										end
 									end
-									2'b11: begin
+									2'b10: begin
 										for (i = 0; i < num_data_all; i = i + 1) begin
 											data_memory[i] <= gatoNeutro[i];
+											data_memory2[i] <= nState[i];
 										end
 									end
 								endcase
 								case(select_fig2)
-									3'b000: begin
+									2'b01: begin
 										for (i = 0; i < num_data_all; i = i + 1) begin
 											data_memory2[i] <= energia[i];
 										end
 									end
-									3'b001: begin
+									2'b11: begin
 										for (i = 0; i < num_data_all; i = i + 1) begin
 											data_memory2[i] <= diversion[i];
 										end
 									end
-									3'b010: begin
+									2'b10: begin
 										for (i = 0; i < num_data_all; i = i + 1) begin
 											data_memory2[i] <= alimentacion[i];
 										end
 									end
-									3'b011: begin
+									2'b00: begin
 										for (i = 0; i < num_data_all; i = i + 1) begin
 											data_memory2[i] <= salud[i];
 										end
-									end
-									3'b100: begin
-										for (i = 0; i < num_data_all; i = i + 1) begin
-											data_memory2[i] <= nState[i];
-										end 
 									end
 									
 								endcase
