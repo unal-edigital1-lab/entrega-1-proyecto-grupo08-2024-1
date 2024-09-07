@@ -33,7 +33,7 @@ module TopBrain (
     wire btn_test;
     wire btn_energia; //Arreglar problemas con MPU6050
     wire ledsign;
-    wire clk;
+    wire clk_out;
     
     wire sens_ult;
     wire [19:0] s0;
