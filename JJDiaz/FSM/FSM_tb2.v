@@ -14,6 +14,9 @@ module tamagotchi_tb;
     wire [3:0] display_out;
     wire [6:0] seg_display;
 
+    reg reset;
+    wire clk_out;
+
     // Instancia del módulo tamagotchi_fsm
     tamagotchi_fsm uut (
         .btn_salud(btn_salud),
@@ -25,13 +28,14 @@ module tamagotchi_tb;
         .btn_test(btn_test),
         .clk(clk),
         .display_out(display_out),
-        .seg_display(seg_display)
+        .seg_display(seg_display),
+        .clk_out(clk_out)
     );
 
     // Generación del reloj
     initial begin
         clk = 0;
-        forever #5 clk = ~clk; // Periodo de 10 ns
+        forever #10 clk = ~clk; // Periodo de 10 ns
     end
 
     // Secuencia de test
@@ -44,6 +48,7 @@ module tamagotchi_tb;
         btn_diversion = 0;
         btn_reset = 0;
         btn_test = 0;
+        reset = 1;
 
         // Esperar para estabilizar
         #20;
@@ -51,7 +56,7 @@ module tamagotchi_tb;
         //Inicio de modo test
         //btn_test = 1;
         #10 btn_test = 0;
-        #20
+        #20 reset = 0;
 
         // Simulación del comportamiento: Primer botón Salud
         // Presionar botón de salud por primera vez
@@ -143,7 +148,7 @@ module tamagotchi_tb;
         btn_reset = 1;
         #10 btn_reset = 0;
         #20
-        //#4000;
+        #100000000; 
 
         // Finalizar simulación
         $finish;
