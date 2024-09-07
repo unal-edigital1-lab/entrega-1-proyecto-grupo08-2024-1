@@ -109,7 +109,7 @@ module DEMO_MPU6050 (
             XREG <= 8'b0;
         end else if (TIC && LOAD) begin
             case (ADR)
-                4'h0: XREG <= DATA; // Revisar para el acelerómetro
+                4'h0: XREG <= DATA; 
             endcase
         end
     end

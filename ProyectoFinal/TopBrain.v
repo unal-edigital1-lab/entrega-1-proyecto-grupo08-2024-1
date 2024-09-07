@@ -78,7 +78,7 @@ module TopBrain (
         .btn_diversion(sens_ult),
         .btn_reset(btn_reset),
         .btn_test(btn_test),
-        .clk(clk)
+        .clk(clk),
         .display_out(display_out),
         .seg_display(seg_display)
     );

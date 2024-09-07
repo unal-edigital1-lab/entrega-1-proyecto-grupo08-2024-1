@@ -303,7 +303,9 @@ always @(posedge clk_16ms) begin
 									end
 									2'b00: begin
 										for (i = 0; i < num_data_all; i = i + 1) begin
-											data_memory2[i] <= salud[i];
+                                            if(select_fig1 != 2'b10)begin
+											    data_memory2[i] <= salud[i];
+                                            end
 										end
 									end
 									
