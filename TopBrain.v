@@ -15,7 +15,15 @@ module TopBrain (
     input btn_heal,
     input btn_ali,
     input btn_RST,
-    input btn_TST
+    input btn_TST,
+    //LCD
+    input ready_i,
+    output rs,
+    output rw,
+    output [7:0] data,
+    output enable,
+    //7_seg
+    output [6:0] seg_display
 );
 
     //Conexiones internas
@@ -29,8 +37,7 @@ module TopBrain (
     wire sens_ult;
     wire [19:0] s0;
 
-    //output reg [2:0] display_out,
-    //output reg [6:0] seg_display
+    wire [2:0] display_out;
 
     topBtn U_topBtn (
         .clk(clk),
@@ -71,7 +78,21 @@ module TopBrain (
         .btn_diversion(sens_ult),
         .btn_reset(btn_reset),
         .btn_test(btn_test),
-        .clk(clk)
+        .clk(clk),
+        .display_out(display_out),
+        .seg_display(seg_display)
+    );
+
+    bucleEspera U_bucleEspera(
+        .clk(clk),
+        .reset(rst),
+        .ready_i(ready_i),
+        .select_figures(display_out),
+        .rs(rs),
+        .rw(rw),
+        .enable(enable),
+        .data(data)
+
     );
 
    

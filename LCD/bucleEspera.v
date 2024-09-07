@@ -7,7 +7,7 @@ module bucleEspera #(parameter num_commands = 3,
     input clk,            
     input reset,          
     input ready_i,
-	 input [3:0] select_figures, //DEBE ESTAR EN LA PRUEBA FINAL
+	input [3:0] select_figures, //DEBE ESTAR EN LA PRUEBA FINAL
     output reg rs,        
     output reg rw,
     //output reg enable, //NO ACTIVAR 
