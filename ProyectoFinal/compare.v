@@ -42,6 +42,7 @@ module COMPARE (
             if (TIC) begin //Si TIC es 1, se revisa si el proceso está completado
                 if (COMPLETED) begin
                     LEDX <= ~ledx_a;
+                    SIGN <= 1'b0;
                     if (ledx_a) begin //Se determinan los valores de los LEDs basados en las comparaciones
                         SIGN <= ~XREG[7];
                     end
