@@ -6,9 +6,12 @@ module tamagotchi_fsm (
     input wire btn_diversion,
     input wire btn_reset,
     input wire btn_test,
-    input wire clk,
+    input wire clk, // Reloj de entrada de 50 MHz
     output reg [3:0] display_out,
-    output reg [6:0] seg_display  // Salida para la regleta de 7 segmentos
+    output reg [6:0] seg_display,  // Salida para la regleta de 7 segmentos
+      
+    output reg clk_out,       // Reloj de salida de 6.67 Hz
+    input wire reset
 );
 
     // Definición de niveles separados para cada estado
@@ -20,6 +23,12 @@ module tamagotchi_fsm (
     reg [7:0] timer_salud, timer_energia, timer_hambre, timer_diversion; // Contadores de tiempo
     reg [1:0] btn_press_count; // Contador de presiones del botón
     reg test_mode; // Señal interna para modo de prueba
+
+    // Parámetro para contar los ciclos del reloj de entrada
+    reg [22:0] counter;      // Suficientemente grande para contar hasta 7,500,000
+    //parameter DIVISOR = 7500000;
+    //parameter DIVISOR = 3750000;
+    parameter DIVISOR = 1875000;
 
     // Inicialización de valores
 	
@@ -38,9 +47,22 @@ module tamagotchi_fsm (
         seg_display <= 7'b0000000; // Inicializar la regleta de 7 segmentos en 0
     end
 	 
-
-    // Manejo del reset
-    always @(posedge clk) begin
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            counter <= 0;
+            clk_out <= 0;
+        end else begin
+            if (counter == DIVISOR-1) begin
+                counter <= 0;
+                clk_out <= ~clk_out;  // Invierte la señal para generar el nuevo clk
+            end else begin
+                counter <= counter + 1;
+            end
+        end
+    end
+    
+    always @(posedge clk_out) begin
+        // Manejo del reset
         if (btn_reset) begin // 5 segundos en binario es 101
             nivel_salud <= 4'b1000;   // Reiniciar nivel de Salud a 8
             nivel_energia <= 4'b1000; // Reiniciar nivel de Energía a 8
@@ -246,5 +268,4 @@ module tamagotchi_fsm (
     endfunction
 
 endmodule
-
 

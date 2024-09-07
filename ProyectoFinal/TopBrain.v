@@ -33,6 +33,7 @@ module TopBrain (
     wire btn_test;
     wire btn_energia; //Arreglar problemas con MPU6050
     wire ledsign;
+    wire clk;
     
     wire sens_ult;
     wire [19:0] s0;
@@ -80,7 +81,9 @@ module TopBrain (
         .btn_test(btn_test),
         .clk(clk),
         .display_out(display_out),
-        .seg_display(seg_display)
+        .seg_display(seg_display),
+        .reset(rst),
+        .clk_out(clk_out)
     );
 
     bucleEspera U_bucleEspera(
