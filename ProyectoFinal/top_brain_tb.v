@@ -71,6 +71,7 @@ module top_brain_tb;
 initial begin
       // Inicialización de señales
         btn_heal = 0;
+        
 
         rst = 0;
 

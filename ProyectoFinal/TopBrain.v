@@ -69,6 +69,7 @@ module TopBrain (
         .LEDX(LEDX),
         .LEDSIGN(LEDSIGN)
     );
+    
 
     tamagotchi_fsm #(.DIVISOR(20000)) U_tamagotchi_fsm (
         .btn_salud(btn_salud),

@@ -184,6 +184,7 @@ module tamagotchi_fsm (
                     nivel_energia <= nivel_energia - 1; // Aumentar nivel Energía
                 end
             end
+            
             if (btn_energia && ledsign) begin
                 display_out[1:0] <= 2'b01; // Mostrar Energía
                 if (nivel_energia < 4'b1010 && display_out == 3'b001) begin
