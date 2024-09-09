@@ -211,24 +211,24 @@ module tamagotchi_fsm (
 
     // Manejo del decremento de los niveles en modo normal, con niveles separados
         if (!test_mode) begin
-            if (timer_salud == 120) begin
+		if (timer_salud == 15600) begin
                 nivel_salud <= nivel_salud - 1;
                 timer_salud <= 0;
             end else timer_salud <= timer_salud + 1;
 
             if(ledsign == 0)begin
-                if (timer_energia == 100) begin
+		    if (timer_energia == 1300) begin
                 nivel_energia <= nivel_energia + 1;
                 timer_energia <= 0;
                 end else timer_energia <= timer_energia + 1;
             end 
 
-            if (timer_hambre == 70) begin
+		if (timer_hambre == 910) begin
                 nivel_hambre <= nivel_hambre - 1;
                 timer_hambre <= 0;
             end else timer_hambre <= timer_hambre + 1;
 
-            if (timer_diversion == 50) begin
+		if (timer_diversion == 650) begin
                 nivel_diversion <= nivel_diversion - 1;
                 timer_diversion <= 0;
             end else timer_diversion <= timer_diversion + 1;
