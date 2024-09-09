@@ -63,7 +63,7 @@ module top_brain_tb;
     );
 
 initial begin
-        rst = 0;
+        
         clk = 0;
         forever #10 clk = ~clk;
     end
@@ -73,20 +73,19 @@ initial begin
         btn_heal = 0;
 
         // Espera 100 ns
-     
-        #100000000
+        #1000
         // Activa btn_heal durante 60000 ciclos de reloj
         btn_heal = 1;
-        #100000000;
+        #1000;
         // Desactiva btn_heal
         btn_heal = 0;
-        #100000000;
+        #1000;
         // Activa btn_ali durante 60000 ciclos de reloj
         btn_heal = 1;
-        #100000000;
+        #1000;
         // Desactiva btn_ali
         btn_heal = 0;
-        #100000000 $finish;
+        #100000 $finish;
     end
 
  initial begin
@@ -94,9 +93,8 @@ initial begin
         $dumpfile("top_brain_tb.vcd");
         $dumpvars(-1, UUT);
 
-        //Inicializar variables
-        //#10000000
-        //$finish;
+        // #10000000
+        // $finish;
     end
 
 
