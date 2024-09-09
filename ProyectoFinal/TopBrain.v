@@ -23,7 +23,8 @@ module TopBrain (
     output [7:0] data,
     output enable,
     //7_seg
-    output [6:0] seg_display
+    output [6:0] seg_display,
+    output an
 );
 
     //Conexiones internas
@@ -38,7 +39,7 @@ module TopBrain (
     wire sens_ult;
     wire [19:0] s0;
 
-    wire [2:0] display_out;
+    wire [3:0] display_out;
 
     topBtn U_topBtn (
         .clk(clk),
@@ -59,7 +60,7 @@ module TopBrain (
         .sens_ult(sens_ult),
         .led1(led1),
         .s0(s0)
-        );
+    );
 
     // Instanciar Top demo_mpu6050
     DEMO_MPU6050 U_DEMO_MPU6050 (
@@ -83,10 +84,11 @@ module TopBrain (
         .display_out(display_out),
         .seg_display(seg_display),
         .reset(rst),
-        .clk_out(clk_out)
+        .clk_out(clk_out),
+        .an(an)
     );
 
-    bucleEspera U_bucleEspera(
+    bucleEspera #(.num_commands(3), .num_data_all(64), .char_data(8), .num_cgram_addrs(8), .COUNT_MAX(800000), .WAIT_TIME(50)) U_bucleEspera(
         .clk(clk),
         .reset(rst),
         .ready_i(ready_i),
@@ -95,7 +97,6 @@ module TopBrain (
         .rw(rw),
         .enable(enable),
         .data(data)
-
     );
 
    

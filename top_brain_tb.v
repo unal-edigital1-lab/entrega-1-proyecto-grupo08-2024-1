@@ -11,6 +11,7 @@
 `include "Botones/btn/btnRT.v"
 `include "Botones/btn/topBtn.v"
 `include "TopBrain.v"
+`timescale 1ns / 1ps
 
 module top_brain_tb;
 

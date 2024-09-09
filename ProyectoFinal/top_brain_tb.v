@@ -1,3 +1,20 @@
+`include "ProyectoFinal/TopBrain.v"
+`include "ProyectoFinal/FSM.v"
+`include "ProyectoFinal/bucleEspera.v"
+`include "ProyectoFinal/btnAntirebote.v"
+`include "ProyectoFinal/btnRT.v"
+`include "ProyectoFinal/topBtn.v"
+`include "ProyectoFinal/compare.v"
+`include "ProyectoFinal/demo_mpu6050.v"
+`include "ProyectoFinal/mpu6050.v"
+`include "ProyectoFinal/i2cmaster.v"
+`include "ProyectoFinal/top.v"
+`include "ProyectoFinal/ControlLed.v"
+`include "ProyectoFinal/ContadorConTrigger.v"
+`include "ProyectoFinal/ContadorConEcho.v"
+
+`timescale 1ns / 1ps
+
 module top_brain_tb;
 
     //Inputs son reg / Outputs son wire / Bidireccionales son wire
@@ -14,6 +31,13 @@ module top_brain_tb;
     reg btn_ali;
     reg btn_RST;
     reg btn_TST;
+    reg ready_i;
+    wire rs;
+    wire rw;
+    wire [7:0] data;
+    wire enable;
+    wire [6:0] seg_display;
+    wire an;
 
     TopBrain UUT (
         .clk(clk),
@@ -28,7 +52,14 @@ module top_brain_tb;
         .btn_heal(btn_heal),
         .btn_ali(btn_ali),
         .btn_RST(btn_RST),
-        .btn_TST(btn_TST)
+        .btn_TST(btn_TST),
+        .ready_i(ready_i),
+        .rs(rs),
+        .rw(rw),
+        .data(data),
+        .enable(enable),
+        .seg_display(seg_display),
+        .an(an)
     );
 
 initial begin
@@ -118,6 +149,8 @@ initial begin
         // Finaliza la simulación
         #100 $finish;
     end
+
+
 
 
  initial begin
