@@ -29,7 +29,14 @@ module tamagotchi_fsm (
     reg [22:0] counter;      // Suficientemente grande para contar hasta 7,500,000
     //parameter DIVISOR = 7500000;
     //parameter DIVISOR = 3750000;
-    parameter DIVISOR = 1875000;
+    //parameter DIVISOR = 1875000;
+    //parameter DIVISOR = 937500;
+    //parametrer DIVISOR = 468750;
+    //parameter DIVISOR = 234375;
+    //parameter DIVISOR = 117187;
+    //parameter DIVISOR = 58593;
+    parameter DIVISOR = 20000;
+
 
     // Inicialización de valores
 	
@@ -182,7 +189,7 @@ module tamagotchi_fsm (
                 if (nivel_energia < 4'b1010 && display_out == 3'b001) begin
                     nivel_energia <= nivel_energia - 1; // Aumentar nivel Energía
                 end
-            end
+            end*/
             if (btn_hambre) begin
                 display_out[1:0] <= 2'b10; // Mostrar Hambre
                 if (nivel_hambre < 4'b1010 && display_out == 3'b110) begin
@@ -194,7 +201,7 @@ module tamagotchi_fsm (
                 if (nivel_hambre < 4'b1010 && display_out == 3'b010) begin
                     nivel_hambre <= nivel_hambre + 1; // Aumentar nivel Hambre
                 end
-            end
+            end/*
             if (btn_diversion) begin
                 display_out[1:0] <= 2'b11; // Mostrar Diversión
                 if (nivel_diversion < 4'b1010 && display_out == 3'b111) begin
@@ -211,24 +218,24 @@ module tamagotchi_fsm (
 
     // Manejo del decremento de los niveles en modo normal, con niveles separados
         if (!test_mode) begin
-		if (timer_salud == 15600) begin
+		if (timer_salud == 12000) begin
                 nivel_salud <= nivel_salud - 1;
                 timer_salud <= 0;
             end else timer_salud <= timer_salud + 1;
 
-            if(ledsign == 0)begin
-		    if (timer_energia == 1300) begin
-                nivel_energia <= nivel_energia + 1;
-                timer_energia <= 0;
+            if(ledsign)begin
+		        if (timer_energia == 12000) begin
+                    nivel_energia <= nivel_energia + 1;
+                    timer_energia <= 0;
                 end else timer_energia <= timer_energia + 1;
-            end 
+            end
 
-		if (timer_hambre == 910) begin
+		if (timer_hambre == 12000) begin
                 nivel_hambre <= nivel_hambre - 1;
                 timer_hambre <= 0;
             end else timer_hambre <= timer_hambre + 1;
 
-		if (timer_diversion == 650) begin
+		if (timer_diversion == 12000) begin
                 nivel_diversion <= nivel_diversion - 1;
                 timer_diversion <= 0;
             end else timer_diversion <= timer_diversion + 1;

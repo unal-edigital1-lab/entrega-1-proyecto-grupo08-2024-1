@@ -1,4 +1,4 @@
-`include "ProyectoFinal/TopBrain.v"
+/*`include "ProyectoFinal/TopBrain.v"
 `include "ProyectoFinal/FSM.v"
 `include "ProyectoFinal/bucleEspera.v"
 `include "ProyectoFinal/btnAntirebote.v"
@@ -11,7 +11,7 @@
 `include "ProyectoFinal/top.v"
 `include "ProyectoFinal/ControlLed.v"
 `include "ProyectoFinal/ContadorConTrigger.v"
-`include "ProyectoFinal/ContadorConEcho.v"
+`include "ProyectoFinal/ContadorConEcho.v"*/
 
 `timescale 1ns / 1ps
 
@@ -62,39 +62,59 @@ module top_brain_tb;
         .an(an)
     );
 
-initial begin
-        
+// Generación del reloj
+    initial begin
         clk = 0;
-        forever #10 clk = ~clk;
+        forever #10 clk = ~clk; // Periodo de 10 ns
     end
 
 initial begin
-        // Inicializa las señales
+      // Inicialización de señales
         btn_heal = 0;
 
-        // Espera 100 ns
-        #1000
-        // Activa btn_heal durante 60000 ciclos de reloj
-        btn_heal = 1;
-        #1000;
-        // Desactiva btn_heal
-        btn_heal = 0;
-        #1000;
-        // Activa btn_ali durante 60000 ciclos de reloj
-        btn_heal = 1;
-        #1000;
-        // Desactiva btn_ali
-        btn_heal = 0;
-        #100000 $finish;
+        rst = 0;
+
+        // Esperar para estabilizar
+        #100 rst = 1;
+        #1000 rst = 0;
+
+
+        #1000000 btn_heal = 1;
+        #1000000 btn_heal = 0;  // Liberar el botón
+
+
+        #1000000 btn_heal = 1;
+        #1000000 btn_heal = 0;  // Liberar el botón
+        #1000000;
+
+        #1000000 btn_heal = 1;
+        #1000000 btn_heal = 0;  // Liberar el botón
+        #1000000;
+
+        #1000000 btn_heal = 1;
+        #1000000 btn_heal = 0;  // Liberar el botón
+        #1000000;
+        #1000000;
+        #1000000;
+
+        
+
+        // Finalizar simulación
+        $finish;
     end
+
+
+
+
 
  initial begin
 
         $dumpfile("top_brain_tb.vcd");
         $dumpvars(-1, UUT);
 
-        // #10000000
-        // $finish;
+        //Inicializar variables
+        #10000000
+        $finish;
     end
 
 
