@@ -2,8 +2,8 @@ module bucleEspera #(parameter num_commands = 3,
                                       num_data_all = 64,  
                                       char_data = 8, 
                                       num_cgram_addrs = 8,
-                                      COUNT_MAX = 800000,
-												  WAIT_TIME = 50)(
+                                      COUNT_MAX = 200000,
+												  WAIT_TIME = 25)(
     input clk,            
     input reset,          
     input ready_i,
@@ -102,7 +102,6 @@ integer i;
 
 reg [1:0] select_fig1;
 reg [1:0] select_fig2; 
-
 initial begin
     fsm_state <= IDLE;
     data <= 'b0;
@@ -124,19 +123,18 @@ initial begin
 
     create_char_task <= SET_CGRAM_ADDR;
 	 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoFelizF.txt", gatoFeliz);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoTristeF.txt", gatoTriste);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoNeutroF.txt", gatoNeutro);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ComidaF.txt", alimentacion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EnergiaF.txt", energia);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/SaludF.txt", salud);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/DiversionF.txt", diversion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EstadoNeutroF.txt", nState);//
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoFelizF.txt", gatoFeliz);//
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoTristeF.txt", gatoTriste);//
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoNeutroF.txt", gatoNeutro);//
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ComidaF.txt", alimentacion);// 
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/EnergiaF.txt", energia);// 
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/SaludF.txt", salud);// 
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/DiversionF.txt", diversion);// 
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/EstadoNeutroF.txt", nState);//
 			
 	config_memory[0] <= LINES2_MATRIX5x8_MODE8bit;
 	config_memory[1] <= DISPON_CURSOROFF;
 	config_memory[2] <= CLEAR_DISPLAY;
-
     cgram_addrs[0] <= CGRAM_ADDR0;
     cgram_addrs[1] <= CGRAM_ADDR1;
     cgram_addrs[2] <= CGRAM_ADDR2;
@@ -214,14 +212,14 @@ always @(posedge clk_16ms) begin
 		  wait_done <= 1'b0;
 		  //enable <= 'b0;
 		  
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoFelizF.txt", gatoFeliz);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoTristeF.txt", gatoTriste);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoNeutroF.txt", gatoNeutro);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ComidaF.txt", alimentacion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EnergiaF.txt", energia);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/SaludF.txt", salud);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/DiversionF.txt", diversion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EstadoNeutroF.txt", nState);// 
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoFelizF.txt", gatoFeliz);//
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoTristeF.txt", gatoTriste);//
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoNeutroF.txt", gatoNeutro);//
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ComidaF.txt", alimentacion);// 
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/EnergiaF.txt", energia);// 
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/SaludF.txt", salud);// 
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/DiversionF.txt", diversion);// 
+			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/EstadoNeutroF.txt", nState);//
     end else begin
         case (next)
             IDLE: begin

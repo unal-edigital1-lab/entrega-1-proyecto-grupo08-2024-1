@@ -7,7 +7,7 @@ module top (
   output sens_ult
 );
 
-  wire clk_out;
+  wire clk_out1;
   wire [19:0] s0;
   // ContadorConTrigger
   ContadorConTrigger ContadorConTrigger_i0 (
@@ -18,13 +18,13 @@ module top (
   ContadorConEcho ContadorConEcho_i1 (
     .clk( clk ),
     .echo( echo ),
-	 .reset(reset),
-	 .clk_out(clk_out),
-    .contador2( s0 )
+	  .reset(reset),
+	  .clk_out1(clk_out1),
+    .contador2(s0)
   );
   // ControlLed
   ControlLed ControlLed_i2 (
-    .contador2( s0 ),
+    .contador2(s0),
     .led1( led1 ),
     .sens_ult( sens_ult )
   );

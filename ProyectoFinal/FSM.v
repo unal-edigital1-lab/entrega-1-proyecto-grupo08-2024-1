@@ -170,7 +170,7 @@ module tamagotchi_fsm (
                 if (nivel_salud < 4'b1010 && display_out == 4'b0100) begin
                     nivel_salud <= nivel_salud + 1; // Aumentar nivel Salud
                 end
-            end
+            end/*
             if (btn_energia && ledsign) begin
                 display_out[1:0] <= 2'b01; // Mostrar Energía
                 if (nivel_energia < 4'b1010 && display_out == 3'b101) begin
@@ -206,7 +206,7 @@ module tamagotchi_fsm (
                 if (nivel_diversion < 4'b1010 && display_out == 3'b011) begin
                     nivel_diversion <= nivel_diversion + 1; // Aumentar nivel Diversión
                 end
-            end
+            end*/
         end
 
     // Manejo del decremento de los niveles en modo normal, con niveles separados

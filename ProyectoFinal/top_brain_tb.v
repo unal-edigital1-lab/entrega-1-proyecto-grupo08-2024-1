@@ -71,87 +71,23 @@ initial begin
 initial begin
         // Inicializa las señales
         btn_heal = 0;
-        btn_ali = 0;
-        btn_RST = 0;
-        btn_TST = 0;
+
         // Espera 100 ns
-        #100;
-        // Activa btn_RST
-        btn_RST = 1;
-        #200;
-        // Desactiva btn_RST
-        btn_RST = 0;
-        #200;
-        btn_RST = 1;
-        #60000
-        btn_RST = 0;
-        #200;
-        // Activa btn_TST
-        btn_TST = 1;
-        #200;
-        // Desactiva btn_TST
-        btn_TST = 0;
-        #200;
-        btn_TST = 1;
-        #60000
-        btn_TST = 0;
-        #200;
+     
+        #100000000
         // Activa btn_heal durante 60000 ciclos de reloj
         btn_heal = 1;
-        #60000;
+        #100000000;
         // Desactiva btn_heal
         btn_heal = 0;
-        #200;
+        #100000000;
         // Activa btn_ali durante 60000 ciclos de reloj
-        btn_ali = 1;
-        #60000;
+        btn_heal = 1;
+        #100000000;
         // Desactiva btn_ali
-        btn_ali = 0;
-        #200;
-        #60000 $finish;
+        btn_heal = 0;
+        #100000000 $finish;
     end
-
-initial begin
-        // Inicializa las señales
-        echo = 0;
-        // Espera 10 us del trig
-        #10000;
-        // Espera 25 us de los pulsos enviados por el ultrasonido
-        #25000;
-        // Activa echo
-        echo = 1;
-        #350000;
-        // Desactiva echo
-        echo = 0;
-        // Espera 10 us del trig
-        #10000;
-        // Espera 25 us de los pulsos enviados por el ultrasonido
-        #25000;
-        // Activa echo de nuevo
-        echo = 1;
-        #50000;
-        echo = 0;
-        // Espera 10 us del trig
-        #10000;
-        // Espera 25 us de los pulsos enviados por el ultrasonido
-        #25000;
-        echo = 1;
-        #200000;
-        echo = 0;
-        // Espera 10 us del trig
-        #10000;
-        // Espera 25 us de los pulsos enviados por el ultrasonido
-        #25000;
-        echo = 1;
-        #100000;
-        echo = 0;
-        #50000;
-        // Finaliza la simulación
-        #100 $finish;
-    end
-
-
-
 
  initial begin
 
@@ -159,8 +95,8 @@ initial begin
         $dumpvars(-1, UUT);
 
         //Inicializar variables
-        #10000000
-        $finish;
+        //#10000000
+        //$finish;
     end
 
 

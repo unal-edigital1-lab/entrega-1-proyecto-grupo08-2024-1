@@ -37,7 +37,6 @@ module TopBrain (
     wire clk_out;
     
     wire sens_ult;
-    wire [19:0] s0;
 
     wire [3:0] display_out;
 
@@ -58,8 +57,7 @@ module TopBrain (
         .echo(echo),
         .trig(trig),
         .sens_ult(sens_ult),
-        .led1(led1),
-        .s0(s0)
+        .led1(led1)
     );
 
     // Instanciar Top demo_mpu6050
@@ -72,9 +70,9 @@ module TopBrain (
         .LEDSIGN(LEDSIGN)
     );
 
-    tamagotchi_fsm U_tamagotchi_fsm (
+    tamagotchi_fsm #(.DIVISOR(1875000)) U_tamagotchi_fsm (
         .btn_salud(btn_salud),
-        .btn_energia(LEDX), //Arreglaaaar
+        .btn_energia(LEDX), 
         .ledsign(LEDSIGN),
         .btn_hambre(btn_hambre),
         .btn_diversion(sens_ult),
@@ -88,7 +86,7 @@ module TopBrain (
         .an(an)
     );
 
-    bucleEspera #(.num_commands(3), .num_data_all(64), .char_data(8), .num_cgram_addrs(8), .COUNT_MAX(800000), .WAIT_TIME(50)) U_bucleEspera(
+    bucleEspera #(.num_commands(3), .num_data_all(64), .char_data(8), .num_cgram_addrs(8), .COUNT_MAX(200000), .WAIT_TIME(25)) U_bucleEspera(
         .clk(clk),
         .reset(rst),
         .ready_i(ready_i),
