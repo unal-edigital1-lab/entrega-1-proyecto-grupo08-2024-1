@@ -4,7 +4,7 @@ module btnRT (
     output reg boton_out
 );
 
-    localparam COUNT_LIMIT = 2500; // 50000 ns = 50 us
+    localparam COUNT_LIMIT = 250000000; // 50000 ns = 50 us
 
     reg [$clog2(COUNT_LIMIT)-1:0] counter; // contador con bits de COUNT_LIMIT
 
