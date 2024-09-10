@@ -70,7 +70,7 @@ module TopBrain (
     );
     
 
-    tamagotchi_fsm #(.DIVISOR(20000)) U_tamagotchi_fsm (
+    tamagotchi_fsm #(.DIVISOR(2500000)) U_tamagotchi_fsm (
         .btn_salud(btn_salud),
         .btn_energia(LEDX), 
         .ledsign(LEDSIGN),
@@ -81,7 +81,6 @@ module TopBrain (
         .clk(clk),
         .display_out(display_out),
         .seg_display(seg_display),
-        .reset(rst),
         .clk_out(clk_out),
         .an(an)
     );

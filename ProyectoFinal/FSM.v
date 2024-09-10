@@ -11,8 +11,6 @@ module tamagotchi_fsm (
     output reg [6:0] seg_display,  // Salida para la regleta de 7 segmentos
       
     output reg clk_out,       // Reloj de salida de 6.67 Hz
-    input wire reset,
-    output reg an
 );
 
     // Definición de niveles separados para cada estado
@@ -29,14 +27,7 @@ module tamagotchi_fsm (
     reg [22:0] counter;      // Suficientemente grande para contar hasta 7,500,000
     //parameter DIVISOR = 7500000;
     //parameter DIVISOR = 3750000;
-    //parameter DIVISOR = 1875000;
-    //parameter DIVISOR = 937500;
-    //parametrer DIVISOR = 468750;
-    //parameter DIVISOR = 234375;
-    //parameter DIVISOR = 117187;
-    //parameter DIVISOR = 58593;
-    parameter DIVISOR = 20000;
-
+    parameter DIVISOR = 2500000;
 
     // Inicialización de valores
 	
@@ -54,20 +45,17 @@ module tamagotchi_fsm (
         test_mode <= 1'b0; // Iniciar en modo normal
         seg_display <= 7'b0000000; // Inicializar la regleta de 7 segmentos en 0
 
-        an <= 0;
+        counter = 0;
+        clk_out = 0;
     end
 	 
-    always @(posedge clk or posedge reset) begin
-        if (reset) begin
-            counter <= 0;
-            clk_out <= 0;
+    
+    always @(posedge clk) begin
+        if (contador == (DIVISOR - 1)) begin
+            contador <= 0;
+            clk_out <= ~clk_out; // Invierte el reloj de salida
         end else begin
-            if (counter == DIVISOR-1) begin
-                counter <= 0;
-                clk_out <= ~clk_out;  // Invierte la señal para generar el nuevo clk
-            end else begin
-                counter <= counter + 1;
-            end
+            contador <= contador + 1;
         end
     end
     
@@ -177,20 +165,19 @@ module tamagotchi_fsm (
                 if (nivel_salud < 4'b1010 && display_out == 4'b0100) begin
                     nivel_salud <= nivel_salud + 1; // Aumentar nivel Salud
                 end
-            end/*
+            end
             if (btn_energia && ledsign) begin
                 display_out[1:0] <= 2'b01; // Mostrar Energía
                 if (nivel_energia < 4'b1010 && display_out == 3'b101) begin
                     nivel_energia <= nivel_energia - 1; // Aumentar nivel Energía
                 end
             end
-
             if (btn_energia && ledsign) begin
                 display_out[1:0] <= 2'b01; // Mostrar Energía
                 if (nivel_energia < 4'b1010 && display_out == 3'b001) begin
                     nivel_energia <= nivel_energia - 1; // Aumentar nivel Energía
                 end
-            end*/
+            end
             if (btn_hambre) begin
                 display_out[1:0] <= 2'b10; // Mostrar Hambre
                 if (nivel_hambre < 4'b1010 && display_out == 3'b110) begin
@@ -202,7 +189,7 @@ module tamagotchi_fsm (
                 if (nivel_hambre < 4'b1010 && display_out == 3'b010) begin
                     nivel_hambre <= nivel_hambre + 1; // Aumentar nivel Hambre
                 end
-            end/*
+            end
             if (btn_diversion) begin
                 display_out[1:0] <= 2'b11; // Mostrar Diversión
                 if (nivel_diversion < 4'b1010 && display_out == 3'b111) begin
@@ -214,29 +201,29 @@ module tamagotchi_fsm (
                 if (nivel_diversion < 4'b1010 && display_out == 3'b011) begin
                     nivel_diversion <= nivel_diversion + 1; // Aumentar nivel Diversión
                 end
-            end*/
+            end
         end
 
     // Manejo del decremento de los niveles en modo normal, con niveles separados
         if (!test_mode) begin
-		if (timer_salud == 12000) begin
+		if (timer_salud == 1560) begin
                 nivel_salud <= nivel_salud - 1;
                 timer_salud <= 0;
             end else timer_salud <= timer_salud + 1;
 
-            if(ledsign)begin
-		        if (timer_energia == 12000) begin
-                    nivel_energia <= nivel_energia + 1;
-                    timer_energia <= 0;
+            if(ledsign == 0)begin
+		    if (timer_energia == 1300) begin
+                nivel_energia <= nivel_energia + 1;
+                timer_energia <= 0;
                 end else timer_energia <= timer_energia + 1;
-            end
+            end 
 
-		if (timer_hambre == 12000) begin
+		if (timer_hambre == 910) begin
                 nivel_hambre <= nivel_hambre - 1;
                 timer_hambre <= 0;
             end else timer_hambre <= timer_hambre + 1;
 
-		if (timer_diversion == 12000) begin
+		if (timer_diversion == 650) begin
                 nivel_diversion <= nivel_diversion - 1;
                 timer_diversion <= 0;
             end else timer_diversion <= timer_diversion + 1;
@@ -263,17 +250,17 @@ module tamagotchi_fsm (
     function [6:0] get_seg_display;
         input [3:0] level;
         case (level)
-            4'b0000: get_seg_display = 7'b1000000; // 0
-            4'b0001: get_seg_display = 7'b1111001; // 1
-            4'b0010: get_seg_display = 7'b0100100; // 2
-            4'b0011: get_seg_display = 7'b0110000; // 3
-            4'b0100: get_seg_display = 7'b0011001; // 4
-            4'b0101: get_seg_display = 7'b0010010; // 5
-            4'b0110: get_seg_display = 7'b0000010; // 6
-            4'b0111: get_seg_display = 7'b1111000; // 7
-            4'b1000: get_seg_display = 7'b0000000; // 8
-            4'b1001: get_seg_display = 7'b0010000; // 9
-            //4'b1010: get_seg_display = 7'b1110111; // A (utilizado para representar 10)
+            4'b0000: get_seg_display = 7'b0111111; // 0
+            4'b0001: get_seg_display = 7'b0000110; // 1
+            4'b0010: get_seg_display = 7'b1011011; // 2
+            4'b0011: get_seg_display = 7'b1001111; // 3
+            4'b0100: get_seg_display = 7'b1100110; // 4
+            4'b0101: get_seg_display = 7'b1101101; // 5
+            4'b0110: get_seg_display = 7'b1111101; // 6
+            4'b0111: get_seg_display = 7'b0000111; // 7
+            4'b1000: get_seg_display = 7'b1111111; // 8
+            4'b1001: get_seg_display = 7'b1101111; // 9
+            4'b1010: get_seg_display = 7'b1110111; // A (utilizado para representar 10)
             default: get_seg_display = 7'b0000000; // Apagar todos los segmentos
         endcase
     endfunction

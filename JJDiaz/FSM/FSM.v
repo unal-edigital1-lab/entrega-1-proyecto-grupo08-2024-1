@@ -11,7 +11,6 @@ module tamagotchi_fsm (
     output reg [6:0] seg_display,  // Salida para la regleta de 7 segmentos
       
     output reg clk_out,       // Reloj de salida de 6.67 Hz
-    input wire reset
 );
 
     // Definición de niveles separados para cada estado
@@ -28,7 +27,7 @@ module tamagotchi_fsm (
     reg [22:0] counter;      // Suficientemente grande para contar hasta 7,500,000
     //parameter DIVISOR = 7500000;
     //parameter DIVISOR = 3750000;
-    parameter DIVISOR = 1875000;
+    parameter DIVISOR = 2500000;
 
     // Inicialización de valores
 	
@@ -45,19 +44,18 @@ module tamagotchi_fsm (
         btn_press_count <= 2'b00; // Contador de presiones del botón
         test_mode <= 1'b0; // Iniciar en modo normal
         seg_display <= 7'b0000000; // Inicializar la regleta de 7 segmentos en 0
+
+        counter = 0;
+        clk_out = 0;
     end
 	 
-    always @(posedge clk or posedge reset) begin
-        if (reset) begin
-            counter <= 0;
-            clk_out <= 0;
+    
+    always @(posedge clk) begin
+        if (contador == (DIVISOR - 1)) begin
+            contador <= 0;
+            clk_out <= ~clk_out; // Invierte el reloj de salida
         end else begin
-            if (counter == DIVISOR-1) begin
-                counter <= 0;
-                clk_out <= ~clk_out;  // Invierte la señal para generar el nuevo clk
-            end else begin
-                counter <= counter + 1;
-            end
+            contador <= contador + 1;
         end
     end
     
