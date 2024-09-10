@@ -1,30 +1,29 @@
-module ControlLed(
-    input wire [19:0] contador2,	 
-    output reg led1,   
-    output reg sens_ult
+module ControlLed (
+    input clk,
+    input [31:0] echo_duration,
+    output reg aux
 );
 
 
-
-parameter L1=20'd70000;  //30cm             1400000 ns
-parameter L1m=20'd50000; //Para entre 10cm    1000000 ns
-parameter L3=20'd30000; //Para entre 2cm       600000 ns
-parameter L3m=20'd3000; //Para 1cm             60000 ns
-
+// 29 us/cm 
+// 20 ns = 1 ciclo de reloj = 0,02 us
+// 1 us = 1000 ns
+// 2cm => 58us = 58000 ns = 2900 cR; 10cm => 290us = 290000ns = 14500 cR; 5cm => 145us = 145000 ns = 7250 cR
 
 
-always @(contador2) 
-	begin
+parameter DISTANCE_2CM = 14'd2900; // Duración del pulso para 2cm
+parameter DISTANCE_5CM = 14'd14500; // Duración del pulso para 5cm
 
-		if (contador2 > L3m && contador2<L3)
-			begin
-				 sens_ult <= 0;
-			end
-		else if (contador2 > L1m && contador2<L1)
-			begin
-				sens_ult <= 1;
-			end
+always @(clk) begin
+    if (echo_duration > DISTANCE_2CM && echo_duration < DISTANCE_5CM) begin
+        aux <= 1; // Enciende el LED si la distancia está entre 2cm y 5cm
+        
 		
-		led1 <= ~sens_ult;
-	end
+    end else if (echo_duration > DISTANCE_5CM || echo_duration < DISTANCE_2CM) begin
+        aux <= 0; // Apaga el LED en cualquier otro caso
+		
+    end
+
+end
+
 endmodule

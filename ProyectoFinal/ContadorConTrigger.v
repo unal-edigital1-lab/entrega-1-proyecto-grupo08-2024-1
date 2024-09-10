@@ -1,18 +1,18 @@
 module ContadorConTrigger(
-    input wire clk,          
-    output reg trigger       
+    input clk,
+    output reg trig
 );
 
-reg [19:0] contador1;        
-parameter limite = 20'd500000;     
+parameter TRIG_PULSE_WIDTH = 10'd500; // 10us = 10000ns = 500 ciclos de reloj
+reg [31:0] counter;
 
 always @(posedge clk) begin
-    if (contador1 < limite) begin
-        contador1 <= contador1 + 1;
-        trigger <= 1;
+    if (counter < TRIG_PULSE_WIDTH) begin
+        counter <= counter + 1;
+        trig <= 1;
     end else begin
-        contador1 = 0;
-        trigger = 0;
+        counter <= 0;
+        trig <= 0;
     end
 end
 

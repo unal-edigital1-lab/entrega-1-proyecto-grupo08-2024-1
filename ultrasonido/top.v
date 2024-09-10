@@ -1,31 +1,38 @@
 module top (
-  input clk,
-  input echo,
-  input reset,
-  output trig,
-  output led1,
-  output sens_ult
+    input clk,
+    input echo,
+    output trig,
+	  output sens_ult,
+    output led
 );
 
-  wire clk_out;
-  wire [19:0] s0;
-  // ContadorConTrigger
-  ContadorConTrigger ContadorConTrigger_i0 (
-    .clk( clk ),
-    .trigger( trig )
-  );
-  // ContadorConEcho
-  ContadorConEcho ContadorConEcho_i1 (
-    .clk( clk ),
-    .echo( echo ),
-	 .reset(reset),
-	 .clk_out(clk_out),
-    .contador2( s0 )
-  );
-  // ControlLed
-  ControlLed ControlLed_i2 (
-    .contador2( s0 ),
-    .led1( led1 ),
-    .sens_ult( sens_ult )
-  );
+
+wire [31:0] echo_duration;
+wire aux;
+
+ContadorConTrigger U_trigger(
+    .clk(clk), 
+    .trig(trig)
+    );
+
+
+ContadorConEcho U_echo(
+    .clk(clk), 
+    .echo(echo), 
+    .echo_duration(echo_duration)
+    );
+
+ControlLed U_led(
+	 .clk(clk),
+    .echo_duration(echo_duration), 
+    .aux(aux)
+    );
+
+Salida U_salida(
+    .clk(clk),
+    .aux(aux),
+    .led(led),
+    .sens_ult(sens_ult)
+    );  
+
 endmodule
