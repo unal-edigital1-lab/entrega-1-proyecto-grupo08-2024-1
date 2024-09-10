@@ -10,7 +10,7 @@ module TopBrain (
     //Ultrasonido
     input echo,
     output trig,
-    output led1,
+    output led,
     // Botones
     input btn_heal,
     input btn_ali,
@@ -56,7 +56,7 @@ module TopBrain (
         .echo(echo),
         .trig(trig),
         .sens_ult(sens_ult),
-        .led1(led1)
+        .led(led)
     );
 
     // Instanciar Top demo_mpu6050
@@ -70,7 +70,7 @@ module TopBrain (
     );
     
 
-    tamagotchi_fsm #(.DIVISOR(2500000)) U_tamagotchi_fsm (
+    tamagotchi_fsm #(.DIVISOR(1000000)) U_tamagotchi_fsm (
         .btn_salud(btn_salud),
         .btn_energia(LEDX), 
         .ledsign(LEDSIGN),

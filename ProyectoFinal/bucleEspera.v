@@ -126,14 +126,14 @@ initial begin
 
     create_char_task <= SET_CGRAM_ADDR;
 	 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoFelizF.txt", gatoFeliz);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoTristeF.txt", gatoTriste);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoNeutroF.txt", gatoNeutro);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ComidaF.txt", alimentacion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EnergiaF.txt", energia);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/SaludF.txt", salud);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/DiversionF.txt", diversion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EstadoNeutroF.txt", nState);//
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoFelizF.txt", gatoFeliz);//
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoTristeF.txt", gatoTriste);//
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoNeutroF.txt", gatoNeutro);//
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ComidaF.txt", alimentacion);// 
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/EnergiaF.txt", energia);// 
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/SaludF.txt", salud);// 
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/DiversionF.txt", diversion);// 
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/EstadoNeutroF.txt", nState);//
 			
 	config_memory[0] <= LINES2_MATRIX5x8_MODE8bit;
 	config_memory[1] <= DISPON_CURSOROFF;
@@ -218,14 +218,14 @@ always @(posedge clk_16ms) begin
 		  wait_done <= 1'b0;
 		  //enable <= 'b0;
 		  
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoFelizF.txt", gatoFeliz);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoTristeF.txt", gatoTriste);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoNeutroF.txt", gatoNeutro);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ComidaF.txt", alimentacion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EnergiaF.txt", energia);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/SaludF.txt", salud);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/DiversionF.txt", diversion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EstadoNeutroF.txt", nState);// 
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoFelizF.txt", gatoFeliz);//
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoTristeF.txt", gatoTriste);//
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoNeutroF.txt", gatoNeutro);//
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ComidaF.txt", alimentacion);// 
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/EnergiaF.txt", energia);// 
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/SaludF.txt", salud);// 
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/DiversionF.txt", diversion);// 
+			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/EstadoNeutroF.txt", nState);// 
     end else begin
         case (next)
             IDLE: begin

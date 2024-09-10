@@ -71,13 +71,17 @@ module top_brain_tb;
 initial begin
       // Inicialización de señales
         btn_heal = 0;
-        
+
+        ready_i = 0;
 
         rst = 0;
 
         // Esperar para estabilizar
         #100 rst = 1;
         #1000 rst = 0;
+
+        #2000 ready_i = 1;
+        #100000 ready_i = 0;   
 
 
         #1000000 btn_heal = 1;
