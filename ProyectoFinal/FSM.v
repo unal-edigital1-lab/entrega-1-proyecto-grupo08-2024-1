@@ -24,7 +24,7 @@ module tamagotchi_fsm (
     reg test_mode; // Señal interna para modo de prueba
 
     // Parámetro para contar los ciclos del reloj de entrada
-    reg [22:0] counter;      // Suficientemente grande para contar hasta 7,500,000
+    reg [22:0] contador;   // Suficientemente grande para contar hasta 7,500,000
     //parameter DIVISOR = 7500000;
     //parameter DIVISOR = 3750000;
     parameter DIVISOR = 2500000;
@@ -43,9 +43,9 @@ module tamagotchi_fsm (
         display_out <= 4'b1000; // Mostrar Neutra y cara feliz por defecto
         btn_press_count <= 2'b00; // Contador de presiones del botón
         test_mode <= 1'b0; // Iniciar en modo normal
-        seg_display <= 7'b0000000; // Inicializar la regleta de 7 segmentos en 0
+        seg_display <= 7'b0100000; // Inicializar la regleta de 7 segmentos en 0
 
-        counter = 0;
+        contador = 0;
         clk_out = 0;
     end
 	 
