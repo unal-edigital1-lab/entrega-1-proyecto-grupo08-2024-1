@@ -24,6 +24,8 @@ ProyectoFinal/db
 ProyectoFinal/incremental_db
 ProyectoFinal/output_files
 ProyectoFinal/simulation
+*.wav
+*.rpt
 *.qsf
 *.qws
 *.bak
