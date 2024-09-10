@@ -20,6 +20,9 @@ lcd_controller/simulation
 *.qws
 *.bak
 
+ProyectoFinal/db
+ProyectoFinal/incremental_db
+
 mpu6050/mpu6050
 
 # User-specific files
