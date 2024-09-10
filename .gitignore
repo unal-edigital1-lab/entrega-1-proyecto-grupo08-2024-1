@@ -22,6 +22,11 @@ lcd_controller/simulation
 
 ProyectoFinal/db
 ProyectoFinal/incremental_db
+ProyectoFinal/output_files
+ProyectoFinal/simulation
+*.qsf
+*.qws
+*.bak
 
 mpu6050/mpu6050
 
