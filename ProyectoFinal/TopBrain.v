@@ -17,7 +17,6 @@ module TopBrain (
     input btn_RST,
     input btn_TST,
     //LCD
-    input ready_i,
     output rs,
     output rw,
     output [7:0] data,
@@ -87,10 +86,9 @@ module TopBrain (
         .an(an)
     );
 
-    bucleEspera #(.num_commands(3), .num_data_all(64), .char_data(8), .num_cgram_addrs(8), .COUNT_MAX(200000), .WAIT_TIME(25)) U_bucleEspera(
+    bucleEspera #(.num_commands(3), .num_data_all(64), .char_data(8), .num_cgram_addrs(8), .COUNT_MAX(100000), .WAIT_TIME(25)) U_bucleEspera(
         .clk(clk),
         .reset(rst),
-        .ready_i(ready_i),
         .select_figures(display_out),
         .rs(rs),
         .rw(rw),

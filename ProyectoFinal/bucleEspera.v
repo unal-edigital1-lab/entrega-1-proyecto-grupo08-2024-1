@@ -2,12 +2,12 @@ module bucleEspera #(parameter num_commands = 3,
                                       num_data_all = 64,  
                                       char_data = 8, 
                                       num_cgram_addrs = 8,
-                                      COUNT_MAX = 200000,
+                                      COUNT_MAX = 100000,
 												  WAIT_TIME = 25)(
     input clk,            
     input reset,          
-    input ready_i,
-	input [3:0] select_figures, //DEBE ESTAR EN LA PRUEBA FINAL
+    //input ready_i,
+	 input [3:0] select_figures, //DEBE ESTAR EN LA PRUEBA FINAL
     output reg rs,        
     output reg rw,
     //output reg enable, //NO ACTIVAR 
@@ -17,13 +17,14 @@ module bucleEspera #(parameter num_commands = 3,
 
 // Definir los estados del controlador
 localparam IDLE = 0;
-localparam INIT_CONFIG = 1;
-localparam CLEAR_COUNTERS0 = 2;
-localparam CREATE_CHARS = 3;
-localparam CLEAR_COUNTERS1 = 4;
-localparam SET_CURSOR_AND_WRITE = 5;
-localparam WAIT = 6;
-localparam SHOW_NOTHING = 7;
+localparam INIT_CONFIG = 1; //1
+localparam CLEAR_COUNTERS0 = 2; //2
+localparam CREATE_CHARS = 3; //3
+localparam CLEAR_COUNTERS1 = 4; //4
+localparam SET_CURSOR_AND_WRITE = 5; //5
+localparam SHOW_NOTHING = 6; //6
+localparam WAIT = 7; //7
+
 
 localparam SET_CGRAM_ADDR = 0;
 localparam WRITE_CHARS = 1;
@@ -102,8 +103,10 @@ integer i;
 
 reg [1:0] select_fig1;
 reg [1:0] select_fig2; 
+
 initial begin
     fsm_state <= IDLE;
+	 //fsm_state <= INIT_CONFIG;
     data <= 'b0;
     command_counter <= 'b0;
     data_counter <= 'b0;
@@ -116,25 +119,26 @@ initial begin
     char_counter <= 'b0;
     done_lcd_write <= 1'b0; 
 	 change <= 'b0;
-	 //select_figures <= 4'b0001; //SOLO PARA PRUEBAS, SE DEBE QUITAR
+	 //select_figures <= 4'b0100; //SOLO PARA PRUEBAS, SE DEBE QUITAR
 	 wait_counter <= 'b0;
 	 wait_done <= 1'b0;
 	 //enable <= 'b0;
 
     create_char_task <= SET_CGRAM_ADDR;
 	 
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoFelizF.txt", gatoFeliz);//
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoTristeF.txt", gatoTriste);//
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoNeutroF.txt", gatoNeutro);//
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ComidaF.txt", alimentacion);// 
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/EnergiaF.txt", energia);// 
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/SaludF.txt", salud);// 
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/DiversionF.txt", diversion);// 
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/EstadoNeutroF.txt", nState);//
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoFelizF.txt", gatoFeliz);//
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoTristeF.txt", gatoTriste);//
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoNeutroF.txt", gatoNeutro);//
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ComidaF.txt", alimentacion);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EnergiaF.txt", energia);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/SaludF.txt", salud);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/DiversionF.txt", diversion);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EstadoNeutroF.txt", nState);//
 			
 	config_memory[0] <= LINES2_MATRIX5x8_MODE8bit;
 	config_memory[1] <= DISPON_CURSOROFF;
 	config_memory[2] <= CLEAR_DISPLAY;
+
     cgram_addrs[0] <= CGRAM_ADDR0;
     cgram_addrs[1] <= CGRAM_ADDR1;
     cgram_addrs[2] <= CGRAM_ADDR2;
@@ -163,6 +167,7 @@ end
 always @(posedge clk_16ms)begin
     if(reset == 0)begin
         fsm_state <= IDLE;
+		  //fsm_state <= INIT_CONFIG;
     end else begin
         fsm_state <= next;
     end
@@ -171,7 +176,7 @@ end
 always @(*) begin
     case(fsm_state)
         IDLE: begin
-            next <= (ready_i)? ((init_config_executed)? CREATE_CHARS : INIT_CONFIG) : IDLE;
+            next <= (init_config_executed)? CREATE_CHARS : INIT_CONFIG;
         end
         INIT_CONFIG: begin 
             next <= (command_counter == num_commands)? CLEAR_COUNTERS0 : INIT_CONFIG;
@@ -194,7 +199,8 @@ always @(*) begin
 			SHOW_NOTHING: begin
 			next <= WAIT;
 			end
-        default: next = IDLE;
+		  default: next = IDLE;
+        //default: next = INIT_CONFIG;
     endcase
 end
 
@@ -212,14 +218,14 @@ always @(posedge clk_16ms) begin
 		  wait_done <= 1'b0;
 		  //enable <= 'b0;
 		  
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoFelizF.txt", gatoFeliz);//
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoTristeF.txt", gatoTriste);//
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/GatoNeutroF.txt", gatoNeutro);//
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/ComidaF.txt", alimentacion);// 
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/EnergiaF.txt", energia);// 
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/SaludF.txt", salud);// 
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/DiversionF.txt", diversion);// 
-			$readmemb("C:/Users/Isabela Mendoza/Documents/GitHub/entrega-1-proyecto-grupo08-2024-1/ProyectoFinal/EstadoNeutroF.txt", nState);//
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoFelizF.txt", gatoFeliz);//
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoTristeF.txt", gatoTriste);//
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoNeutroF.txt", gatoNeutro);//
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ComidaF.txt", alimentacion);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EnergiaF.txt", energia);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/SaludF.txt", salud);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/DiversionF.txt", diversion);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EstadoNeutroF.txt", nState);// 
     end else begin
         case (next)
             IDLE: begin
@@ -236,8 +242,8 @@ always @(posedge clk_16ms) begin
             end
             INIT_CONFIG: begin
                 rs <= 'b0;
-                command_counter <= command_counter + 1;
 			    data <= config_memory[command_counter];
+				 command_counter <= command_counter + 1;
 				 //enable <= 'b1;
                 if(command_counter == num_commands-1) begin
                     init_config_executed <= 1'b1;
@@ -301,9 +307,9 @@ always @(posedge clk_16ms) begin
 									end
 									2'b00: begin
 										for (i = 0; i < num_data_all; i = i + 1) begin
-                                            if(select_fig1 != 2'b10)begin
-											    data_memory2[i] <= salud[i];
-                                            end
+											if(select_fig1 != 2'b10)begin
+												data_memory2[i] <= salud[i];
+											end
 										end
 									end
 									
