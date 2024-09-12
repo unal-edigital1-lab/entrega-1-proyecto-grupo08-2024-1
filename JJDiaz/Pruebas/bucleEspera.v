@@ -126,14 +126,14 @@ initial begin
 
     create_char_task <= SET_CGRAM_ADDR;
 	 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoFelizF.txt", gatoFeliz);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoTristeF.txt", gatoTriste);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoNeutroF.txt", gatoNeutro);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ComidaF.txt", alimentacion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EnergiaF.txt", energia);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/SaludF.txt", salud);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/DiversionF.txt", diversion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EstadoNeutroF.txt", nState);//
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoFelizF.txt", gatoFeliz);//
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoTristeF.txt", gatoTriste);//
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoNeutroF.txt", gatoNeutro);//
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ComidaF.txt", alimentacion);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EnergiaF.txt", energia);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/SaludF.txt", salud);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/DiversionF.txt", diversion);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EstadoNeutroF.txt", nState);//
 			
 	config_memory[0] <= LINES2_MATRIX5x8_MODE8bit;
 	config_memory[1] <= DISPON_CURSOROFF;
@@ -218,14 +218,14 @@ always @(posedge clk_16ms) begin
 		  wait_done <= 1'b0;
 		  //enable <= 'b0;
 		  
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoFelizF.txt", gatoFeliz);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoTristeF.txt", gatoTriste);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoNeutroF.txt", gatoNeutro);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ComidaF.txt", alimentacion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EnergiaF.txt", energia);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/SaludF.txt", salud);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/DiversionF.txt", diversion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EstadoNeutroF.txt", nState);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoFelizF.txt", gatoFeliz);//
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoTristeF.txt", gatoTriste);//
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoNeutroF.txt", gatoNeutro);//
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ComidaF.txt", alimentacion);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EnergiaF.txt", energia);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/SaludF.txt", salud);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/DiversionF.txt", diversion);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EstadoNeutroF.txt", nState);// 
     end else begin
         case (next)
             IDLE: begin

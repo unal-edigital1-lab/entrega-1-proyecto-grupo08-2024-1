@@ -1,5 +1,5 @@
 module tamagotchi_fsm (
-    input wire btn_salud,
+    input wire ledsign,
     input wire clk, // Reloj de entrada de 50 MHz
     output reg [3:0] display_out,
     output reg [6:0] seg_display,  // Salida para la regleta de 7 segmentos
@@ -52,17 +52,11 @@ module tamagotchi_fsm (
     
     always @(posedge clk_out) begin
             // Modo normal: Incrementar el nivel del estado correspondiente, con límite de 10
-            if (btn_salud) begin
-                display_out[3:0] <= 4'b0000; // Mostrar Salud
-                if (nivel_salud < 4'b1010 && display_out == 4'b0000) begin
-                    nivel_salud <= nivel_salud + 1; // Aumentar nivel Salud
-                end
-            end
-            if (btn_salud) begin
-                display_out[3:0] <= 4'b0000; // Mostrar Salud
-                if (nivel_salud < 4'b1010 && display_out == 4'b0100) begin
-                    nivel_salud <= nivel_salud + 1; // Aumentar nivel Salud
-                end
+            if (!ledsign) begin
+		        if (timer_energia == 10) begin
+                    nivel_energia <= nivel_energia - 1;
+                    timer_energia <= 0;
+                end else timer_energia <= timer_energia + 1;
             end
 
     // Manejo del decremento de los niveles en modo normal, con niveles separados
@@ -72,11 +66,12 @@ module tamagotchi_fsm (
                 timer_salud <= 0;
             end else timer_salud <= timer_salud + 1;
 
-
-		    if (timer_energia == 1000) begin
-                nivel_energia <= nivel_energia + 1;
-                timer_energia <= 0;
-            end else timer_energia <= timer_energia + 1;
+            if (ledsign) begin
+		        if (timer_energia == 10) begin
+                    nivel_energia <= nivel_energia + 1;
+                    timer_energia <= 0;
+                end else timer_energia <= timer_energia + 1;
+            end
 
 		    if (timer_hambre == 700) begin
                 nivel_hambre <= nivel_hambre - 1;
