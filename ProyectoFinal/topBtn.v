@@ -9,7 +9,12 @@ module topBtn(
     output reg btn_salud,
     output reg btn_hambre,
     output reg btn_reset,
-    output reg btn_test
+    output reg btn_test,
+	 
+	 output reg ledSalud,
+	 output reg ledHambre,
+	 output reg ledReset,
+	 output reg ledTest
 
 );
     
@@ -35,10 +40,18 @@ module topBtn(
 
     always @(posedge clk) begin
         
-        btn_salud = heal;
-        btn_hambre = ali;
-        btn_reset = RST;
-        btn_test = TST;
+        btn_salud = ~heal;
+        btn_hambre = ~ali;
+        btn_reset = ~RST;
+        btn_test = ~TST;
+		  
+		  
+		  //leds
+		  
+		  ledSalud = heal;
+		  ledHambre = ali;
+		  ledReset = RST;
+		  ledTest = TST;
     end
 
     
