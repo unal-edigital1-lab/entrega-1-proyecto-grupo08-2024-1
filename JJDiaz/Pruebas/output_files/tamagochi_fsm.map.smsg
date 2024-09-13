@@ -1,0 +1,3 @@
+Warning (10268): Verilog HDL information at Salida.v(19): always construct contains both blocking and non-blocking assignments File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/Salida.v Line: 19
+Warning (10268): Verilog HDL information at bucleEspera.v(177): always construct contains both blocking and non-blocking assignments File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/bucleEspera.v Line: 177
+Warning (10268): Verilog HDL information at bucleEspera.v(207): always construct contains both blocking and non-blocking assignments File: /home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/bucleEspera.v Line: 207

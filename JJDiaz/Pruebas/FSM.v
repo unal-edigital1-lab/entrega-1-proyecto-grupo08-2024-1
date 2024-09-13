@@ -1,11 +1,12 @@
 module tamagotchi_fsm (
-    input wire btn_salud,
-	 input wire btn_ali,
-    input wire clk, // Reloj de entrada de 50 MHz
-    output reg [3:0] display_out,
-    output reg [6:0] seg_display,  // Salida para la regleta de 7 segmentos
-    output reg clk_out,       // Reloj de salida de 6.67 Hz
-	 output reg an
+   input wire btn_salud,
+	input wire btn_ali,
+	input wire ult,
+   input wire clk, // Reloj de entrada de 50 MHz
+   output reg [3:0] display_out,
+   output reg [6:0] seg_display,	 // Salida para la regleta de 7 segmentos
+   output reg clk_out,       // Reloj de salida de 6.67 Hz
+	output reg an
     );
 
     // Definición de niveles separados para cada estado
@@ -36,7 +37,7 @@ module tamagotchi_fsm (
         timer_diversion <= 0;
         display_out <= 4'b1000; // Mostrar Neutra y cara feliz por defecto
         test_mode <= 1'b0; // Iniciar en modo normal
-        seg_display <= 7'b0100000; // Inicializar la regleta de 7 segmentos en 0
+        seg_display<= 7'b1110111; // Inicializar la regleta de 7 segmentos en 0
 
         contador = 0;
         clk_out = 0;
@@ -55,33 +56,53 @@ module tamagotchi_fsm (
     
     always @(posedge clk_out) begin
             // Modo normal: Incrementar el nivel del estado correspondiente, con límite de 10
-            if (!btn_salud) begin
+            if (btn_salud && nivel_salud < 4'b0101) begin
                 display_out[3:0] <= 4'b0000; // Mostrar Salud
-                if (nivel_hambre < 4'b1010 && display_out == 'b0000) begin
+                if (display_out == 4'b0000) begin
                     nivel_salud <= nivel_salud + 1; // Aumentar nivel Salud
+						  timer_salud <= 0;
                 end
             end
 				
-            if (!btn_salud) begin
+            if (btn_salud && nivel_salud > 4'b0100) begin
                 display_out[3:0] <= 4'b0100; // Mostrar Salud
-                if (nivel_hambre < 4'b1010 && display_out == 4'b0100) begin
+                if (nivel_salud < 4'b1010 && display_out == 4'b0100) begin
                     nivel_salud <= nivel_salud + 1; // Aumentar nivel Salud
+						  timer_salud <= 0;
                 end
             end
 				
-				if (!btn_ali) begin
+				if (btn_ali && nivel_hambre < 4'b0101) begin
                 display_out[1:0] <= 4'b0010; // Mostrar Hambre
-                if (nivel_hambre < 4'b1010 && display_out == 4'b0010) begin
+                if (display_out == 4'b0010) begin
                     nivel_hambre <= nivel_hambre + 1; // Aumentar nivel Hambre
+						  timer_hambre <= 0;
                 end
             end
 				
-            if (!btn_ali) begin
+            if (btn_ali && nivel_hambre > 4'b0100) begin
                 display_out[1:0] <= 4'b0110; // Mostrar Hambre
                 if (nivel_hambre < 4'b1010 && display_out == 4'b0110) begin
                     nivel_hambre <= nivel_hambre + 1; // Aumentar nivel Hambre
+						  timer_hambre <= 0;
                 end
             end
+				
+				if (ult && nivel_diversion < 4'b0101)begin
+					display_out[1:0] <= 4'b0011; // Mostrar Hambre
+					if (display_out == 4'b0011) begin
+                   nivel_diversion <= nivel_diversion + 1; // Aumentar nivel Hambre
+						 timer_diversion <= 0;
+					end
+				end
+				
+				if (ult && nivel_diversion > 4'b0100)begin
+					display_out[1:0] <= 4'b0111; // Mostrar Hambre
+					if (nivel_diversion < 4'b1010 && display_out == 4'b0111) begin
+                   nivel_diversion <= nivel_diversion + 1; // Aumentar nivel Hambre
+						 timer_diversion <= 0;
+					end
+				end
 
     // Manejo del decremento de los niveles en modo normal, con niveles separados
         if (!test_mode) begin
@@ -94,7 +115,7 @@ module tamagotchi_fsm (
 					timer_salud <= 0;
 				end
 
-		    if (timer_energia == 24) begin
+		    if (timer_energia == 24 && nivel_energia > 4'b0001) begin
                 nivel_energia <= nivel_energia + 1;
                 timer_energia <= 0;
             end else timer_energia <= timer_energia + 1;
@@ -103,16 +124,26 @@ module tamagotchi_fsm (
 					timer_salud <= 0;
 				end
 
-		    if (timer_hambre == 24) begin
+		    if (timer_hambre == 24 && nivel_hambre > 4'b0001) begin
                 nivel_hambre <= nivel_hambre - 1;
                 timer_hambre <= 0;
             end else timer_hambre <= timer_hambre + 1;
+				
+				if (nivel_hambre == 4'b0001)begin
+					timer_salud <= 0;
+				end
 
-		    if (timer_diversion == 500) begin
+		    if (timer_diversion == 24 && nivel_diversion > 4'b0001) begin
                 nivel_diversion <= nivel_diversion - 1;
                 timer_diversion <= 0;
             end else timer_diversion <= timer_diversion + 1;
+				
+				if (nivel_diversion == 4'b0001)begin
+					timer_diversion <= 0;
+				end
+				
         end
+		  
 
     // Actualizar cara feliz/triste basado en el nivel del estado actual
         case (display_out[1:0])

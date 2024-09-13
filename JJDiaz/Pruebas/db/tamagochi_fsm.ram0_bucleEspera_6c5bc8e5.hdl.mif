@@ -1,0 +1,25 @@
+-- begin_signature
+-- bucleEspera(num_commands
+-- 3
+-- num_data_all
+-- 64
+-- char_data
+-- 8
+-- num_cgram_addrs
+-- 8
+-- COUNT_MAX
+-- 50000
+-- WAIT_TIME
+-- 100)
+-- end_signature
+WIDTH=8;
+DEPTH=3;
+
+ADDRESS_RADIX=UNS;
+DATA_RADIX=BIN;
+
+CONTENT BEGIN
+	2 :	00000001;
+	1 :	00001100;
+	0 :	00111000;
+END;

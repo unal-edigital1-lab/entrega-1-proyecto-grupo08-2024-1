@@ -1,0 +1,16 @@
+Fitter Status : Successful - Fri Sep 13 15:04:14 2024
+Quartus Prime Version : 23.1std.0 Build 991 11/28/2023 SC Lite Edition
+Revision Name : tamagochi_fsm
+Top-level Entity Name : topBtn
+Family : Cyclone IV E
+Device : EP4CE6E22C8
+Timing Models : Final
+Total logic elements : 680 / 6,272 ( 11 % )
+    Total combinational functions : 657 / 6,272 ( 10 % )
+    Dedicated logic registers : 298 / 6,272 ( 5 % )
+Total registers : 298
+Total pins : 29 / 92 ( 32 % )
+Total virtual pins : 0
+Total memory bits : 0 / 276,480 ( 0 % )
+Embedded Multiplier 9-bit elements : 0 / 30 ( 0 % )
+Total PLLs : 0 / 2 ( 0 % )
