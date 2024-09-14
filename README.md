@@ -27,9 +27,9 @@ Objetivo: Definición periférica del proyecto y diseño inicial.
 | Botón para Reset | Pulsador con tapa (MCI00315)  | Cuando esté presionado por 5 segundos, restablece el estado inicial del tamagotchi (todos los niveles al 100%).|
 | Botón para Test| Pulsador con tapa (MCI00315)  | Cuando esté presionado por 5 segundos, permite hacer un sondeo rápido entren estados, dejando interactuar de manera directa para modificar el nivel en el que se encuentra el estado.|
 | Sensor de Ultrasonido | Sensor HC-SR04 | Cuando detecte una proximidad de 1-5 cm, la mascota aumentará su estado de diversión.|
-| Sensor de Movimiento | Sensor MPU 6050 | El giroscopio detecta si la mascota está boca abajo (nivel de energía aumenta porque está descansando) o boca arriba (está activo y va disminuyendo el nivel de energía).|
+| Sensor de Movimiento | Sensor MPU 6050 | El giroscopio detecta si la mascota está durmiendo (nivel de energía aumenta porque está descansando) o boca arriba (está activo y va disminuyendo el nivel de energía).|
 | Pantalla | LCD 16x2 | Se observan las 2 caras de la mascota (si se encuentra mal o bien). Además, muestra la necesidad a la que se está haciendo referencia mediante la visualización de un ícono.|
-| Leds 7 segmentos | Ánodo común | Se muestra el porcentaje de todos los niveles.|
+| Leds 7 segmentos | Ánodo común | Se muestra el porcentaje del nivel seleccionado.|
 | FPGA | A-C4E6 Cyclone IV FPGA EP4CE6E22C8N | Controlador de las distintas operaciones que se desean hacer (contiene componentes lógicos programables).|
 
 
@@ -95,7 +95,43 @@ De esta representación queda visible la interacción y el control de los datos,
 
 
 *MPU6050 Giroscopio*
-Para el desarrollo de la MPU6050, se utilizaron 3 módulos y un top. Estos códigos...
+Para el desarrollo de la MPU6050, se utilizaron 3 módulos y un top. El código **i2cmaster** es el encargado de utilizar el protocolo I2C para la comunicación con el sensor MPU6050 por entradas bidireccionales de solo un bit. Adicionalmente, el código **mpu5060** se encarga de enviar la información de inicialización del sensor además de recoger la recibida del propio sensor. Estos dos códigos en conjunto son los principales para poder llevar a cabo el registro de entrada y salida de datos con el sensor. Además, se tiene el código **compare**, que lo que hace es justamente transformar este registro de la posición del giroscopio, en una salida de un bit (led) mostrando si está despierto o dormido según el signo del eje. Finalmente, se tiene el código **demo_mpu6050** que instancia los anteriores códigos para finalmente marcar 2 entradas (el clock de la FPGA y un reset), 2 entradas bidireccionales (SDA y SCL) y una salida que sería la del led.
+
+
+````verilog
+// Definición de los estados de la MPU6050
+    parameter S_IDLE = 3'b000, //Estado inicial
+              S_PWRMGT0 = 3'b001, //Estado de energía 0
+              S_PWRMGT1 = 3'b010, //Estado de energía 1
+              S_READ0 = 3'b011, //Estado para iniciar lectura
+              S_READ1 = 3'b100, //Estado para continuar lectura
+              S_STABLE = 3'b101; //Estado de estabilidad después de completar operación
+````
+
+
+````verilog
+// Definición de los estados del I2CMASTER
+    parameter S_IDLE = 5'b00000, //Estado de espera
+              S_START = 5'b00001, //Estado de inicio 
+              S_SENDBIT = 5'b00010, //Estado de envío de bit
+              S_WESCLUP = 5'b00011, //Estado de espera de la subida del reloj SCL
+              S_WESCLDOWN = 5'b00100, //Estado de espera de la bajada del reloj SCL
+              S_CHECKACK = 5'b00101, //Estado de verificación de ACK/NACK
+              S_CHECKACKUP = 5'b00110, //Estado de verificación con reloj alto
+              S_CHECKACKDOWN = 5'b00111, //Estado de verificación con reloj bajo
+              S_WRITE = 5'b01000, //Estado de escritura de datos
+              S_PRESTOP = 5'b01001, //Estado previo a la señal de parada 
+              S_STOP = 5'b01010, //Estado de parada
+              S_READ = 5'b01011, //Estado lectura de datos
+              S_RECVBIT = 5'b01100, //Estado de recepción de bits (de esclavo a maestro)
+              S_RDSCLUP = 5'b01101, //Espera para la subida del SCL de lectura
+              S_RDSCLDOWN = 5'b01110, //Espera para la bajada del SCL de lectura
+              S_SENDACK = 5'b01111, //Estado para enviar ACK al esclavo después de leer
+              S_SENDACKUP = 5'b10000, //Espera con ACK y reloj alto
+              S_SENDACKDOWN = 5'b10001, //Espera con ACK y reloj bajo
+              S_RESTART = 5'b10010; //Estado de reinicio de la comunicación
+````
+
 
 Primeramente, para poder analizar el código de la MPU6050 se utiliza un comparador análogo, pasando los datos a protocolo I2C. De esta forma, se puede analizar lo que recibe el sensor y lo que se envía del código.
 Adicionalmente, se realiza una simulación del código para verificar los datos del compardaror, siendo la simulación la situación deseada y el comparador lo realmente recibido.
