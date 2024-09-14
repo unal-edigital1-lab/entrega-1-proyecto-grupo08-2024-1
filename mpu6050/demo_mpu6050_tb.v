@@ -6,7 +6,7 @@
 
 module demo_mpu6050_tb;
 
-    //Inputs son reg / Outputs son wire / Bidireccionales son wire
+    // Inputs son reg / Outputs son wire / Bidireccionales son wire
     reg MCLK;
     reg RESET;
     wire SDA;
@@ -24,7 +24,7 @@ module demo_mpu6050_tb;
     );
 
 
-    initial begin //Simula reloj
+    initial begin // Simula reloj
         MCLK = 0;
         forever begin
             MCLK = #10 ~MCLK;
@@ -36,7 +36,7 @@ module demo_mpu6050_tb;
         $dumpfile("demo_mpu6050_tb.vcd");
         $dumpvars(-1, UUT);
 
-        //Inicializar variables
+        // Inicializar variables
         MCLK = 0;
         RESET = 1;
         #1000000

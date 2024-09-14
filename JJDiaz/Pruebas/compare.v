@@ -5,7 +5,6 @@ module COMPARE (
     input wire COMPLETED, 
     output reg RESCAN, 
     input wire [7:0] XREG,
-    //output reg LEDX,
     output reg SIGN
 );
 
@@ -35,13 +34,11 @@ module COMPARE (
 
     always @(posedge MCLK or negedge nRST) begin
         if (!nRST) begin //Si nRST está activo (reset), se inicializan los LEDs y las señales de control
-            //LEDX <= 1'b1;
             SIGN <= 1'b1;
             RESCAN <= 1'b0;
         end else begin
             if (TIC) begin //Si TIC es 1, se revisa si el proceso está completado
                 if (COMPLETED) begin
-                    //LEDX <= ~ledx_a;
 						  SIGN <= 1'b0;
                     if (ledx_a) begin //Se determinan los valores de los LEDs basados en las comparaciones
                         SIGN <= ~XREG[7];

@@ -3,7 +3,6 @@ module DEMO_MPU6050 (
     input wire RESET,
     inout wire SDA,
     inout wire SCL,
-    //output wire LEDX,
     output wire LEDSIGN
 );
 
@@ -35,7 +34,7 @@ module DEMO_MPU6050 (
     reg [7:0] XREG;
     assign nRST = RESET;
 
-    // Se instancia el MPU6050
+    // Se instancia el módulo MPU6050 (sensor)
     MPU6050 I_MPU6050_0 (
         .MCLK(MCLK),
         .nRST(nRST),
@@ -56,7 +55,7 @@ module DEMO_MPU6050 (
         .RESCAN(RESCAN)
     );
 
-    // Se instancia el protocolo I2C
+    // Se instancia el módulo maestro I2C
     I2CMASTER #(.DEVICE(8'h68)) I_I2CMASTER_0 (
         .MCLK(MCLK),
         .nRST(nRST),
@@ -77,7 +76,7 @@ module DEMO_MPU6050 (
         .SDA_OUT(SDA_OUT)
     );
 
-    // Se instancia el Comparador
+    // Se instancia el módulo comparador
     COMPARE I_COMPARE_0 (
         .MCLK(MCLK),
         .nRST(nRST),
@@ -85,39 +84,38 @@ module DEMO_MPU6050 (
         .COMPLETED(COMPLETED),
         .RESCAN(RESCAN),
         .XREG(XREG),
-        //.LEDX(LEDX),
         .SIGN(LEDSIGN)
     );
 
     // Genera la señal TIC
-    assign TIC = counter[7] & counter[5];
+    assign TIC = counter[7] & counter[5]; //Genera la señal TIC cuando las posiciones 7 y 5 del contador están en alto
 
-    // Proceso del contador
+    // Proceso del contador, incrementa cada ciclo de reloj
     always @(posedge MCLK or negedge nRST) begin
         if (!nRST) begin
-            counter <= 8'b0;
+            counter <= 8'b0; //Reinicia el contador di nRST está bajo
         end else if (TIC) begin
-            counter <= 8'b0;
+            counter <= 8'b0; //Reinicia el contador cuando TIC está activo
         end else begin
-            counter <= counter + 1;
+            counter <= counter + 1; //Incrementa el contador en cada ciclo de reloj
         end
     end
 
-    // Proceso de registro
+    // Proceso de registro para captura de datos
     always @(posedge MCLK or negedge nRST) begin
         if (!nRST) begin
-            XREG <= 8'b0;
+            XREG <= 8'b0; //Reinicia el registro XREG si NRST está bajo
         end else if (TIC && LOAD) begin
             case (ADR)
-                4'h0: XREG <= DATA; 
+                4'h0: XREG <= DATA; //Carga los datos de XREG si la dirección es 0 y LOAD está activo
             endcase
         end
     end
 
-    // Configuración de salida
-    assign SCL = (SCL_OUT) ? 1'bz : 1'b0;
-    assign SCL_IN = SCL;
-    assign SDA = (SDA_OUT) ? 1'bz : 1'b0;
-    assign SDA_IN = SDA;
+    // Configuración de salida del bus I2C
+    assign SCL = (SCL_OUT) ? 1'bz : 1'b0;  // Controla la línea SCL, la libera si SCL_OUT está activo
+    assign SCL_IN = SCL;                   // Asigna el estado de la línea SCL a SCL_IN
+    assign SDA = (SDA_OUT) ? 1'bz : 1'b0;  // Controla la línea SDA, la libera si SDA_OUT está activo
+    assign SDA_IN = SDA;                   // Asigna el estado de la línea SDA a SDA_IN
 
 endmodule
