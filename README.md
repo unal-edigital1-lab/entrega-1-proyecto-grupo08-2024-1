@@ -104,9 +104,6 @@ Adicionalmente, se realiza una simulación del código para verificar los datos 
 
 *FSM total*
 
-A continuación, se muestra el RTL del Top
-![RTL del TOP](Images/RTLTop.png)
-
 
 **Tercera Entrega (40% del total de la nota del proyecto)**
 
