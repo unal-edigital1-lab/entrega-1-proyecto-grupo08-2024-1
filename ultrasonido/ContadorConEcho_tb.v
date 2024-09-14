@@ -5,13 +5,13 @@ module ContadorConEcho_tb;
     // Declara las señales de entrada y salida para el módulo ContadorConEcho
     reg clk;
     reg echo;
-    wire [19:0] contador2;
+    wire [31:0] echo_duration;
 
     // Crea una instancia del módulo ContadorConEcho
     ContadorConEcho uut (
         .clk(clk),
         .echo(echo),
-        .contador2(contador2)
+        .echo_duration(echo_duration)
     );
 
     // Genera una señal de reloj
@@ -30,11 +30,25 @@ module ContadorConEcho_tb;
 
         // Activa echo durante 60000 ciclos de reloj
         echo = 1;
-        #600000;
+        #50000;
 
         // Desactiva echo
         echo = 0;
-        #200;
+        #10000;
+
+        echo = 1;
+        #100000;
+
+        // Desactiva echo
+        echo = 0;
+        #10000;
+
+        echo = 1;
+        #20000;
+
+        // Desactiva echo
+        echo = 0;
+        #10000;
 
         // Finaliza la simulación
         #100 $finish;

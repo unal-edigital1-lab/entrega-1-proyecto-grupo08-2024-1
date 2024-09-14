@@ -4,14 +4,14 @@ module ControlLed_tb;
 
     // Declara las señales de entrada y salida para el módulo ControlLed
     reg clk;
-    reg [19:0] contador2;
-    wire sens_ult;
+    reg [31:0] echo_duration;
+    wire aux;
 
     // Crea una instancia del módulo ControlLed
     ControlLed UUT (
         .clk(clk),
-        .contador2(contador2),
-        .sens_ult(sens_ult)
+        .echo_duration(echo_duration),
+        .aux(aux)
     );
 
     // Genera una señal de reloj
@@ -23,18 +23,38 @@ module ControlLed_tb;
     // Test sequence
     initial begin
         // Inicializa las señales
-        contador2 = 0;
+        echo_duration = 0;
 
         // Espera 100 ns
-        #100;
+        #10;
 
-        // Incrementa contador2 durante 60000 ciclos de reloj
-        for (contador2 = 0; contador2 < 60000; contador2 = contador2 + 1) begin
-            #10;
-        end
+        echo_duration = 14'd5000;
+        #20
 
+        echo_duration = 0;
+        #10
+
+        echo_duration = 14'd2000;
+        #20
+
+        echo_duration = 0;
+        #10
+
+        echo_duration = 14'd16000;
+        #20
+
+        echo_duration = 0;
+        #10
+
+        echo_duration = 14'd10000;
+        #20
+
+        echo_duration = 0;
+
+
+        
         // Finaliza la simulación
-        #100 $finish;
+        #10 $finish;
     end
 
     initial begin

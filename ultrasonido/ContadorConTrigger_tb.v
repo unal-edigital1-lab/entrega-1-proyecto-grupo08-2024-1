@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module ContadorConTrigger_tb;
+module ContadorConTrigger_tb; //Moudlo para probar Trigger
 
     // Declara las señales de entrada y salida para el módulo ContadorConTrigger
     reg clk;
@@ -9,7 +9,7 @@ module ContadorConTrigger_tb;
     // Crea una instancia del módulo ContadorConTrigger
     ContadorConTrigger uut (
         .clk(clk),
-        .trigger(trigger)
+        .trig(trig)
     );
 
     // Genera una señal de reloj
@@ -24,7 +24,7 @@ module ContadorConTrigger_tb;
         #100;
 
         // Espera durante 60000 ciclos de reloj
-        #600000;
+        #50000;
 
         // Finaliza la simulación
         #100 $finish;

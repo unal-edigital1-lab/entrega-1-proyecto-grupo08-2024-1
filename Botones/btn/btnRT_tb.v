@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module btnRT_tb;
+module btnRT_tb; //Modulo para simular el modulo de botones Reset y Test
 
     // Declara las señales de entrada y salida para el módulo btnModule
     reg clk;
@@ -23,26 +23,34 @@ module btnRT_tb;
     // Test sequence
     initial begin
         // Inicializa las señales
-        boton_in = 0;
-
-        // Espera 100 ns
-        #200;
-
-        // Activa boton_in durante 300.000.000 ns
         boton_in = 1;
-        #600000;
 
-        // Desactiva boton_in
-        boton_in = 0;
+        // Espera 20000 ns
         #200000;
 
-        // Activa boton_in durante 2000 ciclos de reloj
+        // Activa boton_in durante 550.000.000 ns
+        boton_in = 0;
+        #550000;
+
+        // Desactiva boton_in
         boton_in = 1;
         #200000;
 
-        // Desactiva boton_in
+        // Activa boton_in durante 200.000 ns
         boton_in = 0;
-        #200;
+        #200000;
+
+        // Desactiva boton_in
+        boton_in = 1;
+        #200000;
+
+        // Activa boton_in durante 200.000 ns
+        boton_in = 0;
+        #1000000;
+
+        // Desactiva boton_in
+        boton_in = 1;
+        #200000;
 
         // Finaliza la simulación
         #100 $finish;

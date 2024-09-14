@@ -35,57 +35,57 @@ module topBtn_tb;
     
     initial begin
         // Inicializa las señales
-        btn_heal = 0;
-        btn_ali = 0;
-        btn_RST = 0;
-        btn_TST = 0;
+        btn_heal = 1;
+        btn_ali = 1;
+        btn_RST = 1;
+        btn_TST = 1;
 
         // Espera 100 ns
         #100;
 
         // Activa btn_RST
-        btn_RST = 1;
+        btn_RST = 0;
         #200;
 
         // Desactiva btn_RST
-        btn_RST = 0;
+        btn_RST = 1;
         #200;
 
-        btn_RST = 1;
+        btn_RST = 0;
         #60000
 
-        btn_RST = 0;
+        btn_RST = 1;
         #200;
 
 
         // Activa btn_TST
-        btn_TST = 1;
+        btn_TST = 0;
         #200;
 
         // Desactiva btn_TST
-        btn_TST = 0;
+        btn_TST = 1;
         #200;
 
-        btn_TST = 1;
+        btn_TST = 0;
         #60000
 
-        btn_TST = 0;
+        btn_TST = 1;
         #200;
 
         // Activa btn_heal durante 60000 ciclos de reloj
-        btn_heal = 1;
+        btn_heal = 0;
         #60000;
 
         // Desactiva btn_heal
-        btn_heal = 0;
+        btn_heal = 1;
         #200;
 
         // Activa btn_ali durante 60000 ciclos de reloj
-        btn_ali = 1;
+        btn_ali = 0;
         #60000;
 
         // Desactiva btn_ali
-        btn_ali = 0;
+        btn_ali = 1;
         #200;
 
         
