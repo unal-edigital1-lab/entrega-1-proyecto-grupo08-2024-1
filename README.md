@@ -95,7 +95,7 @@ De esta representación queda visible la interacción y el control de los datos,
 
 
 *MPU6050 Giroscopio*
-Para el desarrollo del MPU6050, se utilizaron 3 módulos y un top. Estos códigos...
+Para el desarrollo de la MPU6050, se utilizaron 3 módulos y un top. Estos códigos...
 
 Primeramente, para poder analizar el código de la MPU6050 se utiliza un comparador análogo, pasando los datos a protocolo I2C. De esta forma, se puede analizar lo que recibe el sensor y lo que se envía del código.
 Adicionalmente, se realiza una simulación del código para verificar los datos del compardaror, siendo la simulación la situación deseada y el comparador lo realmente recibido.
