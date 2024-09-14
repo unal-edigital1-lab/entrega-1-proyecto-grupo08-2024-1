@@ -21,6 +21,7 @@ module btnRT (
 				boton_out <= 0;
 			end else begin
 				boton_out <= 1;
+			
 			end
 		end else begin
 			boton_out <= 1;

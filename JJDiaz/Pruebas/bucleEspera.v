@@ -2,12 +2,13 @@ module bucleEspera #(parameter num_commands = 3,
                                       num_data_all = 64,  
                                       char_data = 8, 
                                       num_cgram_addrs = 8,
-                                      COUNT_MAX = 50000,
+                                      COUNT_MAX = 20000,
 												  WAIT_TIME = 200)(
     input clk,            
     input reset,          
     //input ready_i,
 	 input [3:0] select_figures, //DEBE ESTAR EN LA PRUEBA FINAL
+     input [2:0] sleep,
     output reg rs,        
     output reg rw,
     //output reg enable, //NO ACTIVAR 
@@ -19,11 +20,12 @@ module bucleEspera #(parameter num_commands = 3,
 localparam IDLE = 0;
 localparam INIT_CONFIG = 1; //1
 localparam CLEAR_COUNTERS0 = 2; //2
-localparam CREATE_CHARS = 3; //3
-localparam CLEAR_COUNTERS1 = 4; //4
-localparam SET_CURSOR_AND_WRITE = 5; //5
-localparam SHOW_NOTHING = 6; //6
-localparam WAIT = 7; //7
+localparam SELECT_VIEW = 3;
+localparam CREATE_CHARS = 4; //3
+localparam CLEAR_COUNTERS1 = 5; //4
+localparam SET_CURSOR_AND_WRITE = 6; //5
+localparam SHOW_NOTHING = 7; //6
+localparam WAIT = 8; //7
 
 
 localparam SET_CGRAM_ADDR = 0;
@@ -89,6 +91,8 @@ reg [7:0] diversion [0: num_data_all-1];
 reg [7:0] alimentacion [0: num_data_all-1];
 reg [7:0] salud [0: num_data_all-1];
 reg [7:0] nState [0: num_data_all-1];
+reg [7:0] gatoDormido [0: num_data_all-1];
+reg [7:0] zzz [0: num_data_all-1];
 reg [7:0] config_memory [0:num_commands-1]; 
 reg [7:0] cgram_addrs [0: num_cgram_addrs-1];
 
@@ -126,14 +130,16 @@ initial begin
 
     create_char_task <= SET_CGRAM_ADDR;
 	 
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoFelizF.txt", gatoFeliz);//
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoTristeF.txt", gatoTriste);//
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoNeutroF.txt", gatoNeutro);//
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ComidaF.txt", alimentacion);// 
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EnergiaF.txt", energia);// 
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/SaludF.txt", salud);// 
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/DiversionF.txt", diversion);// 
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EstadoNeutroF.txt", nState);//
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoFelizF.txt", gatoFeliz);//
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoTristeF.txt", gatoTriste);//
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoNeutroF.txt", gatoNeutro);//
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ComidaF.txt", alimentacion);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EnergiaF.txt", energia);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/SaludF.txt", salud);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/DiversionF.txt", diversion);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EstadoNeutroF.txt", nState);//
+            $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoDormido.txt", gatoDormido);// 
+            $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ZZZ.txt", zzz);// 
 			
 	config_memory[0] <= LINES2_MATRIX5x8_MODE8bit;
 	config_memory[1] <= DISPON_CURSOROFF;
@@ -182,6 +188,9 @@ always @(*) begin
             next <= (command_counter == num_commands)? CLEAR_COUNTERS0 : INIT_CONFIG;
         end
         CLEAR_COUNTERS0: begin
+            next <= SELECT_VIEW;
+        end
+        SELECT_VIEW: begin
             next <= CREATE_CHARS;
         end
         CREATE_CHARS:begin
@@ -218,14 +227,16 @@ always @(posedge clk_16ms) begin
 		  wait_done <= 1'b0;
 		  //enable <= 'b0;
 		  
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoFelizF.txt", gatoFeliz);//
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoTristeF.txt", gatoTriste);//
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoNeutroF.txt", gatoNeutro);//
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ComidaF.txt", alimentacion);// 
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EnergiaF.txt", energia);// 
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/SaludF.txt", salud);// 
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/DiversionF.txt", diversion);// 
-			$readmemb("/home/juanjo954/github-classroom/unal-edigital1-lab/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EstadoNeutroF.txt", nState);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoFelizF.txt", gatoFeliz);//
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoTristeF.txt", gatoTriste);//
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoNeutroF.txt", gatoNeutro);//
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ComidaF.txt", alimentacion);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EnergiaF.txt", energia);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/SaludF.txt", salud);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/DiversionF.txt", diversion);// 
+			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EstadoNeutroF.txt", nState);//
+            $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoDormido.txt", gatoDormido);// 
+            $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ZZZ.txt", zzz);// 
     end else begin
         case (next)
             IDLE: begin
@@ -257,12 +268,72 @@ always @(posedge clk_16ms) begin
                 done_lcd_write <= 1'b0;
                 //rs <= 'b0;
 					 rs <= 0;
-                data <= 'b0;
+                data <= CLEAR_DISPLAY;
 					 wait_counter <= 'b0;
 					 wait_done <= 1'b0;
 					 //enable <= 'b0;
 					 
             end
+
+            SELECT_VIEW: begin
+                if (sleep == 2'b01) begin //Dormido
+                    for (i = 0; i < num_data_all; i = i +1 )begin
+                        data_memory[i] <= gatoDormido[i];
+                        data_memory2[i] <= zzz[i];
+                    end
+                end else begin
+                case(select_fig1) //Esta es la linea 269
+                    2'b01: begin
+                        for (i = 0; i < num_data_all; i = i + 1) begin
+                            data_memory[i] <= gatoFeliz[i];
+                        end
+                    end
+                    2'b00: begin
+                        for (i = 0; i < num_data_all; i = i + 1) begin
+                            data_memory[i] <= gatoTriste[i];
+                        end
+                    end
+                    2'b10: begin
+                        for (i = 0; i < num_data_all; i = i + 1) begin
+                            data_memory[i] <= gatoNeutro[i];
+                            data_memory2[i] <= nState[i];
+                        end
+                    end
+                endcase
+                case(select_fig2)
+                    2'b01: begin
+                        for (i = 0; i < num_data_all; i = i + 1) begin
+                            if(select_fig1 != 2'b10)begin
+                            data_memory2[i] <= energia[i];
+                            end
+                        end
+                    end
+                    2'b11: begin
+                        for (i = 0; i < num_data_all; i = i + 1) begin
+                            if(select_fig1 != 2'b10)begin
+                            data_memory2[i] <= diversion[i];
+                            end
+                        end
+                    end
+                    2'b10: begin
+                        for (i = 0; i < num_data_all; i = i + 1) begin
+                            if(select_fig1 != 2'b10)begin
+                            data_memory2[i] <= alimentacion[i];
+                            end
+                        end
+                    end
+                    2'b00: begin
+                        for (i = 0; i < num_data_all; i = i + 1) begin
+                            if(select_fig1 != 2'b10)begin
+                                data_memory2[i] <= salud[i];
+                            end
+                        end
+                    end
+                    
+                endcase
+                end
+            end
+
             CREATE_CHARS: begin
                 case(create_char_task)
                     SET_CGRAM_ADDR: begin
@@ -271,57 +342,14 @@ always @(posedge clk_16ms) begin
                         create_char_task <= WRITE_CHARS; 
                     end
                     WRITE_CHARS: begin
-								case(select_fig1) //Esta es la linea 269
-									2'b01: begin
-										for (i = 0; i < num_data_all; i = i + 1) begin
-											data_memory[i] <= gatoFeliz[i];
-										end
-									end
-									2'b00: begin
-										for (i = 0; i < num_data_all; i = i + 1) begin
-											data_memory[i] <= gatoTriste[i];
-										end
-									end
-									2'b10: begin
-										for (i = 0; i < num_data_all; i = i + 1) begin
-											data_memory[i] <= gatoNeutro[i];
-											data_memory2[i] <= nState[i];
-										end
-									end
-								endcase
-								case(select_fig2)
-									2'b01: begin
-										for (i = 0; i < num_data_all; i = i + 1) begin
-											data_memory2[i] <= energia[i];
-										end
-									end
-									2'b11: begin
-										for (i = 0; i < num_data_all; i = i + 1) begin
-											data_memory2[i] <= diversion[i];
-										end
-									end
-									2'b10: begin
-										for (i = 0; i < num_data_all; i = i + 1) begin
-											data_memory2[i] <= alimentacion[i];
-										end
-									end
-									2'b00: begin
-										for (i = 0; i < num_data_all; i = i + 1) begin
-											if(select_fig1 != 2'b10)begin
-												data_memory2[i] <= salud[i];
-											end
-										end
-									end
-									
-								endcase
                         rs <= 1; 
-								if(change == 'b0) begin
-				        data <= data_memory[data_counter];
+                        if(change == 'b0) begin
+				            data <= data_memory[data_counter];
 						  //enable <= 'b1;
-								end else begin
+                        end else begin
 							data <= data_memory2[data_counter];
 							//enable <= 'b1;
-								end
+                        end
                         data_counter <= data_counter + 1;
                         if(char_counter == char_data -1) begin
                             char_counter = 0;
@@ -329,29 +357,31 @@ always @(posedge clk_16ms) begin
                             cgram_addrs_counter <= cgram_addrs_counter + 1;
                         end else begin
                             char_counter <= char_counter +1;
+                            //rs <= 0; data <= DISPON_CURSOROFF;
                         end
                     end
                 endcase
             end
             CLEAR_COUNTERS1: begin
+                //rs = 'b0; data <= 'b0;
                 data_counter <= 'b0;
                 char_counter <= 'b0;
                 create_char_task <= SET_CURSOR;
                 cgram_addrs_counter <= 'b0;
 					 //enable <= 'b0;
 					 rs <= 0;
-					 data <= 'b0;
+					 data <= DISPON_CURSOROFF;
             end
             SET_CURSOR_AND_WRITE: begin
                 case(create_char_task)
 					SET_CURSOR: begin
 								if (change == 'b0)begin
-                        rs <= 0;
-								data <= (cgram_addrs_counter > 3)? 8'h80 + (cgram_addrs_counter%4) + 8'h40 : 8'h80 + (cgram_addrs_counter%4);
+                                    rs <= 0;
+								    data <= (cgram_addrs_counter > 3)? 8'h80 + (cgram_addrs_counter%4) + 8'h40 : 8'h80 + (cgram_addrs_counter%4);
 								//enable <= 'b1;
 								end else begin
-								rs <= 0;
-								data <= (cgram_addrs_counter > 3)? 8'h84 + (cgram_addrs_counter%4) + 8'h40 : 8'h84 + (cgram_addrs_counter%4);
+								    rs <= 0;
+								    data <= (cgram_addrs_counter > 3)? 8'h84 + (cgram_addrs_counter%4) + 8'h40 : 8'h84 + (cgram_addrs_counter%4);
 								//enable <= 'b1;
 								end
                         create_char_task <= WRITE_LCD; 
