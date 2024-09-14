@@ -1,4 +1,4 @@
-module Salida (
+module Salida ( //Modulo que controla la salida 
     input clk,
     input aux,
     output reg led,
@@ -16,18 +16,18 @@ initial begin
     countAux = 0;
 end
 
-always @(posedge clk) begin
-    if (aux == 1) begin
+always @(posedge clk) begin 
+    if (aux == 1) begin   //Si la señal aux se activa se enciende el Led y se activa la señal de salida sens_ult
         led <= 0;
         sens_ult <= 1;
         countAux = 0;
-    end else if(countAux > downLed) begin
+    end else if(countAux > downLed) begin //El led se apaga y sens_ult vuelve a 0 después de 0.1 segundos
         led <= 1;
         sens_ult <= 0;
     end
 
 
-    countAux <= countAux + 1;
+    countAux <= countAux + 1; //El contador incrementa en todo mom
 end
 
 endmodule

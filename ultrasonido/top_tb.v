@@ -7,8 +7,8 @@ module top_tb;
     reg echo;
     wire trig;
     wire sens_ult;
-    wire led1;
-    wire [19:0] s0;
+    wire led;
+    
 
     
     top uut (
@@ -16,8 +16,7 @@ module top_tb;
         .echo(echo),
         .trig(trig),
         .sens_ult(sens_ult),
-        .led1(led1),
-        .s0(s0)
+        .led(led)
     );
 
     
@@ -39,7 +38,7 @@ module top_tb;
 
         // Activa echo
         echo = 1;
-        #350000;
+        #50000;
 
         // Desactiva echo
         echo = 0;
@@ -52,7 +51,7 @@ module top_tb;
 
         // Activa echo de nuevo
         echo = 1;
-        #50000;
+        #60000;
 
         echo = 0;
         // Espera 10 us del trig
@@ -72,17 +71,51 @@ module top_tb;
         #25000;
 
         echo = 1;
-        #100000;
+        #300000;
 
         echo = 0;
         #50000;
+
+        echo = 1;
+        #59000;
+
+        echo = 0;
+        // Espera 10 us del trig
+        #10000;
+        echo = 1;
+        #59000;
+
+        echo = 0;
+        // Espera 10 us del trig
+        #10000;
+
+        echo = 1;
+        #59000;
+
+        echo = 0;
+        // Espera 10 us del trig
+        #10000;
+
+        echo = 1;
+        #59000;
+
+        echo = 0;
+        // Espera 10 us del trig
+        #10000;
+        echo = 1;
+        #59000;
+
+        echo = 0;
+        // Espera 10 us del trig
+        #1000000;
     
 
 
 
 
+
         // Finaliza la simulación
-        #10000 $finish;
+        $finish;
     end
 
     initial begin

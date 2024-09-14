@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module btnAntirebote_tb;
+module btnAntirebote_tb; //Módulo para probar el módulo btnAntirebote
 
     // Parámetros
     parameter COUNT_BOT = 50000;
