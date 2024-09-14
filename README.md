@@ -109,6 +109,7 @@ Para el desarrollo de la MPU6050, se utilizaron 3 módulos y un top. El código 
 ````
 
 
+
 ````verilog
 // Definición de los estados del I2CMASTER
     parameter S_IDLE = 5'b00000, //Estado de espera
