@@ -69,6 +69,7 @@ module tamagotchi_fsm (
             nivel_diversion <= 4'b1000; // Reiniciar nivel de Diversión a 8
             display_out <= 4'b1000; // Cara neutra
             test_mode <= 1'b0; // Salir del modo de prueba
+            tstled <= 1;
         end
 		  
 		  //Manejo inicial del test
