@@ -136,6 +136,18 @@ module tamagotchi_fsm (
                     nivel_diversion <= 4'b1010;
                 end
             end
+            if (gyro && nivel_energia != 4'b0001) begin
+                display_out[1:0] <= 2'b01; // Mostrar Diversión
+                if (display_out == 3'b101) begin
+                    nivel_energia <= 4'b0001;
+                end
+            end
+            if (gyro && nivel_energia == 4'b0001) begin
+                display_out[1:0] <= 2'b01; // Mostrar Diversión
+                if (display_out == 3'b001) begin
+                    nivel_energia <= 4'b1010;
+                end
+            end
         end else begin
 	 
             // Modo normal: Incrementar el nivel del estado correspondiente, con límite de 10
