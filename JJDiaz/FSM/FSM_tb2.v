@@ -15,7 +15,7 @@ module tamagotchi_tb;
     wire [6:0] seg_display;
 
     // Instancia del módulo tamagotchi_fsm
-    tamagotchi_fsm uut (
+    tamagotchi_fsm #(1) uut (
         .btn_salud(btn_salud),
         .btn_energia(btn_energia),
         .ledsign(ledsign),
@@ -49,17 +49,17 @@ module tamagotchi_tb;
         #20;
 
         //Inicio de modo test
-        //btn_test = 1;
+        btn_test = 1;
         #10 btn_test = 0;
         #20
 
-        // Simulación del comportamiento: Primer botón Salud
+        // Simulación del botón Salud
         // Presionar botón de salud por primera vez
         btn_salud = 1;
         #10 btn_salud = 0;  // Liberar el botón
         #20;
 
-        // Verificar cambio en display_out y seg_display
+        // Verificar 
         $display("Salud - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
 
         // Presionar botón de salud por segunda vez
@@ -67,80 +67,92 @@ module tamagotchi_tb;
         #10 btn_salud = 0;  // Liberar el botón
         #20;
 
-        // Verificar cambio en display_out y aumento en seg_display
+        // Verificar
         $display("Salud - Segunda presion: display_out = %b, seg_display = %b", display_out, seg_display);
 
-        // Simulación del comportamiento: Botón Energía
-        // Presionar botón de energía por primera vez
+        // Presionar botón de salud por tercera vez
         btn_salud = 1;
-        #100 btn_salud = 0;  // Liberar el botón
+        #10 btn_salud = 0;  // Liberar el botón
+        #20;
+
+        // Verificar 
+        $display("Salud - Tercera presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
+        // Presionar botón de energia por segunda vez
+        btn_salud = 1;
+        #10 btn_salud = 0;  // Liberar el botón
+        #20;
+
+        // Verificar 
+        $display("Salud - Cuarta presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
+        //btn_reset = 1;
+        //#10 btn_reset = 0;
+        #20
+
+        // Simulación del comportamiento de sensor energia
+        // Lectura sensor de energia por primera vez
+        /*ledsign = 1;
+        btn_energia = 1;
+        #250;
+
+        // Sensor boca arriba
+        btn_energia = 0;  // Liberar el botón
+        ledsign = 0;
+        #20;
+
+        // Verificar cambio en display_out y aumento en seg_display
+        $display("Energia - Cuarta presion: display_out = %b, seg_display = %b", display_out, seg_display);
+
+        btn_reset = 1;
+        #10 btn_reset = 0;
+        #20
+
+        // Simulación del comportamiento de botón diversion
+        // Lectura sensor de diversion por primera vez
+        btn_diversion = 1;
+        #250;
+
+        btn_diversion = 0;  // Liberar el sensor
         #20;
 
         // Verificar cambio en display_out y seg_display
-        $display("Energia - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
+        $display("Diversion - Cuarta presion: display_out = %b, seg_display = %b", display_out, seg_display);*/
 
-        // Presionar botón de energía por segunda vez
-        btn_salud = 1;
-        #10 btn_salud = 0;  // Liberar el botón
-        #20;
-
-        // Verificar cambio en display_out y aumento en seg_display
-        $display("Energia - Segunda presion: display_out = %b, seg_display = %b", display_out, seg_display);
-
-        // Simulación del comportamiento: Primer botón Hambre
+        // Simulación del comportamiento de boton hambre
         // Presionar botón de hambre por primera vez
-        btn_salud = 1;
-        #10 btn_salud = 0;  // Liberar el botón
+        btn_hambre = 1;
+        #10 btn_hambre = 0;  // Liberar el botón
         #20;
 
         // Verificar cambio en display_out y seg_display
         $display("Hambre - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
 
         // Presionar botón de hambre por segunda vez
-        btn_salud = 1;
-        #10 btn_salud = 0;  // Liberar el botón
+        btn_hambre = 1;
+        #10 btn_hambre = 0;  // Liberar el botón
         #20;
 
         // Verificar cambio en display_out y aumento en seg_display
         $display("Hambre - Segunda presion: display_out = %b, seg_display = %b", display_out, seg_display);
 
-        // Simulación del comportamiento: Botón Diversion
-        // Presionar botón de diversion por primera vez
-        btn_energia = 1;
-        ledsign = 1;
-        #10 btn_energia = 0;  // Liberar el botón
+        // Presionar botón de diversion por tercera vez
+        btn_hambre = 1;
+        #10 btn_hambre = 0;  // Liberar el botón
         #20;
 
         // Verificar cambio en display_out y seg_display
-        $display("Diversion - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
+        $display("Hambre - Tercera presion: display_out = %b, seg_display = %b", display_out, seg_display);
 
-        // Presionar botón de diversion por segunda vez
-        btn_energia = 1;
-        #10 btn_energia = 0;  // Liberar el botón
+        // Presionar botón de diversion por cuarta vez
+        btn_hambre = 1;
+        #10 btn_hambre = 0;  // Liberar el botón
         #20;
 
         // Verificar cambio en display_out y aumento en seg_display
-        $display("Diversion - Segunda presion: display_out = %b, seg_display = %b", display_out, seg_display);
+        $display("Hambre - Cuarta presion: display_out = %b, seg_display = %b", display_out, seg_display);
 
-        // Simulación del comportamiento: Botón Energía
-        // Presionar botón de energía por primera vez
-        btn_energia = 1;
-        #10 btn_energia = 0;  // Liberar el botón
-        #20;
-
-        // Verificar cambio en display_out y seg_display
-        $display("Energia - Primera presion: display_out = %b, seg_display = %b", display_out, seg_display);
-
-        // Presionar botón de energía por segunda vez
-        btn_energia = 1;
-        #10 btn_energia = 0;  // Liberar el botón
-        ledsign = 0;
-        #20;
-
-        // Verificar cambio en display_out y aumento en seg_display
-        $display("Energia - Segunda presion: display_out = %b, seg_display = %b", display_out, seg_display);
-
-        btn_reset = 1;
+        //btn_reset = 1;
         #10 btn_reset = 0;
         #20
         //#4000;
