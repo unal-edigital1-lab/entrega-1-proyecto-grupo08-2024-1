@@ -93,6 +93,8 @@ reg [7:0] salud [0: num_data_all-1];
 reg [7:0] nState [0: num_data_all-1];
 reg [7:0] gatoDormido [0: num_data_all-1];
 reg [7:0] zzz [0: num_data_all-1];
+reg [7:0] gatoMuerto [0: num_data_all-1];
+reg [7:0] muerte [0: num_data_all-1];
 reg [7:0] config_memory [0:num_commands-1]; 
 reg [7:0] cgram_addrs [0: num_cgram_addrs-1];
 
