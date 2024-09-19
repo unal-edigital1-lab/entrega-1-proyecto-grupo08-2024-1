@@ -99,7 +99,7 @@ El módulo top de los botones contiene 2 submódulos: uno para manejar los boton
 
 El primer módulo [btnAntirebote.v](Botones/btn/btnAntirebote.v) implementa un módulo de botones antirebote, este inicialmente tiene 3 entradas: clk, boton_in y reset. La única salida que tiene el módulo es boton_out. Se tiene también un counter y un parámetro para indicar el valor final del contador: *COUNT_BOT = 50000*. En cada ciclo de reloj se revisará el valor de reset, si este es 0 se le asignará al boton_out el valor de boton_in y counter será cero. Si reset es uno, se tienen que revisar varias opciones: primero si boton_in es igual a boton_out, en ese caso el counter aumentará, sino continuará en cero; la segunda condición es que boton_in sea 0 y el counter llegue al limite COUNT_BOT, en ese caso se le asignará 0 a boton_out y el counter se reincia; la tercera condición es que el boton_in sea 1 y el counter sea igual a la centesima parte del limite COUNT_BOT, en ese caso el counter vuelve a cero y a boton_out se le asigna uno. Para mayor simplicidad y para evitar una entrada a este módulo, se definio a reset como un registro con el valor de cero, dejando que la salida del módulo sea igual a la entrada.
 
-//simulalicon btnAntireb
+![SimuBtnAntireb ](Images/ImgSimuBtnULt/SimuBtnAntireb.png)
 
 + Módulo btnRT.v
 
@@ -109,7 +109,8 @@ Al probar un código inicial, se observó que al presionar un botón la FPGA tom
 
 Para visualizar mejor la simulación se tomó un valor de COUNT_LIMIT menor, igual a 500 uS. Para el prototipo se tomo el valor original. 
 
-//Simulacion BtnRT
+![SimuBtnRT](Images/ImgSimuBtnULt/SimuBtnRT.png)
+
 
 En ella se observa que boton_out solo bajará su valor si boton_in esta en bajo por 500uS y se mantendrá así hasta que boton_in vuelva a subir ó, como el counter tiene una cierta cantidad de bits, hasta que llegue counter llegue a su limite impuesto por la memoria.
 
@@ -122,7 +123,8 @@ En el módulo [btnAntirebote.v](Botones/btn/btnAntirebote.v) la salida es igual 
 
 El módulo [btnRT.v](Botones/btn/btnRT.v) tiene como salida un cero cuando se tiene el boton presionado 5 segundos, entonces tambien se asignan los valores negados para las salidas btn_reset y btn_test. Los leds tendrán el mismo valor que los wire, entonces estarán prendidos siempre y cuando se presionen los botones se apagarán, o se apagrán depues de 5 segundos presionados para el caso de reset y test.
 
-//simTopBtn
+![SimuTopBtn](Images/ImgSimuBtnULt/SimuTopBotones.png)
+
 
 En la simulación, se observa que las entradas siempre son 1 y cuando bajan corresponden al boton presionado; las salidas siempre estarán en 0 y cambian a 1 cuando los botones se presionen. Para salud y hambre la salida cambia a 1 instantanemate y para reset y test después del tiempo determinado (para la simulación se muestra un tiempo de 500 uS pero para el prototipo real es un tiempo de 5 segundos).
 
@@ -130,7 +132,7 @@ En la simulación, se observa que las entradas siempre son 1 y cuando bajan corr
 
 Para instanciar el sensor ultrasónico se utilizaron 4 módulos y un Top. El sensor trabaja apartir de dos señales: trigger y echo, tal como se ve en la siguiente figura.
 
-![SeñalesUltrasonido](Imagenes/SeñalesUltrasonido.png)
+![SeñalesUltrasonido](Images/ImgSimuBtnULt/SeñalesUltrasonido.png)
 
 El sensor al recibir la señal trigger con una duración de 10 uS en estado alto, envía 8 pulsos de sonido de 40KHz y pone en alto la señal echo hasta que detecte que los pulsos de sonido vuelvan al sensor. Dependiendo de cuanto tiempo estuvo en alto la señal echo se puede determinar la distancia a la cual se encuentra el objeto con la siguiente fórmula: Distancia [cm] = Tiempo [uS] * 0,01715. Esta se obtiene mediante la velocidad del sonido que es aproximadamente 29 cm/uS. Si se tiene el tiempo en el que la señal estuvo en alto, la distancia se encuentra dividiendo ese tiempo entre la velocidad; hay que tener en cuenta que la señal echo esta encendida desde que se envía al objeto hasta que vuelve, es decir solo se necesita la mitad del tiempo en la que esta encendida. Por esto la formula quedaría: Distancia [cm] = Tiempo [uS] / 2 * 29 [cm/uS]. 
 
@@ -141,7 +143,8 @@ Teniendo claro esto, ahora se analiza los módulos, todos se encuentran en la ca
 El primer módulo es [ContadorConTrigger.v](ultrasonido/ContadorConTrigger.v). Este envía la señal Trigger al ultrasonido, la cual estará en alto por 10 uS y bajará, esto gracias a un counter que se registra en el código. La señal se enviará constantemente para que siempre se revise si hay un objeto frente al sensor. Se realizó un testbench para la simulación de este módulo: [ContadorConTrigger_tb.v](ultrasonido/ContadorConTrigger_tb.v):
 
 
-/testbench trigger/
+![SimuTrig](Images/ImgSimuBtnULt/SimulacionTrigger.png)
+
 
 En ella se puede ver que la señal trig esta en alto por 10 uS y reinicia su ciclo poniendose en bajo.
 
@@ -149,14 +152,15 @@ En ella se puede ver que la señal trig esta en alto por 10 uS y reinicia su cic
 
 El segundno Módulo [ContadorConEcho.v](ultrasonido/ContadorConEcho.v) tendrá como entrada la señal Echo que recibe del sensor. Este tiene un contador que aumentará una unidad por cada ciclo de reloj en el que Echo esté en alto, en otro caso será 0. Tiene una salida llamada **echo_duration** a la que se le asignará el valor del counter cuando echo vuelva a cero. A continuación se muestra la simulación realizada.
 
-/simulacion_echo/
+![SimuRcho](Images/ImgSimuBtnULt/SimulacioEcho.png)
 
 En ella se puede observar que el counter es igual a cero cuando echo está en bajo y que la salida echo_counter solo tiene un valor diferente a cero justo después de que la señal echo baje que corresponde al último valor que tenía el counter.
 
 + ControlLed.v
 
 El tercer módulo llamado [ControlLed.v](ultrasonido/ControlLed.v) se encarga de verificar que el objeto que se detecta esta en el rango requerido entre 1 y 10 centímetros. Para esto hay que hallar la conversióń de centímetros a ciclos de reloj. Despejando de la ecuación que se mencionó anteriormente: distancia [cm] = tiempo [uS] * 0,01715, se obtienen los tiempos 58 uS y 290 uS. Se sabe que la FPGA tiene una frecuancia de 50 MHz, es decir que toma 20 nS por cada ciclo de reloj, realizando la conversión se obtiene que tienen que pasar entre 2.900 y 14.500 ciclos de reloj con echo activo para que el objeto este en la distancia exigida. Este módulo recibirá la salida echo_duration del módulo anterior y en caso de que esta tenga un valor entre 2.900 y 14.500 se activará una señal llama **aux** la cual será la salida del módulo. 
-/simulacionLed/
+
+![SimuLed](Images/ImgSimuBtnULt/SimuLedUlt.png)
 
 En la simulación hecha se puede apreciar que si echo_duration está entre los valores demandados, se activará la señal aux, en otro caso se mantendrá en 0. 
 
@@ -165,7 +169,7 @@ En la simulación hecha se puede apreciar que si echo_duration está entre los v
 
 El siguiente módulo [Salida.v](ultrasonido/Salida.v) recibe la señal **aux**, la cual avisá si el sensor percibe un objeto. Sus salidas son las señales sens_ult, esta irá directamente a la FSM, y led, para verificar el funcionamiento adecuado del sensor. La señal sens_ult siempre estará en 0 hasta que la señal aux se ponga en alto, para que se pueda observar mejor la actuación del ultrasonido, esta señal estará en alto por 100 mS desde el flanco de subida de **aux**. La señal led tiene los valores contrarios a sens_ult, esto debido a que los leds de la FPGA están negados, entonces cuando estos reciban un 0 (sens_ult = 1) se encenderán.
 
-/simulacionSalida/
+![SimuSalUlt](Images/ImgSimuBtnULt/SimuSAlULt.png)
 
 
 Solo para observar mejor la simulación se disminuyo el tiempo en el que sens_ult está en alto a 100 uS. Así se mira que **sens_ult** se activa y **led** baja cuando **aux** tiene un flanco de subida, así se mantienen por el tiempo determinado. Se observa que si se recibe constantemente la señal aux, sens_ult se mantendrá en alto; gracias a esto si un objeto se queda quieto frente al sensor por mucho tiempo, el módulo sabrá que siempre esta ahí, si la señal fuera intermitente, el módulo creerá que el objeto se está removiendo y reubicando.
@@ -174,7 +178,7 @@ Solo para observar mejor la simulación se disminuyo el tiempo en el que sens_ul
 
 El módulo [top.v](ultrasonido/top.v) simplemente realiza las conexiones entre los módulos. Sus entradas serán: clk (de la FPGA) y echo (del sensor). Sus salidas: trig (hacía el sensor), sens_ult (a la FSM) y led (a la FPGA). Y tiene cables internos: aux y echo_duration.
 
-/simulacion top/
+![SimuTop](Images/ImgSimuBtnULt/SimuTopUlt.png)
 
 En la simulación del top se encuentra la señal trig enviandose constantemente, se simula la entrada echo, las señales sens_ult y led solo cambian si la señal echo está activa por el tiempo necesario, ni más ni menos. Por ejemplo la primera señal que se envía de echo es demasiado corta para activar las salidas, y la tercera es demasiado larga. Al final se ve que si recibe constantemente la misma señal de echo, las salidas se van a mantener en el mismo valor así echo este cambiando. En la simulación el tiempo en que las salidas están en alto es de 100uS, pero en la implementación el tiempo es de 100 mS; esto se hizo para poder observar mejor la simulación.
 
