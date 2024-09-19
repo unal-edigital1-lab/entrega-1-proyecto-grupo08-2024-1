@@ -143,7 +143,7 @@ initial begin
          $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoDormido.txt", gatoDormido);// 
          $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ZZZ.txt", zzz);// 
 			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoMuerto.txt", gatoMuerto);// 
-         $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/Muerto.txt", muerte);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/Muerte.txt", muerte);// 
 			
 	config_memory[0] <= LINES2_MATRIX5x8_MODE8bit;
 	config_memory[1] <= DISPON_CURSOROFF;
@@ -242,7 +242,7 @@ always @(posedge clk_16ms) begin
          $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoDormido.txt", gatoDormido);// 
          $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ZZZ.txt", zzz);// 
 			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoMuerto.txt", gatoMuerto);// 
-         $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/Muerto.txt", muerte);//  
+	    $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/Muerte.txt", muerte);//  
 	 end else begin
         case (next)
             IDLE: begin
