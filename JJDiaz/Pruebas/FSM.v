@@ -10,7 +10,7 @@ module tamagotchi_fsm (
 	output reg [1:0] display_out2,
     output reg [6:0] seg_display,	 // Salida para la regleta de 7 segmentos
     output reg clk_out,       // Reloj de salida de 6.67 Hz
-		output reg an,
+	output reg an,
     output reg tstled
     );
 
@@ -44,10 +44,10 @@ module tamagotchi_fsm (
         test_mode <= 1'b0; // Iniciar en modo normal
         seg_display<= 7'b1111111; // Inicializar la regleta de 7 segmentos en 0
 
-			contador = 0;
-			clk_out = 0;
-			an = 0;
-			tstled <= 1;
+		contador = 0;
+		clk_out = 0;
+		an = 0;
+		tstled <= 1;
     end
 	 
     
@@ -78,7 +78,7 @@ module tamagotchi_fsm (
             tstled <= 0;
         end
 		  
-		  if (test_mode) begin
+		if (test_mode) begin
             // Modo test: Solo permitir niveles 1 o 10
             if (btn_salud && nivel_salud != 4'b0001) begin
                 display_out[3:0] <= 4'b0000; // Mostrar Salud
@@ -184,47 +184,48 @@ module tamagotchi_fsm (
                 end
             end
 				
-				if (ult && nivel_diversion < 4'b0101)begin
-					display_out <= 4'b0011; // Mostrar Hambre
-					if (display_out == 4'b0011 && timer_diversion2 == 6) begin
-                   nivel_diversion <= nivel_diversion + 1; // Aumentar nivel Hambre
-						 timer_diversion <= 0;
-						 timer_diversion2 <= 0;
-					end else timer_diversion2 <= timer_diversion2 + 1;
-				end
+			if (ult && nivel_diversion < 4'b0101)begin
+				display_out <= 4'b0011; // Mostrar Hambre
+				if (display_out == 4'b0011 && timer_diversion2 == 6) begin
+              nivel_diversion <= nivel_diversion + 1; // Aumentar nivel Hambre
+					 timer_diversion <= 0;
+					 timer_diversion2 <= 0;
+				end else timer_diversion2 <= timer_diversion2 + 1;
+			end
 				
-				if (ult && nivel_diversion > 4'b0100)begin
-					display_out <= 4'b0111; // Mostrar Hambre
-					if (nivel_diversion < 4'b1010 && display_out == 4'b0111 && timer_diversion2 == 6) begin
-                   nivel_diversion <= nivel_diversion + 1; // Aumentar nivel Hambre
-						 timer_diversion <= 0;
-						 timer_diversion2 <= 0;
-					end else timer_diversion2 <= timer_diversion2 + 1;
-				end
-
-               if (!gyro && nivel_energia < 4'b0101)begin
-						display_out <= 4'b0101; // Mostrar Hambre
-                  display_out2 <= 2'b01; // Mostrar Dormido
-						if (display_out2 == 2'b01 && timer_energia2 == 12) begin
-							nivel_energia <= nivel_energia + 1; // Aumentar nivel Hambre
-							timer_energia <= 0;
-							timer_energia2 <= 0;
-                  end else timer_energia2 <= timer_energia2 + 1;
-				end
-
-               if (!gyro && nivel_energia > 4'b0100)begin
-						display_out <= 4'b0101; // Mostrar Hambre
-                  display_out2 <= 2'b01; // Mostrar Dormido
-					if (nivel_energia < 4'b1010 && display_out2 == 2'b01 && timer_energia2 == 12) begin
-                        nivel_energia <= nivel_energia + 1; // Aumentar nivel Hambre
-						timer_energia <= 0;
-						timer_energia2 <= 0;
-					end else timer_energia2 <= timer_energia2 + 1;
-				end
+			if (ult && nivel_diversion > 4'b0100)begin
+				display_out <= 4'b0111; // Mostrar Hambre
+				if (nivel_diversion < 4'b1010 && display_out == 4'b0111 && timer_diversion2 == 6) begin
+                    nivel_diversion <= nivel_diversion + 1; // Aumentar nivel Hambre
+				    timer_diversion <= 0;
+				    timer_diversion2 <= 0;
+				end else timer_diversion2 <= timer_diversion2 + 1;
 			end
 
-    // Manejo del decremento de los niveles en modo normal, con niveles separados
+            if (!gyro && nivel_energia < 4'b0101)begin
+				display_out <= 4'b0101; // Mostrar Hambre
+                display_out2 <= 2'b01; // Mostrar Dormido
+					if (display_out2 == 2'b01 && timer_energia2 == 12) begin
+						nivel_energia <= nivel_energia + 1; // Aumentar nivel Hambre
+						timer_energia <= 0;
+						timer_energia2 <= 0;
+                end else timer_energia2 <= timer_energia2 + 1;
+			end
+
+            if (!gyro && nivel_energia > 4'b0100)begin
+				display_out <= 4'b0101; // Mostrar Hambre
+                display_out2 <= 2'b01; // Mostrar Dormido
+				if (nivel_energia < 4'b1010 && display_out2 == 2'b01 && timer_energia2 == 12) begin
+                    nivel_energia <= nivel_energia + 1; // Aumentar nivel Hambre
+					timer_energia <= 0;
+					timer_energia2 <= 0;
+				end else timer_energia2 <= timer_energia2 + 1;
+			end
+		end
+
+    
         if (!test_mode) begin
+            // Manejo del decremento de los niveles en modo normal, con niveles separados
 		    if (timer_salud == 24 && nivel_salud > 4'b0001) begin
                 nivel_salud <= nivel_salud - 1;
                 timer_salud <= 0;
@@ -233,26 +234,26 @@ module tamagotchi_fsm (
 				if (nivel_salud == 4'b0001)begin
 					timer_salud <= 0;
 				end
-        if (gyro) begin
-			display_out2 <= 2'b00;
-		    if (timer_energia == 24 && nivel_energia > 4'b0001) begin
-                nivel_energia <= nivel_energia - 1;
-                timer_energia <= 0;
-            end else timer_energia <= timer_energia + 1;
+            if (gyro) begin
+			    display_out2 <= 2'b00;
+		        if (timer_energia == 24 && nivel_energia > 4'b0001) begin
+                    nivel_energia <= nivel_energia - 1;
+                    timer_energia <= 0;
+                end else timer_energia <= timer_energia + 1;
 				
 				if (nivel_energia == 4'b0001)begin
 					timer_salud <= 0;
 				end
-        end
+            end
 
 		    if (timer_hambre == 24 && nivel_hambre > 4'b0001) begin
                 nivel_hambre <= nivel_hambre - 1;
                 timer_hambre <= 0;
             end else timer_hambre <= timer_hambre + 1;
 				
-				if (nivel_hambre == 4'b0001)begin
-					timer_salud <= 0;
-				end
+			if (nivel_hambre == 4'b0001)begin
+		    	timer_salud <= 0;
+			end
 
 		    if (timer_diversion == 24 && nivel_diversion > 4'b0001) begin
                 nivel_diversion <= nivel_diversion - 1;
