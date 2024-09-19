@@ -73,10 +73,17 @@ module tamagotchi_fsm (
         end
 		  
 		  //Manejo inicial del test
-		  if (!btn_test) begin // 5 segundos en binario es 101
+		if (!btn_test) begin // 5 segundos en binario es 101
             test_mode <= 1'b1; // Activar modo de prueba
             tstled <= 0;
         end
+
+        //Muerte del tamagotchi
+        if (nivel_diversion == 4'b0001 && nivel_energia == 4'b0001 && 
+            nivel_salud == 4'b0001 && nivel_hambre == 4'b0001) begin
+                display_out2 <= 11;
+        end
+
 		  
 		if (test_mode) begin
             // Modo test: Solo permitir niveles 1 o 10
