@@ -290,7 +290,7 @@ always @(posedge clk_16ms) begin
                 end else if (sleep == 2'b11) begin
 						for (i = 0; i < num_data_all; i = i+1)begin
 								data_memory[i] <= gatoMuerto[i];
-								data_memory2[i] <= muerto[i];
+							data_memory2[i] <= muerte[i];
 						end
 					 end else begin
                 case(select_fig1) //Esta es la linea 269
