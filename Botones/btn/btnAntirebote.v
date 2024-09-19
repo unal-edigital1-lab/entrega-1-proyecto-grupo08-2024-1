@@ -13,7 +13,7 @@ reg reset;
 
 initial begin
 	boton_out=0;
-    reset = 0;;
+    reset = 0;
 end
 
 always @(posedge clk) begin
