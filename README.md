@@ -187,8 +187,44 @@ En la simulación del top se encuentra la señal trig enviandose constantemente,
 
 
 *MPU6050 Giroscopio*
-Para el desarrollo de la MPU6050, se utilizaron 3 módulos y un top. El código **i2cmaster** es el encargado de utilizar el protocolo I2C para la comunicación con el sensor MPU6050 por entradas bidireccionales de solo un bit. Adicionalmente, el código **mpu5060** se encarga de enviar la información de inicialización del sensor además de recoger la recibida del propio sensor. Estos dos códigos en conjunto son los principales para poder llevar a cabo el registro de entrada y salida de datos con el sensor. Además, se tiene el código **compare**, que lo que hace es justamente transformar este registro de la posición del giroscopio, en una salida de un bit (led) mostrando si está despierto o dormido según el signo del eje. Finalmente, se tiene el código **demo_mpu6050** que instancia los anteriores códigos para finalmente marcar 2 entradas (el clock de la FPGA y un reset), 2 entradas bidireccionales (SDA y SCL) y una salida que sería la del led.
 
+Para el desarrollo de la MPU6050, se utilizaron 3 módulos y un top. El código [i2cmaster.v](mpu6050/i2cmaster.v)es el encargado de utilizar el protocolo I2C para la comunicación con el sensor MPU6050 por entradas bidireccionales de solo un bit. Adicionalmente, el código [mpu6050.v](mpu6050/mpu6050.v) se encarga de enviar la información de inicialización del sensor además de recoger la recibida del propio. Estos dos códigos en conjunto son los principales para poder llevar a cabo el registro de entrada y salida de datos de sensor. Además, se tiene el código [compare.v](mpu6050/compare.v), que lo que hace es justamente transformar este registro de la posición del giroscopio, en una salida de un bit (led) mostrando si está despierto o dormido según el signo del eje. Finalmente, se tiene el código [demompu6050.v](mpu6050/demo_mpu6050.v)que instancia los anteriores códigos para finalmente marcar 2 entradas (el clock de la FPGA y un reset), 2 entradas bidireccionales (SDA y SCL) y una salida que sería la del led.
+
+Para iniciar, es necesario enviar un comando en específico, siendo este el *68* que significa un reset para todo el sistema del sensor. Este envío del *68* se establece en el código del **i2cmaster** como un parámetro de usual iterancia, ya que para cualquier tipo de inicio de envío de datos o de recepción de ellos se nesesita de él obligatoriamente como se muestra en el siguiente fragmento de código.
+
+````verilog
+.
+.
+.
+S_START: begin
+    STATUS <= 3'b001;
+    SCL_OUT <= 1'b1;
+    SDA_OUT <= 1'b0; //Genera el start bit (SDA pasa de alto a bajo mientras SCL está alto)
+    NACK <= 1'b0;
+    QUEUED <= 1'b0;
+    STOP <= 1'b0;
+    DATA_VALID <= 1'b0;
+    if (TIC) begin 
+        SCL_OUT <= 1'b0; //Baja el reloj SCL para comenzar la transmisión
+        counter <= 4'b0000;
+        shift[7:1] <= DEVICE[6:0]; //Carga la dirección del dispositivo esclavo siendo parameter DEVICE = 8'h68
+        if (WE) begin
+            shift[0] <= 1'b0; //Para escritura, el último bit es '0' (RW bit)
+            next_state <= S_WRITE; 
+        end else begin
+            shift[0] <= 1'b1; //Para lectura, el último bit es '1' (RW bit)
+            next_state <= S_READ;
+        end
+        state <= S_SENDBIT;
+    end
+end
+.
+.
+.
+````
+ Más adelante en este código se hace el proceso de recepción del ACK por parte del esclavo, para luego continuar con el envío o recepción de datos según dicte el código **mpu6050**
+
+Principalmente, del codigo **mpu6050** tiene 6 estados mostrados a continuación:
 
 ````verilog
 // Definición de los estados de la MPU6050
@@ -199,37 +235,15 @@ Para el desarrollo de la MPU6050, se utilizaron 3 módulos y un top. El código 
               S_READ1 = 3'b100, //Estado para continuar lectura
               S_STABLE = 3'b101; //Estado de estabilidad después de completar operación
 ````
+El estado de energía 0 es el encargado de enviar el comando que se quiere registrar siendo este el PWR_MGMT_1, para luego (al pasar al siguiente estado de energía 1) se le de un valor inicial de 0, confirmando de esta manera el valor guardado en dicho registro que sería el del giroscopio.
 
-
-
-````verilog
-// Definición de los estados del I2CMASTER
-    parameter S_IDLE = 5'b00000, //Estado de espera
-              S_START = 5'b00001, //Estado de inicio 
-              S_SENDBIT = 5'b00010, //Estado de envío de bit
-              S_WESCLUP = 5'b00011, //Estado de espera de la subida del reloj SCL
-              S_WESCLDOWN = 5'b00100, //Estado de espera de la bajada del reloj SCL
-              S_CHECKACK = 5'b00101, //Estado de verificación de ACK/NACK
-              S_CHECKACKUP = 5'b00110, //Estado de verificación con reloj alto
-              S_CHECKACKDOWN = 5'b00111, //Estado de verificación con reloj bajo
-              S_WRITE = 5'b01000, //Estado de escritura de datos
-              S_PRESTOP = 5'b01001, //Estado previo a la señal de parada 
-              S_STOP = 5'b01010, //Estado de parada
-              S_READ = 5'b01011, //Estado lectura de datos
-              S_RECVBIT = 5'b01100, //Estado de recepción de bits (de esclavo a maestro)
-              S_RDSCLUP = 5'b01101, //Espera para la subida del SCL de lectura
-              S_RDSCLDOWN = 5'b01110, //Espera para la bajada del SCL de lectura
-              S_SENDACK = 5'b01111, //Estado para enviar ACK al esclavo después de leer
-              S_SENDACKUP = 5'b10000, //Espera con ACK y reloj alto
-              S_SENDACKDOWN = 5'b10001, //Espera con ACK y reloj bajo
-              S_RESTART = 5'b10010; //Estado de reinicio de la comunicación
-````
-
-
-Primeramente, para poder analizar el código de la MPU6050 se utiliza un comparador análogo, pasando los datos a protocolo I2C. De esta forma, se puede analizar lo que recibe el sensor y lo que se envía del código.
-Adicionalmente, se realiza una simulación del código para verificar los datos del compardaror, siendo la simulación la situación deseada y el comparador lo realmente recibido.
+Este envío de información desde el maestro al esclavo se puede observar en la simulación así como en las señales reales cuando se analizan en un comparador análogo con el protocolo I2C. De esta forma, se puede observar cómo es que responde el sensor (con un ACK o no) y qué es lo que realmente llega a recibir del código.
+Por lo que, para verificar los dos momentos establecidos anteriormente, se decide poner la salida del comparador análogo a la par de la simulación como se muestra en la siguiente imagen, confirmando que los datos de envío y recepción de la comunicación son precisos y claros.
 
 ![Valor I2C datos iniciales analizador ](Images/I2C%20comparador.png)
+
+*Pantalla LCD 16x2*
+
 
 *FSM total*
 
