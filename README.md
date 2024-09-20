@@ -193,9 +193,7 @@ Para el desarrollo de la MPU6050, se utilizaron 3 módulos y un top. El código 
 Para iniciar, es necesario enviar un comando en específico, siendo este el *68* que significa un reset para todo el sistema del sensor. Este envío del *68* se establece en el código del **i2cmaster** como un parámetro de usual iterancia, ya que para cualquier tipo de inicio de envío de datos o de recepción de ellos se nesesita de él obligatoriamente como se muestra en el siguiente fragmento de código.
 
 ````verilog
-.
-.
-.
+...
 S_START: begin
     STATUS <= 3'b001;
     SCL_OUT <= 1'b1;
@@ -218,9 +216,7 @@ S_START: begin
         state <= S_SENDBIT;
     end
 end
-.
-.
-.
+...
 ````
  Más adelante en este código se hace el proceso de recepción del ACK por parte del esclavo, para luego continuar con el envío o recepción de datos según dicte el código **mpu6050**
 
