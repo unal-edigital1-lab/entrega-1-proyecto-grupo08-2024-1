@@ -8,7 +8,7 @@ module bucleEspera #(parameter num_commands = 3,
     input reset,          
     //input ready_i,
 	 input [3:0] select_figures, //DEBE ESTAR EN LA PRUEBA FINAL
-	 input [2:0] sleep,
+	 input [1:0] sleep, //Debe estar en la prueba final
     output reg rs,        
     output reg rw,
     //output reg enable, //NO ACTIVAR 
@@ -106,6 +106,7 @@ reg change;
 integer i;
 
 //reg [3:0] select_figures; //PRUEBAS ONLY, SE DEBE QUITAR
+//reg [1:0] sleep; // PRUEBAS ONLY SE DEBE QUITAR
 
 reg [1:0] select_fig1;
 reg [1:0] select_fig2; 
@@ -126,24 +127,25 @@ initial begin
     done_lcd_write <= 1'b0; 
 	 change <= 'b0;
 	 //select_figures <= 4'b0100; //SOLO PARA PRUEBAS, SE DEBE QUITAR
+	 //sleep <= 2'b11; //SOLO PARA PRUEBAS SE DEBE QUITAR
 	 wait_counter <= 'b0;
 	 wait_done <= 1'b0;
 	 //enable <= 'b0;
 
     create_char_task <= SET_CGRAM_ADDR;
 	 
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoFelizF.txt", gatoFeliz);//
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoTristeF.txt", gatoTriste);//
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoNeutroF.txt", gatoNeutro);//
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ComidaF.txt", alimentacion);// 
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EnergiaF.txt", energia);// 
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/SaludF.txt", salud);// 
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/DiversionF.txt", diversion);// 
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EstadoNeutroF.txt", nState);//
-         $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoDormido.txt", gatoDormido);// 
-         $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ZZZ.txt", zzz);// 
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoMuerto.txt", gatoMuerto);// 
-	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/Muerte.txt", muerte);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoFelizF.txt", gatoFeliz);//
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoTristeF.txt", gatoTriste);//
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoNeutroF.txt", gatoNeutro);//
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ComidaF.txt", alimentacion);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EnergiaF.txt", energia);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/SaludF.txt", salud);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/DiversionF.txt", diversion);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EstadoNeutroF.txt", nState);//
+         $readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoDormido.txt", gatoDormido);// 
+         $readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ZZZ.txt", zzz);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoMuerto.txt", gatoMuerto);// 
+         $readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/Muerte.txt", muerte);// 
 			
 	config_memory[0] <= LINES2_MATRIX5x8_MODE8bit;
 	config_memory[1] <= DISPON_CURSOROFF;
@@ -231,18 +233,18 @@ always @(posedge clk_16ms) begin
 		  wait_done <= 1'b0;
 		  //enable <= 'b0;
 		  
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoFelizF.txt", gatoFeliz);//
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoTristeF.txt", gatoTriste);//
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoNeutroF.txt", gatoNeutro);//
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ComidaF.txt", alimentacion);// 
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EnergiaF.txt", energia);// 
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/SaludF.txt", salud);// 
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/DiversionF.txt", diversion);// 
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EstadoNeutroF.txt", nState);//
-         $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoDormido.txt", gatoDormido);// 
-         $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ZZZ.txt", zzz);// 
-			$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoMuerto.txt", gatoMuerto);// 
-	    $readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/Muerte.txt", muerte);//  
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoFelizF.txt", gatoFeliz);//
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoTristeF.txt", gatoTriste);//
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoNeutroF.txt", gatoNeutro);//
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ComidaF.txt", alimentacion);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EnergiaF.txt", energia);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/SaludF.txt", salud);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/DiversionF.txt", diversion);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EstadoNeutroF.txt", nState);//
+         $readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoDormido.txt", gatoDormido);// 
+         $readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ZZZ.txt", zzz);// 
+			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoMuerto.txt", gatoMuerto);// 
+         $readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/Muerte.txt", muerte);//  
 	 end else begin
         case (next)
             IDLE: begin
@@ -290,7 +292,7 @@ always @(posedge clk_16ms) begin
                 end else if (sleep == 2'b11) begin
 						for (i = 0; i < num_data_all; i = i+1)begin
 								data_memory[i] <= gatoMuerto[i];
-							data_memory2[i] <= muerte[i];
+								data_memory2[i] <= muerte[i];
 						end
 					 end else begin
                 case(select_fig1) //Esta es la linea 269
