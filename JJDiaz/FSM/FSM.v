@@ -74,6 +74,7 @@ module tamagotchi_fsm (
             test_mode <= 1'b0; // Salir del modo de prueba
             timer_diversion2 <= 0;
             timer_energia2 <= 0;
+            energia_tst <= 4'b0001;
         end
 
         // Manejo de la activación del modo test mediante el botón dedicado
