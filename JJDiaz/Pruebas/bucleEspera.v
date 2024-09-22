@@ -1,9 +1,9 @@
 module bucleEspera #(parameter num_commands = 3, 
-                                      num_data_all = 64,  
-                                      char_data = 8, 
-                                      num_cgram_addrs = 8,
-                                      COUNT_MAX = 20000,
-				      WAIT_TIME = 200)(
+			       num_data_all = 64,  
+			       char_data = 8, 
+			       num_cgram_addrs = 8,
+			       COUNT_MAX = 20000,
+			       WAIT_TIME = 200)(
     input clk,            
     input reset,          
     input [3:0] select_figures,
