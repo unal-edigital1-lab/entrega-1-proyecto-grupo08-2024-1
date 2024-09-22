@@ -1,17 +1,17 @@
-module bucleEspera #(parameter num_commands = 3, 
-			       num_data_all = 64,  
-			       char_data = 8, 
-			       num_cgram_addrs = 8,
-			       COUNT_MAX = 20000,
-			       WAIT_TIME = 200)(
-    input clk,            
-    input reset,          
-    input [3:0] select_figures,
-    input [1:0] sleep,
-    output reg rs,        
-    output reg rw, 
-    output enable,
-    output reg [7:0] data
+module bucleEspera #(parameter num_commands = 3, //Número de comandos que se dan en la configuración inicial
+			       num_data_all = 64,  //Número de datos por txt máximo 64
+			       char_data = 8, //Número de caracteres a escribir máximo 8
+			       num_cgram_addrs = 8, //Número de direcciones CGRAM a sobrescribir máximo 8
+			       COUNT_MAX = 20000, //Divisor de frecuencia respecto al clk de la FPGA entre mas alto el número, más rápido el clk de la LCD
+		     WAIT_TIME = 200)( //Tiempo que se muestra cada figura en pantalla
+    input clk,            //clk de la FPGA
+    input reset,          //Boton de reinicio vuelve todo a valores iniciales
+    input [3:0] select_figures,  //Dato que se recibe del FSM total y determina el estado y la situación del gato
+    input [1:0] sleep, // Dato que se recibe del FSM total y determina si el gato esta dormido, muerto o ninguno de las dos. Tiene prioridad sobre select_figures
+    output reg rs,        //salida a la LCD
+    output reg rw,        //Salida a la LCD
+    output enable,        //Salida a la LCD
+	output reg [7:0] data //Salida a la LCD
 );
 
 // Definir los estados del controlador
@@ -42,9 +42,10 @@ localparam CGRAM_ADDR5 = 8'h68;
 localparam CGRAM_ADDR6 = 8'h70;
 localparam CGRAM_ADDR7 = 8'h78;
 
-reg [3:0] fsm_state;
+//Registros necesarios indicando su cantidad de bits	
+reg [3:0] fsm_state; //Cnatidad de estados del FSM de 4 bits
 reg [3:0] next;
-reg clk_16ms;
+reg clk_16ms; //Clk que toma en cuenta el código para usar la LCD (Clk de la FPGA pasado por el divisor de frecuencia)
 
 // Definir un contador para el divisor de frecuencia
 reg [$clog2(COUNT_MAX)-1:0] counter_div_freq;
@@ -68,12 +69,13 @@ reg [$clog2(char_data):0] char_counter;
 // Definir un contador para controlar el envío de cuantos CGRAM requiere
 reg [$clog2(num_cgram_addrs):0] cgram_addrs_counter;
 
+//Definir un contador para controlar la visualización de las figuras	
 reg [$clog2(WAIT_TIME)-1:0] wait_counter;
 
-reg wait_done;
 
 
-// Banco de registros
+
+// Banco de registros donde se guardan los txt
 reg [7:0] data_memory [0: num_data_all-1];
 reg [7:0] data_memory2 [0: num_data_all-1];
 reg [7:0] gatoFeliz [0: num_data_all-1];
@@ -91,11 +93,12 @@ reg [7:0] muerte [0: num_data_all-1];
 reg [7:0] config_memory [0:num_commands-1]; 
 reg [7:0] cgram_addrs [0: num_cgram_addrs-1];
 
-	
+//
 reg [1:0] create_char_task;
 reg init_config_executed;
 wire done_cgram_write;
 reg done_lcd_write;
+reg wait_done;
 reg change;
 integer i;
 
@@ -167,7 +170,6 @@ end
 always @(posedge clk_16ms)begin
     if(reset == 0)begin
         fsm_state <= IDLE;
-		  //fsm_state <= INIT_CONFIG;
     end else begin
         fsm_state <= next;
     end
@@ -232,6 +234,7 @@ always @(posedge clk_16ms) begin
 	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoMuerto.txt", gatoMuerto);// 
 	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/Muerte.txt", muerte);//  
     end else begin
+	    
         case (next)
             IDLE: begin
 		char_counter <= 'b0;
@@ -266,66 +269,69 @@ always @(posedge clk_16ms) begin
             end
 
             SELECT_VIEW: begin
+	    	//Se da prioridad a si esta dormido o muerto
                 if (sleep == 2'b01) begin //Dormido
 			for (i = 0; i < num_data_all; i = i +1 )begin
 				data_memory[i] <= gatoDormido[i];
 				data_memory2[i] <= zzz[i];
-		end
+			end
 		end else if (sleep == 2'b11) begin //Muerto
 			for (i = 0; i < num_data_all; i = i+1)begin
 				data_memory[i] <= gatoMuerto[i];
 				data_memory2[i] <= muerte[i];
 			end
-		 end else begin
-                case(select_fig1) 
-                    2'b01: begin //Gato Feliz
-                        for (i = 0; i < num_data_all; i = i + 1) begin
-                            data_memory[i] <= gatoFeliz[i];
-                        end
-                    end
-                    2'b00: begin //Gato Triste
-                        for (i = 0; i < num_data_all; i = i + 1) begin
-                            data_memory[i] <= gatoTriste[i];
-                        end
-                    end
-                    2'b10: begin // Gato Neutro y Estado Neutro
-                        for (i = 0; i < num_data_all; i = i + 1) begin
-                            data_memory[i] <= gatoNeutro[i];
-                            data_memory2[i] <= nState[i];
-                        end
-                    end
-                endcase
-                case(select_fig2)
-                    2'b01: begin //Estado de energía
-                        for (i = 0; i < num_data_all; i = i + 1) begin
-                            if(select_fig1 != 2'b10)begin
-                            data_memory2[i] <= energia[i];
-                            end
-                        end
-                    end
-                    2'b11: begin //Estado de Diversión
-                        for (i = 0; i < num_data_all; i = i + 1) begin
-                            if(select_fig1 != 2'b10)begin
-                            data_memory2[i] <= diversion[i];
-                            end
-                        end
-                    end
-                    2'b10: begin //Estado de Alimentación
-                        for (i = 0; i < num_data_all; i = i + 1) begin
-                            if(select_fig1 != 2'b10)begin
-                            data_memory2[i] <= alimentacion[i];
-                            end
-                        end
-                    end
-                    2'b00: begin //Estado de Salud
-                        for (i = 0; i < num_data_all; i = i + 1) begin
-                            if(select_fig1 != 2'b10)begin
-                                data_memory2[i] <= salud[i];
-                            end
-                        end
-                    end
-                    
-                endcase
+		 end else begin //Si no esta ni muerto ni dormido continuo con los estador normales
+			 
+			 case(select_fig1) //Determina si el gato está feliz o triste, además de un estado inicial Neutro
+	                    2'b01: begin //Gato Feliz
+	                        for (i = 0; i < num_data_all; i = i + 1) begin
+	                            data_memory[i] <= gatoFeliz[i];
+	                        end
+	                    end
+	                    2'b00: begin //Gato Triste
+	                        for (i = 0; i < num_data_all; i = i + 1) begin
+	                            data_memory[i] <= gatoTriste[i];
+	                        end
+	                    end
+	                    2'b10: begin // Gato Neutro y Estado Neutro
+	                        for (i = 0; i < num_data_all; i = i + 1) begin
+	                            data_memory[i] <= gatoNeutro[i];
+	                            data_memory2[i] <= nState[i];
+	                        end
+	                    end
+	                endcase
+			 
+			 case(select_fig2) //Determina el estado que se desea mostrar
+	                    2'b01: begin //Estado de energía
+	                        for (i = 0; i < num_data_all; i = i + 1) begin
+	                            if(select_fig1 != 2'b10)begin
+	                            data_memory2[i] <= energia[i];
+	                            end
+	                        end
+	                    end
+	                    2'b11: begin //Estado de Diversión
+	                        for (i = 0; i < num_data_all; i = i + 1) begin
+	                            if(select_fig1 != 2'b10)begin
+	                            data_memory2[i] <= diversion[i];
+	                            end
+	                        end
+	                    end
+	                    2'b10: begin //Estado de Alimentación
+	                        for (i = 0; i < num_data_all; i = i + 1) begin
+	                            if(select_fig1 != 2'b10)begin
+	                            data_memory2[i] <= alimentacion[i];
+	                            end
+	                        end
+	                    end
+	                    2'b00: begin //Estado de Salud
+	                        for (i = 0; i < num_data_all; i = i + 1) begin
+	                            if(select_fig1 != 2'b10)begin
+	                                data_memory2[i] <= salud[i];
+	                            end
+	                        end
+	                    end
+	                    
+	                endcase
                 end
             end
 
