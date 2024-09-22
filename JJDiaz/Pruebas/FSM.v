@@ -1,17 +1,21 @@
 module tamagotchi_fsm (
+    // Entradas del modulo
     input wire btn_salud,
 	input wire btn_ali,
 	input wire ult,
     input wire gyro,
 	input wire btn_reset,
 	input wire btn_test,
-    input wire clk, // Reloj de entrada de 50 MHz
+
+    input wire clk, //relog  de la FPGA
+    output reg clk_out, // Reloj de salida de 6.67 Hz
+
+    // Salidas del modulo
     output reg [3:0] display_out,
-	output reg [1:0] display_out2,
+	output reg [1:0] display_out2, // Senal especifica para cara dormida y muerte
     output reg [6:0] seg_display,	 // Salida para la regleta de 7 segmentos
-    output reg clk_out,       // Reloj de salida de 6.67 Hz
-	output reg an,
-    output reg tstled
+	output reg an, // Anodo en el que se veran los niveles
+    output reg tstled // Led encendido cuando el modo test este activo
     );
 
     // Definición de niveles separados para cada estado
@@ -22,32 +26,32 @@ module tamagotchi_fsm (
     reg [3:0] energia_tst;
     reg [3:0] diversion_tst;
 
-    reg [7:0] timer_salud, timer_energia, timer_energia2, timer_hambre, timer_diversion, timer_diversion2; // Contadores de tiempo
-    reg  test_mode;
-    reg dead_mode;
+    // Timers de control de disminucion de niveles
+    reg [7:0] timer_salud, timer_energia, timer_hambre, timer_diversion;
+    // Timers especificos para los sensores
+    reg [7:0] timer_diversion2, timer_energia2;
 
-    // Parámetro para contar los ciclos del reloj de entrada
-    reg [22:0] contador;   // Suficientemente grande para contar hasta 7,500,000
-    parameter DIVISOR = 7500000;
-    //parameter DIVISOR = 15000000;
-    //parameter DIVISOR = 2500000;
+    reg  test_mode; // Controlador del modo test
+    reg dead_mode; // Controlador de la mmuerte del tamagotchi
+    reg [22:0] contador;   // Contador lo suficientemente grande para contar hasta 7,500,000
+    parameter DIVISOR = 7500000; // Parametro para el divisor de frecuencia para el buen funcionamiento del tamagotchi
 
     // Inicialización de valores
-	
     initial begin
-        nivel_salud <= 4'b0011;   // Nivel de Salud inicial en 8
-        nivel_energia <= 4'b0100; // Nivel de Energía inicial en 8
-        nivel_hambre <= 4'b0101;  // Nivel de Hambre inicial en 8
-        nivel_diversion <= 4'b0110; // Nivel de Diversión inicial en 8
+        nivel_salud <= 4'b0011;   // Nivel de Salud inicial en 3
+        nivel_energia <= 4'b0100; // Nivel de Energía inicial en 4
+        nivel_hambre <= 4'b0101;  // Nivel de Hambre inicial en 5
+        nivel_diversion <= 4'b0110; // Nivel de Diversión inicial en 6
         timer_salud <= 0;
         timer_energia <= 0;
         timer_hambre <= 0;
         timer_diversion <= 0;
         display_out <= 4'b1000; // Mostrar Neutra y cara feliz por defecto
-        test_mode <= 1'b0; // Iniciar en modo normal
+        // Iniciar en modo normal
         dead_mode <= 1'b0;
-        seg_display<= 7'b1111111; // Inicializar la regleta de 7 segmentos en 0
+        test_mode <= 1'b0; 
 
+        seg_display<= 7'b1111111; // Inicializar la regleta de 7 segmentos en 0
 		contador = 0;
 		clk_out = 0;
 		an = 0;
@@ -56,7 +60,7 @@ module tamagotchi_fsm (
         diversion_tst <= 4'b0001;
     end
 	 
-    
+    // Divisor de frecuencia del clock
     always @(posedge clk) begin
         if (contador == (DIVISOR - 1)) begin
             contador <= 0;
@@ -85,11 +89,12 @@ module tamagotchi_fsm (
             timer_hambre <= 0;
             timer_salud <= 0;
         end
-		  
-		  //Manejo inicial del test
+
+		  //Manejo inicial del test, 
 		if (!btn_test) begin // 5 segundos en binario es 101
             test_mode <= 1'b1; // Activar modo de prueba
             tstled <= 0;
+            // Valores iniciales del modo test
             nivel_diversion <= 4'b0001;
             nivel_energia <= 4'b0001;
             nivel_salud <= 4'b0001;
@@ -105,9 +110,8 @@ module tamagotchi_fsm (
             dead_mode <= 1'b1;
         end
 
-		  
+		// Modo test: Solo permitir niveles 1 o 10
 		if (test_mode) begin
-            // Modo test: Solo permitir niveles 1 o 10
             if (!btn_salud && nivel_salud != 4'b0001) begin
                 display_out[3:0] <= 4'b0000; // Mostrar Salud
                 if (display_out[3:0] == 4'b0100) begin
@@ -133,7 +137,7 @@ module tamagotchi_fsm (
                 end
             end
             if (ult && diversion_tst == 4'b0001) begin
-                display_out[3:0] <= 4'b0011; // Mostrar Hambre
+                display_out[3:0] <= 4'b0011; // Mostrar Diversion
                 if (display_out[3:0] == 4'b0011 && timer_diversion2 > 2) begin
                     nivel_diversion <= 4'b1010;
                     timer_diversion2 <= 0;
@@ -141,7 +145,7 @@ module tamagotchi_fsm (
                 end else timer_diversion2 <= timer_diversion2 + 1;
             end
             if (ult && diversion_tst == 4'b1010) begin
-                display_out[3:0] <= 4'b0111; // Mostrar Hambre
+                display_out[3:0] <= 4'b0111; // Mostrar Diversion
                 if (display_out[3:0] == 4'b0111 && timer_diversion2 > 2) begin
                     nivel_diversion <= 4'b0001;
                     timer_diversion2 <= 0;
@@ -149,7 +153,7 @@ module tamagotchi_fsm (
                 end else timer_diversion2 <= timer_diversion2 + 1;
             end
             if (!gyro && energia_tst == 4'b0001) begin
-                display_out[3:0] <= 4'b0001; // Mostrar Salud
+                display_out[3:0] <= 4'b0001; // Mostrar Energia
                 if (display_out[3:0] == 4'b0001 && timer_energia2 > 2) begin
                     nivel_energia <= 4'b1010;
                     timer_energia2 <= 0;
@@ -157,7 +161,7 @@ module tamagotchi_fsm (
                 end else timer_energia2 <= timer_energia2 + 1;
             end
             if (!gyro && energia_tst == 4'b1010) begin
-                display_out[3:0] <= 4'b0101; // Mostrar Salud
+                display_out[3:0] <= 4'b0101; // Mostrar Energia
                 if (display_out[3:0] == 4'b0101 && timer_energia2 > 2) begin
                     nivel_energia <= 4'b0001;
                     timer_energia2 <= 0;
@@ -165,8 +169,9 @@ module tamagotchi_fsm (
                 end else timer_energia2 <= timer_energia2 + 1;
             end
         end 
+
+        // Modo normal: Incrementar el nivel del estado correspondiente, con límite de 10
         if (!dead_mode && !test_mode)begin
-            // Modo normal: Incrementar el nivel del estado correspondiente, con límite de 10
             if (!btn_salud && nivel_salud < 4'b0101) begin
                 display_out[3:0] <= 4'b0000; // Mostrar Salud
                 if (display_out[3:0] == 4'b0000) begin
@@ -200,35 +205,35 @@ module tamagotchi_fsm (
             end
 				
 			if (ult && nivel_diversion < 4'b0101)begin
-				display_out[3:0] <= 4'b0011; // Mostrar Hambre
+				display_out[3:0] <= 4'b0011; // Mostrar Diversion
 				if (display_out[3:0] == 4'b0011 && timer_diversion2 == 6) begin
-                    nivel_diversion <= nivel_diversion + 1; // Aumentar nivel Hambre
+                    nivel_diversion <= nivel_diversion + 1; // Aumentar nivel Diversion
 					 timer_diversion2 <= 0;
 				end else timer_diversion2 <= timer_diversion2 + 1;
 			end
 				
 			if (ult && nivel_diversion > 4'b0100)begin
-				display_out[3:0] <= 4'b0111; // Mostrar Hambre
+				display_out[3:0] <= 4'b0111; // Mostrar Diversion
 				if (nivel_diversion < 4'b1010 && display_out[3:0] == 4'b0111 && timer_diversion2 == 6) begin
-                    nivel_diversion <= nivel_diversion + 1; // Aumentar nivel Hambre
+                    nivel_diversion <= nivel_diversion + 1; // Aumentar nivel Diversion
 				    timer_diversion2 <= 0;
 				end else timer_diversion2 <= timer_diversion2 + 1;
 			end
 
             if (!gyro && nivel_energia < 4'b0101)begin
-				display_out[3:0] <= 4'b0101; // Mostrar Hambre
+				display_out[3:0] <= 4'b0101; // Mostrar Energia
                 display_out2[1:0] <= 2'b01; // Mostrar Dormido
 					if (display_out2[1:0] == 2'b01 && timer_energia2 == 12) begin
-						nivel_energia <= nivel_energia + 1; // Aumentar nivel Hambre
+						nivel_energia <= nivel_energia + 1; // Aumentar nivel Energia
 						timer_energia2 <= 0;
                 end else timer_energia2 <= timer_energia2 + 1;
 			end
 
             if (!gyro && nivel_energia > 4'b0100)begin
-				display_out <= 4'b0101; // Mostrar Hambre
+				display_out <= 4'b0101; // Mostrar Energi
                 display_out2 <= 2'b01; // Mostrar Dormido
 				if (nivel_energia < 4'b1010 && display_out2 == 2'b01 && timer_energia2 == 12) begin
-                    nivel_energia <= nivel_energia + 1; // Aumentar nivel Hambre
+                    nivel_energia <= nivel_energia + 1; // Aumentar nivel Energia
 					timer_energia2 <= 0;
 				end else timer_energia2 <= timer_energia2 + 1;
 			end
@@ -245,6 +250,8 @@ module tamagotchi_fsm (
 				if (nivel_salud == 4'b0001)begin
 					timer_salud <= 0;
 				end
+
+            // Para la disminucion de energia se debe colocar el condicional de cara muerta para que no se muestre siempre en la pantalla
             if (gyro) begin
                 if (!dead_mode) begin
 			        display_out2 <= 2'b00;
