@@ -226,6 +226,61 @@ Por lo que, para verificar los dos momentos establecidos anteriormente, se decid
 
 _Pantalla LCD 16x2_
 
+- Simulación configuración condiciones iniciales
+
+Se realiza la simulación, se ve como se inica correctamentr en el estado 0 del FSM para inicializar los registros que se usarán, Pasa al estado 1 del FSM en donde se mandan las configuraciones iniciales de la LCD, sabemos que es lectura de comandos al estar el rs en 0, y los comandos se mandan en data, loc aules corresponden con definir que se usará modo 8 bits de dos líneas y que son matrices de 5x8 píxeles por caracter (8’h38), se define que el cursor permanecerá apagado (8’h0C) y finaliza limpiando el display (8’h01), pasa al estado 2 del fsm en donde limpia todos los contadores necesarios. En el estado 3 se seleccionan de entre las visualizaciones las pertinentes dependiendo de las entradas que recibe el programa (Select_view y sleep).
+
+![Simulación de condiciones iniciales](Images/ImgSimLCD/SimINIT.png)
+  
+- Simulación creación de chars
+
+Al entrar en el estado 4 del FSM se indica la dirección y los datos de los carácteres especiales creados por nosotros guardados en txt en formato binario. En el data se muestra la dirección de la CGRAM en la que se guardan los datos, y después los binarios que van en ese espacio de la CGRAM, la LCD diferencia entre seleccionar el espacio y mandar los datos dependiendo de el valor del rs caundo es 0 selecciona la dirección cuando es 1 manda los datos de la imagen que se quiere guardar en el espacio previamente selccionado.
+
+![Simulación de condiciones iniciales](Images/ImgSimLCD/SimCreateChar.png)
+
+
+- Simulación de escritura de chars
+
+Se pasa al estado 5 del FSM en donde se reinician los contadores, entra enel estado 6 del FSM en donde en primer momento se indica en que dirección de la pantalla se desea escribir el cáracter y lo escribe. Cuando el rs es 0 el data indica la dirección de la pantalla, y cuando rs es 1 indica el cáracter que se desea escribir (cáracter guardado previamente en el CGRAM).
+
+![Simulación de condiciones iniciales](Images/ImgSimLCD/SimWriteChar.png)
+
+
+- Simulación del bucle espera
+
+Posteriormente entra a un bucle entre wait (Estado 7 del FSM) y show_nothing (estado 8 del FSM) por el tiempo determinado por un parámero inicial llamado WAIT_TIME, la función de estos dos estados es evitar que se reproduzcan carácteres no deseados en la pantalla además de controlar el tiempo en el que se muestran las figuras para mejorar su apreciación.
+  
+![Simulación de condiciones iniciales](Images/ImgSimLCD/SimWait.png)
+
+
+- Simulación cambio de lectura y escritura de figura
+
+Cuando termina de mostrar la primer figura el registro change se vuelve 1 para poder realizar el mismo proceso de guardado en CGRAM y de escritura en la LCD de la segunda parte de la visualización. Recordemos que se deben mostrar dos figuras por cada visualización, una en donde muestre si el gato esta feliz o triste (dependiendo del nivel del estado que se desea ver), además de una imagen representativa del estado del que se está dando la información actualmente. Se debe realizar todo el proceso para cada figura debido a que la LCD 16x2 que se está manejando solo permite guardar 8 crácteres especiales, por lo que si se quiere una figura detallada aprovecharemos los 8 para una sola figura (Esto se relaciona con la capacidad de la memoria RAM de la LCD).
+  
+![Simulación de condiciones iniciales](Images/ImgSimLCD/SimChange1.png)
+
+ Se aprecia el cambio del registro change apenas se acaba de mostrar la figura en la pantalla.
+
+![Simulación de condiciones iniciales](Images/ImgSimLCD/SimChange2.png)
+
+Se observa como se repite el proceso pero con change en 1 lo que hace que se procese la información de la segunda figura.
+
+Cuando termina este proceso change vuelve a ser 0 para entrar en un bucle en el que se lea constantemente la figura que se desea mostrar y si hay algún cambio en esta determinado por Select_fig o sleep.
+
+
+- Simulación cambio de entrada select_fig
+
+Podemos ver como se detecta el cambio de select_fig y se muestra la figura seleccionada.
+  
+![Simulación de condiciones iniciales](Images/ImgSimLCD/SimSelectFig.png)
+
+
+- Simulación cambio de entrada sleep
+
+Ahora para mostrar el gato durmiendo o muerto se depende de la entrada sleep (esta variable tiene prioridad sobre select_fig). Podemos ver como se reconoce el cambio de la variable sleep y se realiza su proceso correspondiente para poder visualizarlo.
+  
+![Simulación de condiciones iniciales](Images/ImgSimLCD/SimSleep.png)
+
 _FSM total_
 
 - Simulación de botones en modo normal
