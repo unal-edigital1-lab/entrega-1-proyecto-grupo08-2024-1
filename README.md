@@ -55,7 +55,8 @@ Para la visualización se utiliza la siguiente convención:
 
 ![Tabla de SM visual 1](/Images/Tabla%20Visual1.png) ![Tabla de SM visual 2](/Images/Tabla%20visual%202.png)
 
-Consiste en 5 bits de los cuales los primeras 3 cifras se toman en cuenta para determinar el estado que se muestra, ya sea la energia (000), la diversión (001), la alimentación (010) y la salud (011) además de un estado neutro (100) para no mostrar nada en la visualización. La dos cifras restantes determinan si el estado con el q se combina es alto o bajo demostrando una cara feliz (00) o triste (01) además de su respectiva cara neutra(10) con la misma finalidad del estado neutro.
+La visualización 1 consiste en 4 bits de los cuales las últimas 2 cifras se toman en cuenta para determinar el estado que se muestra, ya sea la energia (01), la diversión (11), la alimentación (10) y la salud (00). Las primeras dos cifras ssignificativas determinan si el estado con el q se combina es alto o bajo demostrando una cara feliz (01) o triste (00) además de su respectiva cara neutra(01) con la misma finalidad del estado neutro.
+La vizualización 2 tiene prioridad por sobre la visualización 1. Consiste en dos bits en donde se determina si el tamagochi se encuentra durmiendo(01) o muerto (11), cuando el tamagochi no se encuentra en ninguno de estos estados envía un 00 para que funcione la visualización 1 con normalidad. 
 
 _Diagrama de Flujo_
 
