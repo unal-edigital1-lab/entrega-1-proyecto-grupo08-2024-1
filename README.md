@@ -228,7 +228,7 @@ _Pantalla LCD 16x2_
 
 _ENTENDIMIENTO BÁSICO DEL CÓDIGO_
 
-Para poder enterder correctamente el código de la LCD lo más importante es comprender el FSM que lo controla, como se explica en el código [BucleEspera.v](LCD/BucleEspera.v) Así como todo el código comentado.Aquí podemos ver el fragmento del FSM:
+Para poder enterder correctamente el código de la LCD lo más importante es comprender el FSM que lo controla, como se explica en el código [BucleEspera.v](LCD/bucleEspera.v) Así como todo el código comentado.Aquí podemos ver el fragmento del FSM:
 
 
 ```verilog
