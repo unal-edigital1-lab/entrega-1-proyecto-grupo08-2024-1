@@ -1,38 +1,36 @@
-module bucleEspera #(parameter num_commands = 3, 
-                                      num_data_all = 64,  
-                                      char_data = 8, 
-                                      num_cgram_addrs = 8,
-                                      COUNT_MAX = 20000,
-												  WAIT_TIME = 200)(
-    input clk,            
-    input reset,          
-    //input ready_i,
-	 input [3:0] select_figures, //DEBE ESTAR EN LA PRUEBA FINAL
-	 input [1:0] sleep, //Debe estar en la prueba final
-    output reg rs,        
-    output reg rw,
-    //output reg enable, //NO ACTIVAR 
-	 output enable,
-    output reg [7:0] data
+module bucleEspera #(parameter num_commands = 3, //Número de comandos que se dan en la configuración inicial
+			       num_data_all = 64,  //Número de datos por txt máximo 64
+			       char_data = 8, //Número de caracteres a escribir máximo 8
+			       num_cgram_addrs = 8, //Número de direcciones CGRAM a sobrescribir máximo 8
+			       COUNT_MAX = 20000, //Divisor de frecuencia respecto al clk de la FPGA entre mas alto el número, más rápido el clk de la LCD
+		     	       WAIT_TIME = 200)( //Tiempo que se muestra cada figura en pantalla
+    input clk,            //clk de la FPGA
+    input reset,          //Boton de reinicio vuelve todo a valores iniciales
+    input [3:0] select_figures,  //Dato que se recibe del FSM total y determina el estado y la situación del gato
+    input [1:0] sleep, // Dato que se recibe del FSM total y determina si el gato esta dormido, muerto o ninguno de las dos. Tiene prioridad sobre select_figures
+    output reg rs,        //salida a la LCD
+    output reg rw,        //Salida a la LCD
+    output enable,        //Salida a la LCD
+	output reg [7:0] data //Salida a la LCD
 );
 
 // Definir los estados del controlador
 localparam IDLE = 0;
-localparam INIT_CONFIG = 1; //1
-localparam CLEAR_COUNTERS0 = 2; //2
+localparam INIT_CONFIG = 1; 
+localparam CLEAR_COUNTERS0 = 2; 
 localparam SELECT_VIEW = 3;
-localparam CREATE_CHARS = 4; //3
-localparam CLEAR_COUNTERS1 = 5; //4
-localparam SET_CURSOR_AND_WRITE = 6; //5
-localparam SHOW_NOTHING = 7; //6
-localparam WAIT = 8; //7
+localparam CREATE_CHARS = 4; 
+localparam CLEAR_COUNTERS1 = 5; 
+localparam SET_CURSOR_AND_WRITE = 6; 
+localparam SHOW_NOTHING = 7; 
+localparam WAIT = 8; 
 
-
+//Definir los sub estados de SET_CURSOR_AND_WRITE
 localparam SET_CGRAM_ADDR = 0;
 localparam WRITE_CHARS = 1;
 localparam SET_CURSOR = 2;
 localparam WRITE_LCD = 3;
-//localparam CHANGE_LINE = 4;
+
 
 // Direcciones de escritura de la CGRAM 
 localparam CGRAM_ADDR0 = 8'h40;
@@ -44,9 +42,10 @@ localparam CGRAM_ADDR5 = 8'h68;
 localparam CGRAM_ADDR6 = 8'h70;
 localparam CGRAM_ADDR7 = 8'h78;
 
-reg [3:0] fsm_state;
-reg [3:0] next;
-reg clk_16ms;
+//Registros necesarios indicando su cantidad de bits	
+reg [3:0] fsm_state; //Cnatidad de estados del FSM de 4 bits
+reg [3:0] next; //Registro para moverse entre los estados del FSM
+reg clk_16ms; //Clk que toma en cuenta el código para usar la LCD (Clk de la FPGA pasado por el divisor de frecuencia)
 
 // Definir un contador para el divisor de frecuencia
 reg [$clog2(COUNT_MAX)-1:0] counter_div_freq;
@@ -55,13 +54,8 @@ reg [$clog2(COUNT_MAX)-1:0] counter_div_freq;
 localparam CLEAR_DISPLAY = 8'h01;
 localparam SHIFT_CURSOR_RIGHT = 8'h06;
 localparam DISPON_CURSOROFF = 8'h0C;
-localparam DISPON_CURSORON = 8'h0E;
 localparam LINES2_MATRIX5x8_MODE8bit = 8'h38;
-//localparam LINES2_MATRIX5x8_Mwait_done <= 1'b0;ODE4bit = 8'h28;
-//localparam LINES1_MATRIX5x8_MODE8bit = 8'h30;
-//localparam LINES1_MATRIX5x8_MODE4bit = 8'h20;
-localparam START_1LINE = 8'h80;
-localparam START_2LINE = 8'hC0;
+
 
 // Definir un contador para controlar el envío de comandos
 reg [$clog2(num_commands):0] command_counter;
@@ -75,12 +69,13 @@ reg [$clog2(char_data):0] char_counter;
 // Definir un contador para controlar el envío de cuantos CGRAM requiere
 reg [$clog2(num_cgram_addrs):0] cgram_addrs_counter;
 
+//Definir un contador para controlar la visualización de las figuras	
 reg [$clog2(WAIT_TIME)-1:0] wait_counter;
 
-reg wait_done;
 
 
-// Banco de registros
+
+// Banco de registros donde se guardan los txt
 reg [7:0] data_memory [0: num_data_all-1];
 reg [7:0] data_memory2 [0: num_data_all-1];
 reg [7:0] gatoFeliz [0: num_data_all-1];
@@ -98,70 +93,67 @@ reg [7:0] muerte [0: num_data_all-1];
 reg [7:0] config_memory [0:num_commands-1]; 
 reg [7:0] cgram_addrs [0: num_cgram_addrs-1];
 
-reg [1:0] create_char_task;
-reg init_config_executed;
-wire done_cgram_write;
-reg done_lcd_write;
-reg change;
-integer i;
 
-//reg [3:0] select_figures; //PRUEBAS ONLY, SE DEBE QUITAR
-//reg [1:0] sleep; // PRUEBAS ONLY SE DEBE QUITAR
+reg [1:0] create_char_task; //Registro para moverse en los estados del SET_CURSOR_AND_WRITE
+reg init_config_executed;//Confirmación de que se haya configurado correctamente condiciones iniciales
+wire done_cgram_write;//Confirmación de que ya se escribieron los chars en el CGRAM
+reg done_lcd_write;//Confirmación de que ya se visualizan todos los chars en la pantalla de la LCD
+reg wait_done;//Confirmación de que ya se espero el tiempo elegido
+reg change;//Registra el cambio entre una figura y otra en la visualización
+integer i;//Registro de operaciones internas  para el CGRAM
 
-reg [1:0] select_fig1;
-reg [1:0] select_fig2; 
 
-initial begin
-    fsm_state <= IDLE;
-	 //fsm_state <= INIT_CONFIG;
-    data <= 'b0;
-    command_counter <= 'b0;
-    data_counter <= 'b0;
-    rw <= 0;
-	 rs <= 0;
-    clk_16ms <= 'b0;
-    counter_div_freq <= 'b0;
-    init_config_executed <= 'b0;
-    cgram_addrs_counter <= 'b0; 
-    char_counter <= 'b0;
-    done_lcd_write <= 1'b0; 
-	 change <= 'b0;
-	 //select_figures <= 4'b0100; //SOLO PARA PRUEBAS, SE DEBE QUITAR
-	 //sleep <= 2'b11; //SOLO PARA PRUEBAS SE DEBE QUITAR
-	 wait_counter <= 'b0;
-	 wait_done <= 1'b0;
-	 //enable <= 'b0;
+reg [1:0] select_fig1;//Registro que se dará a los primeros dos bits del select_figures
+reg [1:0] select_fig2; //Registro que se dará a los ultimos dos bits del select_figures
 
-    create_char_task <= SET_CGRAM_ADDR;
-	 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoFelizF.txt", gatoFeliz);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoTristeF.txt", gatoTriste);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoNeutroF.txt", gatoNeutro);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ComidaF.txt", alimentacion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EnergiaF.txt", energia);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/SaludF.txt", salud);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/DiversionF.txt", diversion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EstadoNeutroF.txt", nState);//
-         $readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoDormido.txt", gatoDormido);// 
-         $readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ZZZ.txt", zzz);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoMuerto.txt", gatoMuerto);// 
-         $readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/Muerte.txt", muerte);// 
-			
+initial begin //Condiciones iniciales
+    fsm_state <= IDLE; //Manda el FSM al primer estado
+	//Registros y contadores en condiciones iniciales
+	    data <= 'b0;
+	    command_counter <= 'b0;
+	    data_counter <= 'b0;
+	    rw <= 0;
+	    rs <= 0;
+	    clk_16ms <= 'b0;
+	    counter_div_freq <= 'b0;
+	    init_config_executed <= 'b0;
+	    cgram_addrs_counter <= 'b0; 
+	    char_counter <= 'b0;
+	    done_lcd_write <= 1'b0; 
+	    change <= 'b0;
+	    wait_counter <= 'b0;
+	    wait_done <= 1'b0;
+
+    create_char_task <= SET_CGRAM_ADDR;//Manda al primer estado del SET_CURSOR_AND_WRITE
+	 //Lectura y guardado de los txt que son necesarios para las figuras que se mostrarán
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoFelizF.txt", gatoFeliz);//
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoTristeF.txt", gatoTriste);//
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoNeutroF.txt", gatoNeutro);//
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ComidaF.txt", alimentacion);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EnergiaF.txt", energia);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/SaludF.txt", salud);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/DiversionF.txt", diversion);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EstadoNeutroF.txt", nState);//
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoDormido.txt", gatoDormido);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ZZZ.txt", zzz);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoMuerto.txt", gatoMuerto);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/Muerte.txt", muerte);// 
+//Se guardan las configuraciones en los registros de memoria correspondientes
 	config_memory[0] <= LINES2_MATRIX5x8_MODE8bit;
 	config_memory[1] <= DISPON_CURSOROFF;
 	config_memory[2] <= CLEAR_DISPLAY;
-
-    cgram_addrs[0] <= CGRAM_ADDR0;
-    cgram_addrs[1] <= CGRAM_ADDR1;
-    cgram_addrs[2] <= CGRAM_ADDR2;
-    cgram_addrs[3] <= CGRAM_ADDR3;
-    cgram_addrs[4] <= CGRAM_ADDR4;
-    cgram_addrs[5] <= CGRAM_ADDR5;
-	 cgram_addrs[6] <= CGRAM_ADDR6;
-	 cgram_addrs[7] <= CGRAM_ADDR7;
+//Se guardan las direcciones del CGRAM
+	cgram_addrs[0] <= CGRAM_ADDR0;
+	cgram_addrs[1] <= CGRAM_ADDR1;
+	cgram_addrs[2] <= CGRAM_ADDR2;
+	cgram_addrs[3] <= CGRAM_ADDR3;
+	cgram_addrs[4] <= CGRAM_ADDR4;
+	cgram_addrs[5] <= CGRAM_ADDR5;
+	cgram_addrs[6] <= CGRAM_ADDR6;
+	cgram_addrs[7] <= CGRAM_ADDR7;
 end
 
-always @(posedge clk) begin
+always @(posedge clk) begin//Divisor de frecuencia
     if (counter_div_freq == COUNT_MAX-1) begin
         clk_16ms <= ~clk_16ms;
         counter_div_freq <= 0;
@@ -171,100 +163,96 @@ always @(posedge clk) begin
 end
 
 
-always @(*) begin
+always @(*) begin//Se lee todo el tiempo select_figures y se asigna lo siguiente
     select_fig1 = select_figures[3:2]; // Primeros 2 bits determinan la figura 1
     select_fig2 = select_figures[1:0]; // Últimos 3 bits determinan la figura 2
 end
 
-always @(posedge clk_16ms)begin
+	always @(posedge clk_16ms)begin//Lee constantemente el botón reset y manda al estado 1 del FSM si es así
     if(reset == 0)begin
         fsm_state <= IDLE;
-		  //fsm_state <= INIT_CONFIG;
     end else begin
         fsm_state <= next;
     end
 end
 
-always @(*) begin
+always @(*) begin //FSM de la LCD
     case(fsm_state)
-        IDLE: begin
-            next <= (init_config_executed)? CREATE_CHARS : INIT_CONFIG;
+        IDLE: begin//Inicia los contadores y registros
+		next <= (init_config_executed)? CREATE_CHARS : INIT_CONFIG; 
         end
-        INIT_CONFIG: begin 
-            next <= (command_counter == num_commands)? CLEAR_COUNTERS0 : INIT_CONFIG;
+        INIT_CONFIG: begin //Realiza la configuración inicial de la pantalla
+		next <= (command_counter == num_commands)? CLEAR_COUNTERS0 : INIT_CONFIG; 
         end
-        CLEAR_COUNTERS0: begin
-            next <= SELECT_VIEW;
+        CLEAR_COUNTERS0: begin //Reinicia los contadores y registros
+		next <= SELECT_VIEW;
         end
-        SELECT_VIEW: begin
-            next <= CREATE_CHARS;
+        SELECT_VIEW: begin//Se seleccionan las figuras necesarias dependiendo de select_figures y de sleep
+            next <= CREATE_CHARS; 
         end
-        CREATE_CHARS:begin
+        CREATE_CHARS:begin//crea lso chars y los guarda en el CGRAM
             next <= (done_cgram_write)? CLEAR_COUNTERS1 : CREATE_CHARS;
         end
-        CLEAR_COUNTERS1: begin
+        CLEAR_COUNTERS1: begin//Reinicia los contadores y registros
             next <= SET_CURSOR_AND_WRITE;
         end
-        SET_CURSOR_AND_WRITE: begin 
+        SET_CURSOR_AND_WRITE: begin //Se indica la posición del cursor y lo que se escribe en ese espacio
             next <= (done_lcd_write)? WAIT: SET_CURSOR_AND_WRITE;
         end
-		  WAIT: begin
-				next <= (wait_done)? CLEAR_COUNTERS0 : SHOW_NOTHING;
-			end
-			SHOW_NOTHING: begin
-			next <= WAIT;
-			end
-		  default: next = IDLE;
-        //default: next = INIT_CONFIG;
+        WAIT: begin //Espera hasta que el contador llegue al valor de WAIT_TIME
+	    next <= (wait_done)? CLEAR_COUNTERS0 : SHOW_NOTHING;
+	end
+	SHOW_NOTHING: begin//Indica que el cursor se quede en una dirección en específico para no dañar la figura generada
+	    next <= WAIT;
+	end
+        default: next = IDLE;//Estado Default
     endcase
 end
 
 always @(posedge clk_16ms) begin
     if (reset == 0) begin
-        command_counter <= 'b0;
-        data_counter <= 'b0;
-		  data <= 'b0;
-        char_counter <= 'b0;
-        init_config_executed <= 'b0;
-        cgram_addrs_counter <= 'b0;
-        done_lcd_write <= 1'b0; 
-		  change <= 'b0;
-		  wait_counter <= 'b0;
-		  wait_done <= 1'b0;
-		  //enable <= 'b0;
-		  
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoFelizF.txt", gatoFeliz);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoTristeF.txt", gatoTriste);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoNeutroF.txt", gatoNeutro);//
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ComidaF.txt", alimentacion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EnergiaF.txt", energia);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/SaludF.txt", salud);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/DiversionF.txt", diversion);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/EstadoNeutroF.txt", nState);//
-         $readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoDormido.txt", gatoDormido);// 
-         $readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/ZZZ.txt", zzz);// 
-			$readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/GatoMuerto.txt", gatoMuerto);// 
-         $readmemb("/home/angel/github-classroom/unal-edigital1-lab/BucleEspera/Muerte.txt", muerte);//  
-	 end else begin
+	command_counter <= 'b0;
+	data_counter <= 'b0;
+	data <= 'b0;
+	char_counter <= 'b0;
+	init_config_executed <= 'b0;
+	cgram_addrs_counter <= 'b0;
+	done_lcd_write <= 1'b0; 
+	change <= 'b0;
+	wait_counter <= 'b0;
+	wait_done <= 1'b0;
+	
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoFelizF.txt", gatoFeliz);//
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoTristeF.txt", gatoTriste);//
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoNeutroF.txt", gatoNeutro);//
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ComidaF.txt", alimentacion);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EnergiaF.txt", energia);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/SaludF.txt", salud);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/DiversionF.txt", diversion);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/EstadoNeutroF.txt", nState);//
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoDormido.txt", gatoDormido);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ZZZ.txt", zzz);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoMuerto.txt", gatoMuerto);// 
+	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/Muerte.txt", muerte);//  
+    end else begin
+	    
         case (next)
             IDLE: begin
-                char_counter <= 'b0;
-                command_counter <= 'b0;
-                data_counter <= 'b0;
-                rs <= 'b0;
-                cgram_addrs_counter <= 'b0;
-                done_lcd_write <= 1'b0;
-					 change <= 'b0;
-					 wait_counter <= 'b0;
-					 wait_done <= 1'b0;
-					 //enable <= 'b0;
+		char_counter <= 'b0;
+		command_counter <= 'b0;
+		data_counter <= 'b0;
+		rs <= 'b0;
+		cgram_addrs_counter <= 'b0;
+		done_lcd_write <= 1'b0;
+		change <= 'b0;
+		wait_counter <= 'b0;
+		wait_done <= 1'b0;
             end
             INIT_CONFIG: begin
-                rs <= 'b0;
-			    data <= config_memory[command_counter];
-				 command_counter <= command_counter + 1;
-				 //enable <= 'b1;
-                if(command_counter == num_commands-1) begin
+		rs <= 'b0;
+		data <= config_memory[command_counter];
+		command_counter <= command_counter + 1;
+	        if(command_counter == num_commands-1) begin//Se ejecutan tantos comando co,mo se indica num_commands
                     init_config_executed <= 1'b1;
                 end
             end
@@ -274,94 +262,92 @@ always @(posedge clk_16ms) begin
                 create_char_task <= SET_CGRAM_ADDR;
                 cgram_addrs_counter <= 'b0;
                 done_lcd_write <= 1'b0;
-                //rs <= 'b0;
-					 rs <= 0;
-                data <= CLEAR_DISPLAY;
-					 wait_counter <= 'b0;
-					 wait_done <= 1'b0;
-					 //enable <= 'b0;
+		rs <= 0;
+		data <= CLEAR_DISPLAY;
+		wait_counter <= 'b0;
+		wait_done <= 1'b0;
 					 
             end
 
             SELECT_VIEW: begin
+	    	//Se da prioridad a si esta dormido o muerto
                 if (sleep == 2'b01) begin //Dormido
-                    for (i = 0; i < num_data_all; i = i +1 )begin
-                        data_memory[i] <= gatoDormido[i];
-                        data_memory2[i] <= zzz[i];
-                    end
-                end else if (sleep == 2'b11) begin
-						for (i = 0; i < num_data_all; i = i+1)begin
-								data_memory[i] <= gatoMuerto[i];
-								data_memory2[i] <= muerte[i];
-						end
-					 end else begin
-                case(select_fig1) //Esta es la linea 269
-                    2'b01: begin
-                        for (i = 0; i < num_data_all; i = i + 1) begin
-                            data_memory[i] <= gatoFeliz[i];
-                        end
-                    end
-                    2'b00: begin
-                        for (i = 0; i < num_data_all; i = i + 1) begin
-                            data_memory[i] <= gatoTriste[i];
-                        end
-                    end
-                    2'b10: begin
-                        for (i = 0; i < num_data_all; i = i + 1) begin
-                            data_memory[i] <= gatoNeutro[i];
-                            data_memory2[i] <= nState[i];
-                        end
-                    end
-                endcase
-                case(select_fig2)
-                    2'b01: begin
-                        for (i = 0; i < num_data_all; i = i + 1) begin
-                            if(select_fig1 != 2'b10)begin
-                            data_memory2[i] <= energia[i];
-                            end
-                        end
-                    end
-                    2'b11: begin
-                        for (i = 0; i < num_data_all; i = i + 1) begin
-                            if(select_fig1 != 2'b10)begin
-                            data_memory2[i] <= diversion[i];
-                            end
-                        end
-                    end
-                    2'b10: begin
-                        for (i = 0; i < num_data_all; i = i + 1) begin
-                            if(select_fig1 != 2'b10)begin
-                            data_memory2[i] <= alimentacion[i];
-                            end
-                        end
-                    end
-                    2'b00: begin
-                        for (i = 0; i < num_data_all; i = i + 1) begin
-                            if(select_fig1 != 2'b10)begin
-                                data_memory2[i] <= salud[i];
-                            end
-                        end
-                    end
-                    
-                endcase
+			for (i = 0; i < num_data_all; i = i +1 )begin
+				data_memory[i] <= gatoDormido[i];
+				data_memory2[i] <= zzz[i];
+			end
+		end else if (sleep == 2'b11) begin //Muerto
+			for (i = 0; i < num_data_all; i = i+1)begin
+				data_memory[i] <= gatoMuerto[i];
+				data_memory2[i] <= muerte[i];
+			end
+		 end else begin //Si no esta ni muerto ni dormido continuo con los estador normales
+			 
+			 case(select_fig1) //Determina si el gato está feliz o triste, además de un estado inicial Neutro
+	                    2'b01: begin //Gato Feliz
+	                        for (i = 0; i < num_data_all; i = i + 1) begin
+	                            data_memory[i] <= gatoFeliz[i];
+	                        end
+	                    end
+	                    2'b00: begin //Gato Triste
+	                        for (i = 0; i < num_data_all; i = i + 1) begin
+	                            data_memory[i] <= gatoTriste[i];
+	                        end
+	                    end
+	                    2'b10: begin // Gato Neutro y Estado Neutro
+	                        for (i = 0; i < num_data_all; i = i + 1) begin
+	                            data_memory[i] <= gatoNeutro[i];
+	                            data_memory2[i] <= nState[i];
+	                        end
+	                    end
+	                endcase
+			 
+			 case(select_fig2) //Determina el estado que se desea mostrar
+	                    2'b01: begin //Estado de energía
+	                        for (i = 0; i < num_data_all; i = i + 1) begin
+	                            if(select_fig1 != 2'b10)begin
+	                            data_memory2[i] <= energia[i];
+	                            end
+	                        end
+	                    end
+	                    2'b11: begin //Estado de Diversión
+	                        for (i = 0; i < num_data_all; i = i + 1) begin
+	                            if(select_fig1 != 2'b10)begin
+	                            data_memory2[i] <= diversion[i];
+	                            end
+	                        end
+	                    end
+	                    2'b10: begin //Estado de Alimentación
+	                        for (i = 0; i < num_data_all; i = i + 1) begin
+	                            if(select_fig1 != 2'b10)begin
+	                            data_memory2[i] <= alimentacion[i];
+	                            end
+	                        end
+	                    end
+	                    2'b00: begin //Estado de Salud
+	                        for (i = 0; i < num_data_all; i = i + 1) begin
+	                            if(select_fig1 != 2'b10)begin
+	                                data_memory2[i] <= salud[i];
+	                            end
+	                        end
+	                    end
+	                    
+	                endcase
                 end
             end
 
             CREATE_CHARS: begin
                 case(create_char_task)
-                    SET_CGRAM_ADDR: begin
+                    SET_CGRAM_ADDR: begin//Se selecciona la dirección de CGRAM
                         rs <= 'b0; data <= cgram_addrs[cgram_addrs_counter]; 
-								//enable <= 'b1;
                         create_char_task <= WRITE_CHARS; 
                     end
                     WRITE_CHARS: begin
                         rs <= 1; 
-                        if(change == 'b0) begin
-				            data <= data_memory[data_counter];
-						  //enable <= 'b1;
+		        if(change == 'b0) begin//Si change es 0 selecciona el gato, si change es 1 selecciona el estado
+			        data <= data_memory[data_counter];
                         end else begin
-							data <= data_memory2[data_counter];
-							//enable <= 'b1;
+				data <= data_memory2[data_counter];
                         end
                         data_counter <= data_counter + 1;
                         if(char_counter == char_data -1) begin
@@ -370,71 +356,64 @@ always @(posedge clk_16ms) begin
                             cgram_addrs_counter <= cgram_addrs_counter + 1;
                         end else begin
                             char_counter <= char_counter +1;
-                            //rs <= 0; data <= DISPON_CURSOROFF;
                         end
                     end
                 endcase
             end
-            CLEAR_COUNTERS1: begin
-                //rs = 'b0; data <= 'b0;
-                data_counter <= 'b0;
-                char_counter <= 'b0;
-                create_char_task <= SET_CURSOR;
-                cgram_addrs_counter <= 'b0;
-					 //enable <= 'b0;
-					 rs <= 0;
-					 data <= DISPON_CURSOROFF;
-            end
+	    CLEAR_COUNTERS1: begin
+			data_counter <= 'b0;
+			char_counter <= 'b0;
+			create_char_task <= SET_CURSOR;
+			cgram_addrs_counter <= 'b0;
+			rs <= 0;
+			data <= DISPON_CURSOROFF;
+	    end
             SET_CURSOR_AND_WRITE: begin
                 case(create_char_task)
-					SET_CURSOR: begin
-								if (change == 'b0)begin
-                                    rs <= 0;
-								    data <= (cgram_addrs_counter > 3)? 8'h80 + (cgram_addrs_counter%4) + 8'h40 : 8'h80 + (cgram_addrs_counter%4);
-								//enable <= 'b1;
-								end else begin
-								    rs <= 0;
-								    data <= (cgram_addrs_counter > 3)? 8'h84 + (cgram_addrs_counter%4) + 8'h40 : 8'h84 + (cgram_addrs_counter%4);
-								//enable <= 'b1;
-								end
+			SET_CURSOR: begin
+			if (change == 'b0)begin//Posición de la cara del gato
+				rs <= 0;
+				data <= (cgram_addrs_counter > 3)? 8'h80 + (cgram_addrs_counter%4) + 8'h40 : 8'h80 + (cgram_addrs_counter%4);//Varia entre las primeras 4 columnas de las dos filas
+			end else begin//Posición del estado
+				rs <= 0;
+				data <= (cgram_addrs_counter > 3)? 8'h84 + (cgram_addrs_counter%4) + 8'h40 : 8'h84 + (cgram_addrs_counter%4);//Varia entre la columna 5 y 8 de ambas filas
+			end
                         create_char_task <= WRITE_LCD; 
                     end
                     WRITE_LCD: begin
-                        rs <= 1; data <=  8'h00 + cgram_addrs_counter;
-								//enable <= 'b1;
+                        rs <= 1; data <=  8'h00 + cgram_addrs_counter;//Escribe el char correspondiente
                         if(cgram_addrs_counter == num_cgram_addrs-1)begin
-                            cgram_addrs_counter = 'b0;
-									 if(change == 'b0)begin
-									  change <= change +1;
-									 end else begin
-										change <= 'b0;
-									 end
-                            done_lcd_write <= 1'b1;
+				cgram_addrs_counter = 'b0;
+				if(change == 'b0)begin//Cambia el registro change de valor
+					change <= change +1;
+				end else begin
+					change <= 'b0;
+				end
+				done_lcd_write <= 1'b1;
                         end else begin
-                            cgram_addrs_counter <= cgram_addrs_counter + 1;
+				cgram_addrs_counter <= cgram_addrs_counter + 1;
                         end
-                        create_char_task <= SET_CURSOR; 
+				create_char_task <= SET_CURSOR; 
                     end
                 endcase
             end
-				WAIT: begin
-					if(wait_counter == WAIT_TIME)begin
-						wait_done <= 1'b1;
-					end
-					//enable <= 'b0;
-					rs <= 1;
-					data <= 'b0;
-					wait_counter <= wait_counter +1;
-				end
-				SHOW_NOTHING: begin
-					rs <= 0;
-					data <= 8'hC4;
-				end
+	    WAIT: begin
+	        if(wait_counter == WAIT_TIME)begin//Contador dependiente del WAIT_TIME
+			wait_done <= 1'b1;
+		end
+		rs <= 1;
+		data <= 'b0;
+		wait_counter <= wait_counter +1;
+	    end
+	    SHOW_NOTHING: begin//Obliga a dejar el cursor en un lugar para no dañar la figura
+		rs <= 0;
+		data <= 8'hC4;
+            end
         endcase
     end
 end
 
-assign enable = clk_16ms;
-assign done_cgram_write = (data_counter == num_data_all-1)? 'b1 : 'b0;
+assign enable = clk_16ms;//El enable se ejecuta cada que suba el clc pasado por el divisor de frecuencia
+assign done_cgram_write = (data_counter == num_data_all-1)? 'b1 : 'b0;//Done_cgram_write es 1 cuando el contador de datos llegue a num_data_all
 
 endmodule
