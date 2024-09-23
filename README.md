@@ -226,6 +226,48 @@ Por lo que, para verificar los dos momentos establecidos anteriormente, se decid
 
 _Pantalla LCD 16x2_
 
+_ENTENDIMIENTO BÁSICO DEL CÓDIGO_
+
+Para poder enterder correctamente el código de la LCD lo más importante es comprender el FSM que lo controla, como se explica en el código [BucleEspera.v](LCD/BucleEspera.v) Así como todo el código comentado.Aquí podemos ver el fragmento del FSM:
+
+
+```verilog
+always @(*) begin //FSM de la LCD
+    case(fsm_state)
+        IDLE: begin//Inicia los contadores y registros
+		next <= (init_config_executed)? CREATE_CHARS : INIT_CONFIG; 
+        end
+        INIT_CONFIG: begin //Realiza la configuración inicial de la pantalla
+		next <= (command_counter == num_commands)? CLEAR_COUNTERS0 : INIT_CONFIG; 
+        end
+        CLEAR_COUNTERS0: begin //Reinicia los contadores y registros
+		next <= SELECT_VIEW;
+        end
+        SELECT_VIEW: begin//Se seleccionan las figuras necesarias dependiendo de select_figures y de sleep
+            next <= CREATE_CHARS; 
+        end
+        CREATE_CHARS:begin//crea lso chars y los guarda en el CGRAM
+            next <= (done_cgram_write)? CLEAR_COUNTERS1 : CREATE_CHARS;
+        end
+        CLEAR_COUNTERS1: begin//Reinicia los contadores y registros
+            next <= SET_CURSOR_AND_WRITE;
+        end
+        SET_CURSOR_AND_WRITE: begin //Se indica la posición del cursor y lo que se escribe en ese espacio
+            next <= (done_lcd_write)? WAIT: SET_CURSOR_AND_WRITE;
+        end
+        WAIT: begin //Espera hasta que el contador llegue al valor de WAIT_TIME
+	    next <= (wait_done)? CLEAR_COUNTERS0 : SHOW_NOTHING;
+	end
+	SHOW_NOTHING: begin//Indica que el cursor se quede en una dirección en específico para no dañar la figura generada
+	    next <= WAIT;
+	end
+        default: next = IDLE;//Estado Default
+    endcase
+end
+```
+Además de esto unas consideraciones importantes, la LCD 16x2 solo permite reescribir 8 direcciones CGRAM por lo que limita la visualización de carácteres especiales, por lo que el proceso de lectura y escritura de las figuras se realiza dos veces, una para la cara del gato y una para el estado, este cambio se ve controlado por el registro change que se usa en el código.
+
+_SIMULACIONES_
 - Simulación configuración condiciones iniciales
 
 Se realiza la simulación, se ve como se inica correctamentr en el estado 0 del FSM para inicializar los registros que se usarán, Pasa al estado 1 del FSM en donde se mandan las configuraciones iniciales de la LCD, sabemos que es lectura de comandos al estar el rs en 0, y los comandos se mandan en data, loc aules corresponden con definir que se usará modo 8 bits de dos líneas y que son matrices de 5x8 píxeles por caracter (8’h38), se define que el cursor permanecerá apagado (8’h0C) y finaliza limpiando el display (8’h01), pasa al estado 2 del fsm en donde limpia todos los contadores necesarios. En el estado 3 se seleccionan de entre las visualizaciones las pertinentes dependiendo de las entradas que recibe el programa (Select_view y sleep).
