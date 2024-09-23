@@ -379,6 +379,7 @@ Nota final: Para una especificación más detallada del paso a paso del código,
 ### Finalización e implementación del prototipo
 _Video Implementación_
 
+[![Implementación](./Images/Video.jpg)](https://youtu.be/3_kACh5AmKY)
 
 _Limitaciones y precauciones_
 
