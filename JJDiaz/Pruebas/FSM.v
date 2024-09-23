@@ -176,7 +176,6 @@ module tamagotchi_fsm (
                 display_out[3:0] <= 4'b0000; // Mostrar Salud
                 if (display_out[3:0] == 4'b0000) begin
                     nivel_salud <= nivel_salud + 1; // Aumentar nivel Salud
-						  timer_salud <= 0;
                 end
             end
 				
@@ -184,7 +183,6 @@ module tamagotchi_fsm (
                 display_out[3:0] <= 4'b0100; // Mostrar Salud
                 if (nivel_salud < 4'b1010 && display_out[3:0] == 4'b0100) begin
                     nivel_salud <= nivel_salud + 1; // Aumentar nivel Salud
-						  timer_salud <= 0;
                 end
             end
 				
@@ -192,7 +190,6 @@ module tamagotchi_fsm (
                 display_out[3:0] <= 4'b0010; // Mostrar Hambre
                 if (display_out[3:0] == 4'b0010) begin
                     nivel_hambre <= nivel_hambre + 1; // Aumentar nivel Hambre
-				    timer_hambre <= 0;
                 end
             end
 				
@@ -200,7 +197,6 @@ module tamagotchi_fsm (
                 display_out[3:0] <= 4'b0110; // Mostrar Hambre
                 if (nivel_hambre < 4'b1010 && display_out[3:0] == 4'b0110) begin
                     nivel_hambre <= nivel_hambre + 1; // Aumentar nivel Hambre
-						  timer_hambre <= 0;
                 end
             end
 				
@@ -214,7 +210,7 @@ module tamagotchi_fsm (
 				
 			if (ult && nivel_diversion > 4'b0100)begin
 				display_out[3:0] <= 4'b0111; // Mostrar Diversion
-				if (nivel_diversion < 4'b1010 && display_out[3:0] == 4'b0111 && timer_diversion2 == 6) begin
+				if (nivel_diversion[3:0] < 4'b1010 && display_out[3:0] == 4'b0111 && timer_diversion2 == 6) begin
                     nivel_diversion <= nivel_diversion + 1; // Aumentar nivel Diversion
 				    timer_diversion2 <= 0;
 				end else timer_diversion2 <= timer_diversion2 + 1;
@@ -261,7 +257,7 @@ module tamagotchi_fsm (
                     end else timer_energia <= timer_energia + 1;
 				
 				    if (nivel_energia == 4'b0001)begin
-					timer_salud <= 0;
+					timer_energia <= 0;
 				    end
                 end 
                 if (dead_mode) begin
@@ -273,9 +269,8 @@ module tamagotchi_fsm (
                 nivel_hambre <= nivel_hambre - 1;
                 timer_hambre <= 0;
             end else timer_hambre <= timer_hambre + 1;
-				
 			if (nivel_hambre == 4'b0001)begin
-		    	timer_salud <= 0;
+		    	timer_hambre <= 0;
 			end
 
 		    if (timer_diversion == 24 && nivel_diversion > 4'b0001) begin
