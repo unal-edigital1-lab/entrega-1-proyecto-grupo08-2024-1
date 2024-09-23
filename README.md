@@ -23,8 +23,8 @@ _Detalle de la especificación de los componentes del proyecto y su descripción
 | --------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Botón para Curar      | Pulsador con tapa (MCI00315)        | Cada vez que se oprima, aumenta el estado de Salud, cura al Tamogotchi.                                                                                                               |
 | Botón para Alimentar  | Pulsador con tapa (MCI00315)        | Cada vez que se oprima, da de comer a la mascota, aumentando el nivel de alimentación.                                                                                                |
-| Botón para Reset      | Pulsador con tapa (MCI00315)        | Cuando esté presionado por 5 segundos, restablece el estado inicial del tamagotchi (todos los niveles al 100%).                                                                       |
-| Botón para Test       | Pulsador con tapa (MCI00315)        | Cuando esté presionado por 5 segundos, permite hacer un sondeo rápido entren estados, dejando interactuar de manera directa para modificar el nivel en el que se encuentra el estado. |
+| Botón para Reset      | Pulsadores FPGA    | Cuando esté presionado por 5 segundos, restablece el estado inicial del tamagotchi (todos los niveles al 100%).                                                                       |
+| Botón para Test       | Pulsadores FPGA      | Cuando esté presionado por 5 segundos, permite hacer un sondeo rápido entren estados, dejando interactuar de manera directa para modificar el nivel en el que se encuentra el estado. |
 | Sensor de Ultrasonido | Sensor HC-SR04                      | Cuando detecte una proximidad de 1-5 cm, la mascota aumentará su estado de diversión.                                                                                                 |
 | Sensor de Movimiento  | Sensor MPU 6050                     | El giroscopio detecta si la mascota está durmiendo (nivel de energía aumenta porque está descansando) o boca arriba (está activo y va disminuyendo el nivel de energía).              |
 | Pantalla              | LCD 16x2                            | Se observan las 2 caras de la mascota (si se encuentra mal o bien). Además, muestra la necesidad a la que se está haciendo referencia mediante la visualización de un ícono.          |
@@ -34,10 +34,11 @@ _Detalle de la especificación de los componentes del proyecto y su descripción
 _Estados_
 | Estado | Descripción |
 | ------------- | ------------- |
-| Diversión | Cada vez que pasen 30 segundos, se baja el porcentaje de este estado si no se hace uso del sensor ultrasonido (caricia). |
-| Salud | Cada vez que pasen 100 segundos, se baja el porcentaje de este estado. Solo se aumenta cuando se hace uso del botón de curar. |
-| Alimentación | Cada vez que pasen 20 segundos, se baja el porcentaje de este estado. Para aumentarlo se debe presionar el botón de alimentación. |
-| Energía | Cada vez que pasen 50 segundos, se baja el porcentaje de este estado. Cuando el giroscopio este invertido, es decir cuando el tamagotchi este boca abajo, aumenta este estado.|
+| Diversión | Es el estado que más rápido baja en porcentaje. Solo sube si se hace uso del sensor ultrasonido (caricia). |
+| Salud | Es el estado que baja más lento en porcentaje. Solo se aumenta cuando se hace uso del botón de curar. |
+| Alimentación | Es el segundo estado que más rápido baja en porcentaje después del estado de diversión. Para aumentarlo, se debe presionar el botón de alimentación. |
+| Energía | Es el segundo estado que baja más lento en porcentaje después de el de salud. Cuando el giroscopio este invertido, es decir cuando el tamagotchi este boca abajo, aumenta este estado.|
+| Muerte | Cuando los anteriores estados se encuentran todos en 1, se pasa al estado Muerte. No es posible salir a menos de que se oprima el botón de reset o el de test.|
 
 _Sistema de Caja Negra General_
 
@@ -224,6 +225,8 @@ Por lo que, para verificar los dos momentos establecidos anteriormente, se decid
 
 ![Valor I2C datos iniciales analizador ](Images/I2C%20comparador.png)
 
+En la simulación se muestra solamente los datos enviados a la FPGA. Por medio del analizador lógico, se pudieron observar los datos de respuesta por parte del sensor y de esta manera identificar que son 14 datos de lectura(contando uno por parte del maestro).
+
 _Pantalla LCD 16x2_
 
 _ENTENDIMIENTO BÁSICO DEL CÓDIGO_
@@ -367,6 +370,20 @@ En la imagen anterior se observa el correcto funcionamiento de la disminución d
 
 Nota final: Para una especificación más detallada del paso a paso del código, de la cantidad de señales y el funcionamiento de cada una de ellas, es recomendable revisar los comentarios incluidos en cada código.
 
+### Diagrama RTL del Top
+
+![Simulacion disminucion niveles](Images/RTL_Top.jpg)
+
 **Tercera Entrega (40% del total de la nota del proyecto)**
 
 ### Finalización e implementación del prototipo
+_Video Implementación_
+
+
+_Limitaciones y precauciones_
+
+- Si se está interactuando en un estado, es recomendable no presionar algún incentivo para pasar a la vez a otro estado.
+
+- Si los botones se presionan por más de el doble de ciclos del clock para la subida de un solo estado, se va a subir más de una vez el nivel.
+
+- Si el tamagochi muere, solo es posible revivirlo cuando se presiona el botón RST o TST, ningún estado sube aunque se presionen los diferenetes incentivos.
