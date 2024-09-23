@@ -3,7 +3,7 @@ module bucleEspera #(parameter num_commands = 3, //Número de comandos que se da
 			       char_data = 8, //Número de caracteres a escribir máximo 8
 			       num_cgram_addrs = 8, //Número de direcciones CGRAM a sobrescribir máximo 8
 			       COUNT_MAX = 20000, //Divisor de frecuencia respecto al clk de la FPGA entre mas alto el número, más rápido el clk de la LCD
-		     WAIT_TIME = 200)( //Tiempo que se muestra cada figura en pantalla
+		     	       WAIT_TIME = 200)( //Tiempo que se muestra cada figura en pantalla
     input clk,            //clk de la FPGA
     input reset,          //Boton de reinicio vuelve todo a valores iniciales
     input [3:0] select_figures,  //Dato que se recibe del FSM total y determina el estado y la situación del gato
@@ -44,7 +44,7 @@ localparam CGRAM_ADDR7 = 8'h78;
 
 //Registros necesarios indicando su cantidad de bits	
 reg [3:0] fsm_state; //Cnatidad de estados del FSM de 4 bits
-reg [3:0] next;
+reg [3:0] next; //Registro para moverse entre los estados del FSM
 reg clk_16ms; //Clk que toma en cuenta el código para usar la LCD (Clk de la FPGA pasado por el divisor de frecuencia)
 
 // Definir un contador para el divisor de frecuencia
@@ -93,21 +93,22 @@ reg [7:0] muerte [0: num_data_all-1];
 reg [7:0] config_memory [0:num_commands-1]; 
 reg [7:0] cgram_addrs [0: num_cgram_addrs-1];
 
-//
-reg [1:0] create_char_task;
-reg init_config_executed;
-wire done_cgram_write;
-reg done_lcd_write;
-reg wait_done;
-reg change;
-integer i;
+
+reg [1:0] create_char_task; //Registro para moverse en los estados del SET_CURSOR_AND_WRITE
+reg init_config_executed;//Confirmación de que se haya configurado correctamente condiciones iniciales
+wire done_cgram_write;//Confirmación de que ya se escribieron los chars en el CGRAM
+reg done_lcd_write;//Confirmación de que ya se visualizan todos los chars en la pantalla de la LCD
+reg wait_done;//Confirmación de que ya se espero el tiempo elegido
+reg change;//Registra el cambio entre una figura y otra en la visualización
+integer i;//Registro de operaciones internas  para el CGRAM
 
 
-reg [1:0] select_fig1;
-reg [1:0] select_fig2; 
+reg [1:0] select_fig1;//Registro que se dará a los primeros dos bits del select_figures
+reg [1:0] select_fig2; //Registro que se dará a los ultimos dos bits del select_figures
 
-initial begin
-    fsm_state <= IDLE;
+initial begin //Condiciones iniciales
+    fsm_state <= IDLE; //Manda el FSM al primer estado
+	//Registros y contadores en condiciones iniciales
 	    data <= 'b0;
 	    command_counter <= 'b0;
 	    data_counter <= 'b0;
@@ -123,8 +124,8 @@ initial begin
 	    wait_counter <= 'b0;
 	    wait_done <= 1'b0;
 
-    create_char_task <= SET_CGRAM_ADDR;
-	 
+    create_char_task <= SET_CGRAM_ADDR;//Manda al primer estado del SET_CURSOR_AND_WRITE
+	 //Lectura y guardado de los txt que son necesarios para las figuras que se mostrarán
 	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoFelizF.txt", gatoFeliz);//
 	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoTristeF.txt", gatoTriste);//
 	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoNeutroF.txt", gatoNeutro);//
@@ -137,11 +138,11 @@ initial begin
 	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/ZZZ.txt", zzz);// 
 	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/GatoMuerto.txt", gatoMuerto);// 
 	$readmemb("/home/gussi/Documents/unal/digital/entrega-1-proyecto-grupo08-2024-1/JJDiaz/Pruebas/Muerte.txt", muerte);// 
-			
+//Se guardan las configuraciones en los registros de memoria correspondientes
 	config_memory[0] <= LINES2_MATRIX5x8_MODE8bit;
 	config_memory[1] <= DISPON_CURSOROFF;
 	config_memory[2] <= CLEAR_DISPLAY;
-
+//Se guardan las direcciones del CGRAM
 	cgram_addrs[0] <= CGRAM_ADDR0;
 	cgram_addrs[1] <= CGRAM_ADDR1;
 	cgram_addrs[2] <= CGRAM_ADDR2;
@@ -152,7 +153,7 @@ initial begin
 	cgram_addrs[7] <= CGRAM_ADDR7;
 end
 
-always @(posedge clk) begin
+always @(posedge clk) begin//Divisor de frecuencia
     if (counter_div_freq == COUNT_MAX-1) begin
         clk_16ms <= ~clk_16ms;
         counter_div_freq <= 0;
@@ -162,12 +163,12 @@ always @(posedge clk) begin
 end
 
 
-always @(*) begin
+always @(*) begin//Se lee todo el tiempo select_figures y se asigna lo siguiente
     select_fig1 = select_figures[3:2]; // Primeros 2 bits determinan la figura 1
     select_fig2 = select_figures[1:0]; // Últimos 3 bits determinan la figura 2
 end
 
-always @(posedge clk_16ms)begin
+	always @(posedge clk_16ms)begin//Lee constantemente el botón reset y manda al estado 1 del FSM si es así
     if(reset == 0)begin
         fsm_state <= IDLE;
     end else begin
@@ -175,36 +176,36 @@ always @(posedge clk_16ms)begin
     end
 end
 
-always @(*) begin
+always @(*) begin //FSM de la LCD
     case(fsm_state)
-        IDLE: begin
-            next <= (init_config_executed)? CREATE_CHARS : INIT_CONFIG;
+        IDLE: begin//Inicia los contadores y registros
+		next <= (init_config_executed)? CREATE_CHARS : INIT_CONFIG; 
         end
-        INIT_CONFIG: begin 
-            next <= (command_counter == num_commands)? CLEAR_COUNTERS0 : INIT_CONFIG;
+        INIT_CONFIG: begin //Realiza la configuración inicial de la pantalla
+		next <= (command_counter == num_commands)? CLEAR_COUNTERS0 : INIT_CONFIG; 
         end
-        CLEAR_COUNTERS0: begin
-            next <= SELECT_VIEW;
+        CLEAR_COUNTERS0: begin //Reinicia los contadores y registros
+		next <= SELECT_VIEW;
         end
-        SELECT_VIEW: begin
-            next <= CREATE_CHARS;
+        SELECT_VIEW: begin//Se seleccionan las figuras necesarias dependiendo de select_figures y de sleep
+            next <= CREATE_CHARS; 
         end
-        CREATE_CHARS:begin
+        CREATE_CHARS:begin//crea lso chars y los guarda en el CGRAM
             next <= (done_cgram_write)? CLEAR_COUNTERS1 : CREATE_CHARS;
         end
-        CLEAR_COUNTERS1: begin
+        CLEAR_COUNTERS1: begin//Reinicia los contadores y registros
             next <= SET_CURSOR_AND_WRITE;
         end
-        SET_CURSOR_AND_WRITE: begin 
+        SET_CURSOR_AND_WRITE: begin //Se indica la posición del cursor y lo que se escribe en ese espacio
             next <= (done_lcd_write)? WAIT: SET_CURSOR_AND_WRITE;
         end
-        WAIT: begin
+        WAIT: begin //Espera hasta que el contador llegue al valor de WAIT_TIME
 	    next <= (wait_done)? CLEAR_COUNTERS0 : SHOW_NOTHING;
 	end
-	SHOW_NOTHING: begin
+	SHOW_NOTHING: begin//Indica que el cursor se quede en una dirección en específico para no dañar la figura generada
 	    next <= WAIT;
 	end
-        default: next = IDLE;
+        default: next = IDLE;//Estado Default
     endcase
 end
 
@@ -251,7 +252,7 @@ always @(posedge clk_16ms) begin
 		rs <= 'b0;
 		data <= config_memory[command_counter];
 		command_counter <= command_counter + 1;
-                if(command_counter == num_commands-1) begin
+	        if(command_counter == num_commands-1) begin//Se ejecutan tantos comando co,mo se indica num_commands
                     init_config_executed <= 1'b1;
                 end
             end
@@ -337,13 +338,13 @@ always @(posedge clk_16ms) begin
 
             CREATE_CHARS: begin
                 case(create_char_task)
-                    SET_CGRAM_ADDR: begin
+                    SET_CGRAM_ADDR: begin//Se selecciona la dirección de CGRAM
                         rs <= 'b0; data <= cgram_addrs[cgram_addrs_counter]; 
                         create_char_task <= WRITE_CHARS; 
                     end
                     WRITE_CHARS: begin
                         rs <= 1; 
-                        if(change == 'b0) begin
+		        if(change == 'b0) begin//Si change es 0 selecciona el gato, si change es 1 selecciona el estado
 			        data <= data_memory[data_counter];
                         end else begin
 				data <= data_memory2[data_counter];
@@ -370,20 +371,20 @@ always @(posedge clk_16ms) begin
             SET_CURSOR_AND_WRITE: begin
                 case(create_char_task)
 			SET_CURSOR: begin
-			if (change == 'b0)begin
+			if (change == 'b0)begin//Posición de la cara del gato
 				rs <= 0;
-				data <= (cgram_addrs_counter > 3)? 8'h80 + (cgram_addrs_counter%4) + 8'h40 : 8'h80 + (cgram_addrs_counter%4);
-			end else begin
+				data <= (cgram_addrs_counter > 3)? 8'h80 + (cgram_addrs_counter%4) + 8'h40 : 8'h80 + (cgram_addrs_counter%4);//Varia entre las primeras 4 columnas de las dos filas
+			end else begin//Posición del estado
 				rs <= 0;
-				data <= (cgram_addrs_counter > 3)? 8'h84 + (cgram_addrs_counter%4) + 8'h40 : 8'h84 + (cgram_addrs_counter%4);
+				data <= (cgram_addrs_counter > 3)? 8'h84 + (cgram_addrs_counter%4) + 8'h40 : 8'h84 + (cgram_addrs_counter%4);//Varia entre la columna 5 y 8 de ambas filas
 			end
                         create_char_task <= WRITE_LCD; 
                     end
                     WRITE_LCD: begin
-                        rs <= 1; data <=  8'h00 + cgram_addrs_counter;
+                        rs <= 1; data <=  8'h00 + cgram_addrs_counter;//Escribe el char correspondiente
                         if(cgram_addrs_counter == num_cgram_addrs-1)begin
 				cgram_addrs_counter = 'b0;
-				if(change == 'b0)begin
+				if(change == 'b0)begin//Cambia el registro change de valor
 					change <= change +1;
 				end else begin
 					change <= 'b0;
@@ -397,14 +398,14 @@ always @(posedge clk_16ms) begin
                 endcase
             end
 	    WAIT: begin
-		if(wait_counter == WAIT_TIME)begin
+	        if(wait_counter == WAIT_TIME)begin//Contador dependiente del WAIT_TIME
 			wait_done <= 1'b1;
 		end
 		rs <= 1;
 		data <= 'b0;
 		wait_counter <= wait_counter +1;
 	    end
-	    SHOW_NOTHING: begin
+	    SHOW_NOTHING: begin//Obliga a dejar el cursor en un lugar para no dañar la figura
 		rs <= 0;
 		data <= 8'hC4;
             end
@@ -412,7 +413,7 @@ always @(posedge clk_16ms) begin
     end
 end
 
-assign enable = clk_16ms;
-assign done_cgram_write = (data_counter == num_data_all-1)? 'b1 : 'b0;
+assign enable = clk_16ms;//El enable se ejecuta cada que suba el clc pasado por el divisor de frecuencia
+assign done_cgram_write = (data_counter == num_data_all-1)? 'b1 : 'b0;//Done_cgram_write es 1 cuando el contador de datos llegue a num_data_all
 
 endmodule
