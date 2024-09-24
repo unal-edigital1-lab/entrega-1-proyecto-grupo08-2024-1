@@ -175,7 +175,7 @@ En la simulación del top se encuentra la señal trig enviandose constantemente,
 
 _MPU6050 Giroscopio_
 
-Para el desarrollo de la MPU6050, se utilizaron 3 módulos y un top. El código [i2cmaster.v](mpu6050/i2cmaster.v)es el encargado de utilizar el protocolo I2C para la comunicación con el sensor MPU6050 por entradas bidireccionales de solo un bit. Adicionalmente, el código [mpu6050.v](mpu6050/mpu6050.v) se encarga de enviar la información de inicialización del sensor además de recoger la recibida del propio. Estos dos códigos en conjunto son los principales para poder llevar a cabo el registro de entrada y salida de datos de sensor. Además, se tiene el código [compare.v](mpu6050/compare.v), que lo que hace es justamente transformar este registro de la posición del giroscopio, en una salida de un bit (led) mostrando si está despierto o dormido según el signo del eje. Finalmente, se tiene el código [demompu6050.v](mpu6050/demo_mpu6050.v)que instancia los anteriores códigos para finalmente marcar 2 entradas (el clock de la FPGA y un reset), 2 entradas bidireccionales (SDA y SCL) y una salida que sería la del led.
+Para el desarrollo de la MPU6050, se utilizaron 3 módulos y un top. El código [i2cmaster.v](Tamagotchi/mpu6050/i2cmaster.v)es el encargado de utilizar el protocolo I2C para la comunicación con el sensor MPU6050 por entradas bidireccionales de solo un bit. Adicionalmente, el código [mpu6050.v](Tamagotchi/mpu6050/mpu6050.v) se encarga de enviar la información de inicialización del sensor además de recoger la recibida del propio. Estos dos códigos en conjunto son los principales para poder llevar a cabo el registro de entrada y salida de datos de sensor. Además, se tiene el código [compare.v](Tamagotchi/mpu6050/compare.v), que lo que hace es justamente transformar este registro de la posición del giroscopio, en una salida de un bit (led) mostrando si está despierto o dormido según el signo del eje. Finalmente, se tiene el código [demompu6050.v](Tamagotchi/mpu6050/demo_mpu6050.v)que instancia los anteriores códigos para finalmente marcar 2 entradas (el clock de la FPGA y un reset), 2 entradas bidireccionales (SDA y SCL) y una salida que sería la del led.
 
 Para iniciar, es necesario enviar un comando en específico, siendo este el _68_ que significa un reset para todo el sistema del sensor. Este envío del _68_ se establece en el código del **i2cmaster** como un parámetro de usual iterancia, ya que para cualquier tipo de inicio de envío de datos o de recepción de ellos se nesesita de él obligatoriamente como se muestra en el siguiente fragmento de código.
 
@@ -233,7 +233,7 @@ _Pantalla LCD 16x2_
 
 _ENTENDIMIENTO BÁSICO DEL CÓDIGO_
 
-Para poder enterder correctamente el código de la LCD lo más importante es comprender el FSM que lo controla, como se explica en el código [BucleEspera.v](LCD/bucleEspera.v) Así como todo el código comentado.Aquí podemos ver el fragmento del FSM:
+Para poder enterder correctamente el código de la LCD lo más importante es comprender el FSM que lo controla, como se explica en el código [BucleEspera.v](Tamagotchi/LCD/bucleEspera.v) Así como todo el código comentado.Aquí podemos ver el fragmento del FSM:
 
 
 ```verilog
@@ -332,11 +332,11 @@ _FSM total_
 
 - Simulación de botones en modo normal
 
-En el módulo [FSM.v](ProyectoFinal/FSM.v) se realiza el control general de las acciones y estados del Tamagotchi, como se mostrará en las siguientes simulaciones. La primera acción a explicar será cómo debe comportarse la mascota digital al accionar los botones en un modo normal.
+En el módulo [FSM.v](Tamagotchi/ProyectoFinal/FSM.v) se realiza el control general de las acciones y estados del Tamagotchi, como se mostrará en las siguientes simulaciones. La primera acción a explicar será cómo debe comportarse la mascota digital al accionar los botones en un modo normal.
 
 ![Simulacion de los botones en modo normal](Images/simulacion_n_botones.png)
 
-En esta imagen de simulación se observan las entradas btn_salud y btn_hambre. Estas señales, enviadas por el módulo previamente explicado [topBtn.v](ProyectoFinal/topBtn.v), son procesadas por este módulo para aumentar el valor de un punto en el estado. Como se muestra en las simulaciones, los valores de nivel_salud y nivel_hambre aumentan. Por otro lado, se evidencia el correcto funcionamiento del código, ya que, tras la primera pulsación del botón, solo cambia la señal display_out, la cual es enviada al módulo que controla la pantalla LCD. Además, se aprecia el buen comportamiento de las señales de salida en las visualizaciones. Al cambiar el nivel del estado mostrado, las señales varían de forma correspondiente.
+En esta imagen de simulación se observan las entradas btn_salud y btn_hambre. Estas señales, enviadas por el módulo previamente explicado [topBtn.v](Tamagotchi/ProyectoFinal/topBtn.v), son procesadas por este módulo para aumentar el valor de un punto en el estado. Como se muestra en las simulaciones, los valores de nivel_salud y nivel_hambre aumentan. Por otro lado, se evidencia el correcto funcionamiento del código, ya que, tras la primera pulsación del botón, solo cambia la señal display_out, la cual es enviada al módulo que controla la pantalla LCD. Además, se aprecia el buen comportamiento de las señales de salida en las visualizaciones. Al cambiar el nivel del estado mostrado, las señales varían de forma correspondiente.
 
 - Simulación de sensores en modo normal
 
