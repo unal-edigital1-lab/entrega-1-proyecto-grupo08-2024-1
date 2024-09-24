@@ -101,7 +101,7 @@ El primer módulo [btnAntirebote.v](Tamagotchi/Botones/btn/btnAntirebote.v) impl
 
 - Módulo btnRT.v
 
-El otro módulo [btnRT.v](Botones/btn/btnRT.v) tiene las entradas boton*in y clk, su salida será boton_out. Este tiene counter y un parametro local \_COUNT_LIMIT = 250 x 10⁶*. Lo que hace este módulo es esperar a que el boton este presionado 5 segundos para mandar la señal; el valor de COUNT_LIMIT viene de pasar esos 5 segundos a ciclos de reloj de la FPGA: 5 S = 5 \* 10⁹ nS, frecuencia del clk de la tarjeta = 50 MHz -> 20 nS por ciclo, teniendo en cuenta esto se obtiene que 5 segundos corresponden a 250 millones de ciclos de reloj.
+El otro módulo [btnRT.v](Tamagotchi/Botones/btn/btnRT.v) tiene las entradas boton*in y clk, su salida será boton_out. Este tiene counter y un parametro local \_COUNT_LIMIT = 250 x 10⁶*. Lo que hace este módulo es esperar a que el boton este presionado 5 segundos para mandar la señal; el valor de COUNT_LIMIT viene de pasar esos 5 segundos a ciclos de reloj de la FPGA: 5 S = 5 \* 10⁹ nS, frecuencia del clk de la tarjeta = 50 MHz -> 20 nS por ciclo, teniendo en cuenta esto se obtiene que 5 segundos corresponden a 250 millones de ciclos de reloj.
 
 Al probar un código inicial, se observó que al presionar un botón la FPGA toma esa señal como un 0, entonces si el boton_in = 0 quiere decir que esta presionado. La señal boton_out siempre será 1 a menos que el boton este presionado por más de 5 segundos, en ese momento se converitrá en cero. Esto se logra con el counter: si el boton_in esta presionado, el counter aumenta por cada ciclo de reloj y cuando llegue a COUNT_LIMIT el boton_out tomará el valor de 0, en cualquier otro caso será 1.
 
@@ -113,11 +113,11 @@ En ella se observa que boton_out solo bajará su valor si boton_in esta en bajo 
 
 - Módulo topBtn.v
 
-El módulo top de los botones [topBtn.v](Botones/btn/topBtn.v) tiene como entrada los 4 botones del tamagotchi: btn_heal, btn_alimentación, btn_RST y btn_TST. Tendrán como salida 4 señales que irán a la FSM (btn_salud, btn_hambre, btn_reset, btn_test) y 4 leds para visualizar su funcionamiento en la FPGA (estos no serán implementados en el tamagotchi, solo se crearon para ver el correcto funcionamiento del módulo). Para las entradas btn_heal y btn_ali, se instanció el módulo [btnAntirebote.v](Botones/btn/btnAntirebote.v) y para btn_RST y btn_TST el módulo [btnRT.v](Botones/btn/btnRT.v), para las salidas de cada submódulo se implementaron cables wire (heal, ali, RST y TST).
+El módulo top de los botones [topBtn.v](Tamagotchi/Botones/btn/topBtn.v) tiene como entrada los 4 botones del tamagotchi: btn_heal, btn_alimentación, btn_RST y btn_TST. Tendrán como salida 4 señales que irán a la FSM (btn_salud, btn_hambre, btn_reset, btn_test) y 4 leds para visualizar su funcionamiento en la FPGA (estos no serán implementados en el tamagotchi, solo se crearon para ver el correcto funcionamiento del módulo). Para las entradas btn_heal y btn_ali, se instanció el módulo [btnAntirebote.v](Tamagotchi/Botones/btn/btnAntirebote.v) y para btn_RST y btn_TST el módulo [btnRT.v](Tamagotchi/Botones/btn/btnRT.v), para las salidas de cada submódulo se implementaron cables wire (heal, ali, RST y TST).
 
-En el módulo [btnAntirebote.v](Botones/btn/btnAntirebote.v) la salida es igual a la entrada y como la FPGA está negando los botones, las salidas btn_salud y btn_hambre se les asignará el valor negado de los wire (heal y ali respectivamente). Es decir que el boton siempre estaŕa en uno y cuando se presiona será cero, entonces a la salida del módulo se le asignará el valor contrario de la entrada para que envíe un uno cuando se presione el boton.
+En el módulo [btnAntirebote.v](Tamagotchi/Botones/btn/btnAntirebote.v) la salida es igual a la entrada y como la FPGA está negando los botones, las salidas btn_salud y btn_hambre se les asignará el valor negado de los wire (heal y ali respectivamente). Es decir que el boton siempre estaŕa en uno y cuando se presiona será cero, entonces a la salida del módulo se le asignará el valor contrario de la entrada para que envíe un uno cuando se presione el boton.
 
-El módulo [btnRT.v](Botones/btn/btnRT.v) tiene como salida un cero cuando se tiene el boton presionado 5 segundos, entonces tambien se asignan los valores negados para las salidas btn_reset y btn_test. Los leds tendrán el mismo valor que los wire, entonces estarán prendidos siempre y cuando se presionen los botones se apagarán, o se apagrán depues de 5 segundos presionados para el caso de reset y test.
+El módulo [btnRT.v](Tamagotchi/Botones/btn/btnRT.v) tiene como salida un cero cuando se tiene el boton presionado 5 segundos, entonces tambien se asignan los valores negados para las salidas btn_reset y btn_test. Los leds tendrán el mismo valor que los wire, entonces estarán prendidos siempre y cuando se presionen los botones se apagarán, o se apagrán depues de 5 segundos presionados para el caso de reset y test.
 
 ![SimuTopBtn](Images/ImgSimuBtnULt/SimuTopBotones.png)
 
@@ -135,7 +135,7 @@ Teniendo claro esto, ahora se analiza los módulos, todos se encuentran en la ca
 
 - ContadorConTrigger.v
 
-El primer módulo es [ContadorConTrigger.v](ultrasonido/ContadorConTrigger.v). Este envía la señal Trigger al ultrasonido, la cual estará en alto por 10 uS y bajará, esto gracias a un counter que se registra en el código. La señal se enviará constantemente para que siempre se revise si hay un objeto frente al sensor. Se realizó un testbench para la simulación de este módulo: [ContadorConTrigger_tb.v](ultrasonido/ContadorConTrigger_tb.v):
+El primer módulo es [ContadorConTrigger.v](Tamagotchi/ultrasonido/ContadorConTrigger.v). Este envía la señal Trigger al ultrasonido, la cual estará en alto por 10 uS y bajará, esto gracias a un counter que se registra en el código. La señal se enviará constantemente para que siempre se revise si hay un objeto frente al sensor. Se realizó un testbench para la simulación de este módulo: [ContadorConTrigger_tb.v](Tamagotchi/ultrasonido/ContadorConTrigger_tb.v):
 
 ![SimuTrig](Images/ImgSimuBtnULt/SimulacionTrigger.png)
 
@@ -143,7 +143,7 @@ En ella se puede ver que la señal trig esta en alto por 10 uS y reinicia su cic
 
 - ContadorConEcho.v
 
-El segundno Módulo [ContadorConEcho.v](ultrasonido/ContadorConEcho.v) tendrá como entrada la señal Echo que recibe del sensor. Este tiene un contador que aumentará una unidad por cada ciclo de reloj en el que Echo esté en alto, en otro caso será 0. Tiene una salida llamada **echo_duration** a la que se le asignará el valor del counter cuando echo vuelva a cero. A continuación se muestra la simulación realizada.
+El segundno Módulo [ContadorConEcho.v](Tamagotchi/ultrasonido/ContadorConEcho.v) tendrá como entrada la señal Echo que recibe del sensor. Este tiene un contador que aumentará una unidad por cada ciclo de reloj en el que Echo esté en alto, en otro caso será 0. Tiene una salida llamada **echo_duration** a la que se le asignará el valor del counter cuando echo vuelva a cero. A continuación se muestra la simulación realizada.
 
 ![SimuRcho](Images/ImgSimuBtnULt/SimulacioEcho.png)
 
@@ -151,7 +151,7 @@ En ella se puede observar que el counter es igual a cero cuando echo está en ba
 
 - ControlLed.v
 
-El tercer módulo llamado [ControlLed.v](ultrasonido/ControlLed.v) se encarga de verificar que el objeto que se detecta esta en el rango requerido entre 1 y 10 centímetros. Para esto hay que hallar la conversióń de centímetros a ciclos de reloj. Despejando de la ecuación que se mencionó anteriormente: distancia [cm] = tiempo [uS] \* 0,01715, se obtienen los tiempos 58 uS y 290 uS. Se sabe que la FPGA tiene una frecuancia de 50 MHz, es decir que toma 20 nS por cada ciclo de reloj, realizando la conversión se obtiene que tienen que pasar entre 2.900 y 14.500 ciclos de reloj con echo activo para que el objeto este en la distancia exigida. Este módulo recibirá la salida echo_duration del módulo anterior y en caso de que esta tenga un valor entre 2.900 y 14.500 se activará una señal llama **aux** la cual será la salida del módulo.
+El tercer módulo llamado [ControlLed.v](Tamagotchi/ultrasonido/ControlLed.v) se encarga de verificar que el objeto que se detecta esta en el rango requerido entre 1 y 10 centímetros. Para esto hay que hallar la conversióń de centímetros a ciclos de reloj. Despejando de la ecuación que se mencionó anteriormente: distancia [cm] = tiempo [uS] \* 0,01715, se obtienen los tiempos 58 uS y 290 uS. Se sabe que la FPGA tiene una frecuancia de 50 MHz, es decir que toma 20 nS por cada ciclo de reloj, realizando la conversión se obtiene que tienen que pasar entre 2.900 y 14.500 ciclos de reloj con echo activo para que el objeto este en la distancia exigida. Este módulo recibirá la salida echo_duration del módulo anterior y en caso de que esta tenga un valor entre 2.900 y 14.500 se activará una señal llama **aux** la cual será la salida del módulo.
 
 ![SimuLed](Images/ImgSimuBtnULt/SimuLedUlt.png)
 
@@ -159,7 +159,7 @@ En la simulación hecha se puede apreciar que si echo_duration está entre los v
 
 - Salida.v
 
-El siguiente módulo [Salida.v](ultrasonido/Salida.v) recibe la señal **aux**, la cual avisá si el sensor percibe un objeto. Sus salidas son las señales sens_ult, esta irá directamente a la FSM, y led, para verificar el funcionamiento adecuado del sensor. La señal sens_ult siempre estará en 0 hasta que la señal aux se ponga en alto, para que se pueda observar mejor la actuación del ultrasonido, esta señal estará en alto por 100 mS desde el flanco de subida de **aux**. La señal led tiene los valores contrarios a sens_ult, esto debido a que los leds de la FPGA están negados, entonces cuando estos reciban un 0 (sens_ult = 1) se encenderán.
+El siguiente módulo [Salida.v](Tamagotchi/ultrasonido/Salida.v) recibe la señal **aux**, la cual avisá si el sensor percibe un objeto. Sus salidas son las señales sens_ult, esta irá directamente a la FSM, y led, para verificar el funcionamiento adecuado del sensor. La señal sens_ult siempre estará en 0 hasta que la señal aux se ponga en alto, para que se pueda observar mejor la actuación del ultrasonido, esta señal estará en alto por 100 mS desde el flanco de subida de **aux**. La señal led tiene los valores contrarios a sens_ult, esto debido a que los leds de la FPGA están negados, entonces cuando estos reciban un 0 (sens_ult = 1) se encenderán.
 
 ![SimuSalUlt](Images/ImgSimuBtnULt/SimuSAlULt.png)
 
@@ -167,7 +167,7 @@ Solo para observar mejor la simulación se disminuyo el tiempo en el que sens_ul
 
 - top.v
 
-El módulo [top.v](ultrasonido/top.v) simplemente realiza las conexiones entre los módulos. Sus entradas serán: clk (de la FPGA) y echo (del sensor). Sus salidas: trig (hacía el sensor), sens_ult (a la FSM) y led (a la FPGA). Y tiene cables internos: aux y echo_duration.
+El módulo [top.v](Tamagotchi/ultrasonido/top.v) simplemente realiza las conexiones entre los módulos. Sus entradas serán: clk (de la FPGA) y echo (del sensor). Sus salidas: trig (hacía el sensor), sens_ult (a la FSM) y led (a la FPGA). Y tiene cables internos: aux y echo_duration.
 
 ![SimuTop](Images/ImgSimuBtnULt/SimuTopUlt.png)
 
