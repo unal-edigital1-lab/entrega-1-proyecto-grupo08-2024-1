@@ -1,0 +1,73 @@
+$date
+	Sat Sep 14 11:26:55 2024
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module ControlLed_tb $end
+$var wire 1 ! aux $end
+$var reg 1 " clk $end
+$var reg 32 # echo_duration [31:0] $end
+$scope module UUT $end
+$var wire 1 " clk $end
+$var wire 32 $ echo_duration [31:0] $end
+$var reg 1 ! aux $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+b0 $
+b0 #
+0"
+0!
+$end
+#10000
+1!
+b1001110001000 #
+b1001110001000 $
+1"
+#20000
+0"
+#30000
+0!
+1"
+b0 #
+b0 $
+#40000
+0"
+b11111010000 #
+b11111010000 $
+#50000
+1"
+#60000
+0"
+b0 #
+b0 $
+#70000
+1"
+b11111010000000 #
+b11111010000000 $
+#80000
+0"
+#90000
+1"
+b0 #
+b0 $
+#100000
+1!
+0"
+b10011100010000 #
+b10011100010000 $
+#110000
+1"
+#120000
+0!
+0"
+b0 #
+b0 $
+#130000
+1"
