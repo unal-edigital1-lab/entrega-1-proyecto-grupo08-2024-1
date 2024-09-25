@@ -227,7 +227,9 @@ Por lo que, para verificar los dos momentos establecidos anteriormente, se decid
 
 ![Valor I2C datos iniciales analizador ](Images/I2C%20comparador.png)
 
-En la simulación se muestra solamente los datos enviados a la FPGA. Por medio del analizador lógico, se pudieron observar los datos de respuesta por parte del sensor y de esta manera identificar que son 14 datos de lectura(contando uno por parte del maestro).
+En la simulación se muestra solamente los datos enviados a la FPGA. Por medio del analizador lógico, se pudieron observar los datos de respuesta por parte del sensor y de esta manera identificar que son 14 datos de lectura(contando uno por parte del maestro). A continuación, se muestra que a partir del estado S_READ0 del [mpu6050.v](mpu6050/mpu6050.v), se comienza la lectura de datos que se almacena en el registro XREG instanciado en las últimas líneas de código del [demompu6050.v](mpu6050/demo_mpu6050.v). Este registro, como se observa en la simulación hecha, se activa apenas se llegua al estado de lectura y en este caso, puesto que en la simulación no se enviaron datos de parte del esclavo, se muestra como el envío de un bit (como alta impedancia). No obstante, para no simular entradas aleatorias, se expone adicionalmente los datos recibidos por medio del analizador lógico.
+
+![Lectura Datos I2C](Images/LecturaDatosI2C.png)
 
 _Pantalla LCD 16x2_
 
