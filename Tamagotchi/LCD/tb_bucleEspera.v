@@ -5,8 +5,8 @@ module tb_bucleEspera;
     // Inputs
     reg clk;
     reg reset;
-    //reg ready_i;
-	 reg [3:0]select_figures;
+    reg [3:0]select_figures;
+    reg [1:0]sleep;
 		
     // Outputs
     wire rs;
@@ -18,12 +18,12 @@ module tb_bucleEspera;
     bucleEspera uut (
         .clk(clk), 
         .reset(reset), 
-        //.ready_i(ready_i),
         .select_figures(select_figures), 
         .rs(rs), 
         .rw(rw), 
         .enable(enable), 
-        .data(data)
+        .data(data),
+        .sleep(sleep)
     );
 
     // Clock generation
@@ -33,58 +33,36 @@ module tb_bucleEspera;
         // Initialize Inputs
         clk = 0;
         reset = 0;
-        //ready_i = 0;
         select_figures = 4'b1000;
+        //sleep = 2'b00;
 
         // Apply reset
         reset = 1;
         #10 reset = 0;
         #10 reset = 1;
 
-        // Wait for system initialization
-        //#10 ready_i = 1; 
 
         // Test case 1: select_fig1 = 00 (Gato Feliz), select_fig2 = 000 (Energia)
         #10000000 select_figures = 4'b1000;  
 		  
-		  #10000000 select_figures = 4'b1000;  
-		  #10000000 select_figures = 4'b1000;  
-		  #10000000 select_figures = 4'b1000;  
-		  #10000000 select_figures = 4'b1000;
-			#10000000 select_figures = 4'b1000;
-			#10000000 select_figures = 4'b1000;
-			#10000000 select_figures = 4'b1000;	
-			#10000000 select_figures = 4'b1000;
-			#10000000 select_figures = 4'b1000;		
-        
-		  #10000000 select_figures = 4'b0101; 
-		  
-		  #10000000 reset = 1;
-		  #1000000 reset = 0;
-		  #1000000 reset = 1;
-        
-        // Test case 2: select_fig1 = 01 (Gato Triste), select_fig2 = 001 (Diversion)
-        //select_figures = 4'b0011; 
-        //#1000000;
-        
-        // Test case 3: select_fig1 = 11 (Gato Neutro), select_fig2 = 010 (Alimentacion)//SOLO NEUTRO
-        //select_figures = 4'b1000; 
-        //#1000000;
-
-        // Test case 4: select_fig1 = 00 (Gato Feliz), select_fig2 = 011 (Salud)
-        //select_figures = 4'b0100; 
-        //#1000000;
-
-        // Test case 5: select_fig1 = 01 (Gato Triste), select_fig2 = 100 (Estado Neutro)
-        //select_figures = 4'b01100; 
-        //#1000000;
-        
-        // Test case 6: select_fig1 = 11 (Gato Triste), select_fig2 = 000 (Alimentacion)
-        //select_figures = 4'b0010; 
-        //#1000000;
-        
-		  //#(10000000000000000000000) $finish;
-		  
+	#10000000 select_figures = 4'b1000;  
+	#10000000 select_figures = 4'b1000;  
+	#10000000 select_figures = 4'b1000;  
+	#10000000 select_figures = 4'b1000;
+	#10000000 select_figures = 4'b1000;
+	#10000000 select_figures = 4'b1000;
+	#10000000 select_figures = 4'b1000;	
+	#10000000 select_figures = 4'b1000;
+	#10000000 select_figures = 4'b1000;		
+	
+	//#10000000 select_figures = 4'b0101; //Si se quiere probar la visualización 1
+	//#10000000 sleep = 2'b11; //Si se quiere probar la visualización 2
+	
+	
+	#10000000 reset = 1;
+	#1000000 reset = 0;
+	#1000000 reset = 1;
+  
     end
 
 	 initial begin: TEST_CASE          // Bloque de código ejecutado al realizar la simulación
